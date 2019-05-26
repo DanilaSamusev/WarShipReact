@@ -3,12 +3,6 @@ import React from 'react';
 class Square extends React.Component{
     constructor(props){
         super(props);
-
-        this.state ={
-            style: {backgroundColor: 'white'},
-        }
-
-
     }
 
     componentDidMount(){
@@ -19,8 +13,16 @@ class Square extends React.Component{
     }
 
     render(){
+
+        var style = {backgroundColor: 'white'};
+
+        if (this.props.isClicked === true)
+        {
+            style = {backgroundColor: 'blue'}
+        }
+
         return(
-            <div style={this.state.style}>0</div>
+            <button onClick={this.props.onClick} className="square" style={style}></button>
         )
     }
 }
