@@ -1,5 +1,6 @@
 import Field from "./Field"
 import React from 'react';
+import Ship from './Ship'
 import "./index.css"
 
 class Board extends React.Component {
@@ -17,11 +18,16 @@ class Board extends React.Component {
 
         this.state = {
             board: board,
-
+            shipCount : 0,
         }
     }
 
     render() {
+
+        if (this.state.shipCount === 0){
+            this.setShip();
+        }
+
         return (
             <div className="board">
                 {
@@ -32,10 +38,15 @@ class Board extends React.Component {
             </div>
         )
     }
-}
 
-function CreateBoard(props) {
-
+    setShip(){
+        var board = this.state.board;
+        board[1][1] = <Field condition = {"ship"}/>;
+        this.setState({
+            board : board
+        });
+        this.state.shipCount++;
+    }
 
 }
 
