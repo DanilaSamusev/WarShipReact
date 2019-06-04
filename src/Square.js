@@ -1,28 +1,27 @@
 import React from 'react';
 
-class Square extends React.Component{
-    constructor(props){
-        super(props);
-    }
+class Square extends React.Component {
 
-    componentDidMount(){
-        if (this.props.isClicked === true)
-        {
-            this.setState({style : {backgroundColor: 'blue'}})
-        }
-    }
-
-    render(){
-
+    render() {
         var style = {backgroundColor: 'white'};
 
-        if (this.props.isClicked === true)
-        {
-            style = {backgroundColor: 'blue'}
+        if (this.props.hasShip === true) {
+            style = {backgroundColor: 'yellow'}
         }
 
-        return(
-            <button onClick={this.props.onClick} className="square" style={style}></button>
+        if (this.props.isClicked === true) {
+
+            if (this.props.hasShip === true) {
+                style = {backgroundColor: 'red'}
+            }
+            else {
+                style = {backgroundColor: 'blue'}
+            }
+        }
+
+
+        return (
+            <div onClick={this.props.onClick} className="square" style={style}></div>
         )
     }
 }

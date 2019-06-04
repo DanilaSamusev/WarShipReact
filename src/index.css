@@ -1,5 +1,7 @@
 .field{
-    width: 5%;
+    display: flex;
+    flex-wrap: wrap;
+    width: 20%;
 }
 
 .square {

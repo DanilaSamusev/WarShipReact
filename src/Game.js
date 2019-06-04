@@ -18,7 +18,7 @@ class Game extends React.Component {
             field: []
         });
 
-        fetch('https://localhost:5001/api/game',
+        fetch('http://localhost:5000/api/game',
             {
                 method: 'get',
                 headers:
@@ -37,7 +37,7 @@ class Game extends React.Component {
 
     handleClick(id, isClicked) {
 
-        fetch('https://localhost:5001/api/game',
+        fetch('http://localhost:5000/api/game',
             {
                 method: 'put',
                 headers:
@@ -54,16 +54,17 @@ class Game extends React.Component {
             .then(function (response) {
                 return response.json()
             })
-            .then((json) => this.updateField(json.id, json.isClicked))
+            .then((json) => this.updateField(json.id, json.isClicked, json.hasShip))
     }
 
-    updateField(id, isClicked) {
+    updateField(id, isClicked, hasShip) {
 
         var field = this.state.field;
 
         field[id] = {
             id: id,
-            isClicked: isClicked
+            isClicked: isClicked,
+            hasShip : hasShip,
         };
 
         this.setState({
@@ -74,14 +75,14 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game">
-                <div className="field">
+                <div  className="field">
                     {
                         this.state.field.map((square) => {
                             return (
 
                                 <Square key={square.id}
                                         onClick={() => this.handleClick(square.id, square.isClicked)} id={square.id}
-                                        isClicked={square.isClicked}/>
+                                        isClicked={square.isClicked} hasShip={square.hasShip}/>
 
                             )
                         })}
