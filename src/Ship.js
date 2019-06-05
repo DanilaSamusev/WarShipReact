@@ -1,4 +1,4 @@
-/*handleClick(square) {
+/*handlePlayerClick(square) {
 
     fetch('https://localhost:5001/api/game',
         {

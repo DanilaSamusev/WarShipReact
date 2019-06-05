@@ -1,6 +1,6 @@
 import React from 'react';
-import Square from './Square'
 import "./index.css"
+import Field from "./Field";
 
 class Game extends React.Component {
 
@@ -14,9 +14,7 @@ class Game extends React.Component {
 
     componentWillMount() {
 
-        this.setState({
-            field: []
-        });
+        
 
         fetch('http://localhost:5000/api/game',
             {
@@ -35,7 +33,7 @@ class Game extends React.Component {
             )
     }
 
-    handleClick(id, isClicked) {
+    handlePlayerClick(id, isClicked) {
 
         fetch('http://localhost:5000/api/game',
             {
@@ -59,7 +57,7 @@ class Game extends React.Component {
 
     updateField(id, isClicked, hasShip) {
 
-        var field = this.state.field;
+        const field = this.state.field;
 
         field[id] = {
             id: id,
@@ -72,22 +70,13 @@ class Game extends React.Component {
         });
     }
 
+
+
     render() {
         return (
             <div className="game">
-                <div  className="field">
-                    {
-                        this.state.field.map((square) => {
-                            return (
+                <Field field={this.state.field} handlePlayerClick={this.handlePlayerClick.bind(this)} />
 
-                                <Square key={square.id}
-                                        onClick={() => this.handleClick(square.id, square.isClicked)} id={square.id}
-                                        isClicked={square.isClicked} hasShip={square.hasShip}/>
-
-                            )
-                        })}
-
-                </div>
             </div>
         )
     }
