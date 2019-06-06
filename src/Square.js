@@ -21,7 +21,11 @@ class Square extends React.Component {
 
 
         return (
-            <div onClick={this.props.onClick} className="square" style={style}></div>
+            <div onClick={this.props.onClick}
+                 className="square"
+                 style={style}
+                 onMouseOver={this.props.onMouseOver}
+            ></div>
         )
     }
 }

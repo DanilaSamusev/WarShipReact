@@ -1,6 +1,7 @@
 import React from 'react';
 import "./index.css"
-import Field from "./Field";
+import ComputerField from "./ComputerField";
+import PlayerField from "./PlayerField";
 
 class Game extends React.Component {
 
@@ -8,13 +9,12 @@ class Game extends React.Component {
         super(props);
 
         this.state = {
-            field: [],
+            computerField: [],
+            playerField: [],
         };
     }
 
     componentWillMount() {
-
-        
 
         fetch('http://localhost:5000/api/game',
             {
@@ -28,12 +28,13 @@ class Game extends React.Component {
                 return response.json()
             })
             .then((data) => this.setState({
-                    field: data.squares,
+                    computerField: data.computerField.squares,
+                    playerField: data.playerField.squares,
                 })
             )
     }
 
-    handlePlayerClick(id, isClicked) {
+    handlePlayerShot(id, isClicked) {
 
         fetch('http://localhost:5000/api/game',
             {
@@ -52,31 +53,37 @@ class Game extends React.Component {
             .then(function (response) {
                 return response.json()
             })
-            .then((json) => this.updateField(json.id, json.isClicked, json.hasShip))
+            .then((json) => this.updateComputerField(json.id, json.isClicked, json.hasShip))
     }
 
-    updateField(id, isClicked, hasShip) {
+    updateComputerField(id, isClicked, hasShip) {
 
-        const field = this.state.field;
+        const field = this.state.computerField;
 
         field[id] = {
             id: id,
             isClicked: isClicked,
-            hasShip : hasShip,
+            hasShip: hasShip,
         };
 
         this.setState({
-            field: field,
+            computerField: field,
         });
     }
 
+    handlePlayerClick(id){
 
+        const field = this.state.playerField;
+
+
+
+    }
 
     render() {
         return (
             <div className="game">
-                <Field field={this.state.field} handlePlayerClick={this.handlePlayerClick.bind(this)} />
-
+                <ComputerField computerField={this.state.computerField} handlePlayerShot={this.handlePlayerShot.bind(this)}/>
+                <PlayerField playerField={this.state.playerField}/>
             </div>
         )
     }

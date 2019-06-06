@@ -1,7 +1,11 @@
-.field{
+.playerField, .computerField{
     display: flex;
     flex-wrap: wrap;
     width: 20%;
+}
+
+.playerField{
+    margin-top: 2%;
 }
 
 .square {

@@ -2,16 +2,16 @@ import React from 'react';
 import Square from './Square'
 import "./index.css"
 
-class Field extends React.Component {
+class ComputerField extends React.Component {
 
     render() {
         return (
-            <div className="field">
+            <div className="computerField">
                 {
-                    this.props.field.map((square) => {
+                    this.props.computerField.map((square) => {
                         return (
                             <Square key={square.id}
-                                    onClick={() => this.props.handlePlayerClick(square.id, square.isClicked)}
+                                    onClick={() => this.props.handlePlayerShot(square.id, square.isClicked)}
                                     id={square.id}
                                     isClicked={square.isClicked}
                                     hasShip={square.hasShip}/>
@@ -23,4 +23,4 @@ class Field extends React.Component {
     }
 }
 
-export default Field;
+export default ComputerField;
