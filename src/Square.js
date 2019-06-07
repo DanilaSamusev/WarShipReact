@@ -19,12 +19,16 @@ class Square extends React.Component {
             }
         }
 
+        if (this.props.isChecked === true){
+            style = {backgroundColor: 'grey'};
+        }
 
         return (
             <div onClick={this.props.onClick}
                  className="square"
                  style={style}
                  onMouseOver={this.props.onMouseOver}
+                 onMouseOut={this.props.onMouseOver}
             ></div>
         )
     }

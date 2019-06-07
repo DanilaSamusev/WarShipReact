@@ -49,6 +49,41 @@ class Game extends React.Component {
             )
     }
 
+    handleMouseOver(id){
+        fetch('http://localhost:5000/api/playerField',
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                body: JSON.stringify(
+                    {
+                        id: id,
+                    })
+            })
+            .then(function (response) {
+                return response.json()
+            })
+            .then((json) => this.updatePlayerField(json.id, json.isClicked, json.isChecked, json.hasShip))
+    }
+
+    updatePlayerField(id, isClicked, isChecked, hasShip){
+        const field = this.state.playerField;
+
+        field[id] = {
+            id: id,
+            isClicked: isClicked,
+            isChecked: isChecked,
+            hasShip: hasShip,
+        };
+
+        this.setState({
+            playerField: field,
+        });
+    }
+
     handlePlayerShot(id, isClicked) {
 
         fetch('http://localhost:5000/api/computerField',
@@ -89,7 +124,7 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game">
-                <PlayerField playerField={this.state.playerField}/>
+                <PlayerField playerField={this.state.playerField} handleMouseOver={this.handleMouseOver.bind(this)}/>
                 <ComputerField computerField={this.state.computerField} handlePlayerShot={this.handlePlayerShot.bind(this)}/>
             </div>
         )

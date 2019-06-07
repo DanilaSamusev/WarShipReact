@@ -12,7 +12,9 @@ class PlayerField extends React.Component{
         }
     }
 
+    handleMouseOut(id){
 
+    }
 
     render(){
         return(
@@ -22,7 +24,10 @@ class PlayerField extends React.Component{
                         return (
                             <Square key={square.id}
                                     id={square.id}
+                                    onMouseOver={() => this.props.handleMouseOver(square.id)}
+                                    onMouseOut={() => this.props.handleMouseOver(square.id)}
                                     isClicked={square.isClicked}
+                                    isChecked={square.isChecked}
                                     hasShip={square.hasShip}/>
                         )
                     })}
