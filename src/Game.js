@@ -84,6 +84,10 @@ class Game extends React.Component {
         });
     }
 
+    handleClickOnPlayerField(){
+        
+    }
+
     handlePlayerShot(id, isClicked) {
 
         fetch('http://localhost:5000/api/computerField',
