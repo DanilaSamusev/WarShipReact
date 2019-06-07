@@ -15,7 +15,6 @@ class ComputerField extends React.Component {
                                     id={square.id}
                                     isClicked={square.isClicked}
                                     hasShip={square.hasShip}/>
-
                         )
                     })}
             </div>
