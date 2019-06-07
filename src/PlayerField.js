@@ -21,8 +21,6 @@ class PlayerField extends React.Component{
                     this.props.playerField.map((square) => {
                         return (
                             <Square key={square.id}
-                                    onClick={() => this.props.handlePlayerShot(square.id, square.isClicked)}
-                                    
                                     id={square.id}
                                     isClicked={square.isClicked}
                                     hasShip={square.hasShip}/>

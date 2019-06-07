@@ -16,7 +16,7 @@ class Game extends React.Component {
 
     componentWillMount() {
 
-        fetch('http://localhost:5000/api/game',
+        fetch('http://localhost:5000/api/computerField',
             {
                 method: 'get',
                 headers:
@@ -28,15 +28,30 @@ class Game extends React.Component {
                 return response.json()
             })
             .then((data) => this.setState({
-                    computerField: data.computerField.squares,
-                    playerField: data.playerField.squares,
+                    computerField: data.squares,
+                })
+            );
+
+        fetch('http://localhost:5000/api/playerField',
+            {
+                method: 'get',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                    },
+            })
+            .then(function (response) {
+                return response.json()
+            })
+            .then((data) => this.setState({
+                    playerField: data.squares,
                 })
             )
     }
 
     handlePlayerShot(id, isClicked) {
 
-        fetch('http://localhost:5000/api/game',
+        fetch('http://localhost:5000/api/computerField',
             {
                 method: 'put',
                 headers:
@@ -71,19 +86,11 @@ class Game extends React.Component {
         });
     }
 
-    handlePlayerClick(id){
-
-        const field = this.state.playerField;
-
-
-
-    }
-
     render() {
         return (
             <div className="game">
-                <ComputerField computerField={this.state.computerField} handlePlayerShot={this.handlePlayerShot.bind(this)}/>
                 <PlayerField playerField={this.state.playerField}/>
+                <ComputerField computerField={this.state.computerField} handlePlayerShot={this.handlePlayerShot.bind(this)}/>
             </div>
         )
     }
