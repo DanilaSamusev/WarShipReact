@@ -12,10 +12,6 @@ class PlayerField extends React.Component{
         }
     }
 
-    handleMouseOut(id){
-
-    }
-
     render(){
         return(
             <div className="playerField">
