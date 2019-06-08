@@ -52,14 +52,7 @@ class Game extends React.Component {
 
     handleMouseOver(id) {
 
-        const point = this.state.playerField[id];
-
-        if (this.state.playerDecks < 4){
-            point.isChecked = !point.isChecked;
-            this.updatePlayerField(id, point.isClicked, point.isChecked, point.hasShip)
-        }
-
-        /*fetch('http://localhost:5000/api/playerField',
+        fetch('http://localhost:5000/api/playerField',
             {
                 method: 'put',
                 headers:
@@ -75,8 +68,11 @@ class Game extends React.Component {
             .then(function (response) {
                 return response.json()
             })
-            .then((json) => this.updatePlayerField(json.id, json.isClicked, json.isChecked, json.hasShip))*/
+            .then((json) => this.updatePlayerField(json.id, json.isClicked, json.isChecked, json.hasShip))
+
     }
+
+    
 
     updatePlayerField(id, isClicked, isChecked, hasShip) {
         const field = this.state.playerField;

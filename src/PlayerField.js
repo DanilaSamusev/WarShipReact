@@ -7,9 +7,7 @@ class PlayerField extends React.Component{
     constructor(props){
         super(props);
 
-        this.state={
-            decksOnBoard: 0,
-        }
+
     }
 
     render(){
