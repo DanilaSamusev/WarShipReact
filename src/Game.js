@@ -68,26 +68,29 @@ class Game extends React.Component {
             .then(function (response) {
                 return response.json()
             })
-            .then((json) => this.updatePlayerField(json.id, json.isClicked, json.isChecked, json.hasShip))
+            .then((json) => this.updatePlayerField(json))
 
     }
 
-    
-
-    updatePlayerField(id, isClicked, isChecked, hasShip) {
+    updatePlayerField(squares) {
         const field = this.state.playerField;
 
-        field[id] = {
-            id: id,
-            isClicked: isClicked,
-            isChecked: isChecked,
-            hasShip: hasShip,
-        };
+        for (var i = 0; i < squares.length; i++) {
+            var square = squares[i];
+
+            field[square.id] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                isChecked: square.isChecked,
+                hasShip: square.hasShip,
+            };
+        }
 
         this.setState({
             playerField: field,
         });
     }
+
 
     handlePlayerShot(id, isClicked) {
 
