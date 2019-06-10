@@ -20,6 +20,7 @@ class PlayerField extends React.Component{
                                     id={square.id}
                                     onMouseOver={() => this.props.handleMouseOver(square.id)}
                                     onMouseOut={() => this.props.handleMouseOver(square.id)}
+                                    onClick={() => this.props.handlePlayerFieldClick(square.id)}
                                     isClicked={square.isClicked}
                                     isChecked={square.isChecked}
                                     hasShip={square.hasShip}/>

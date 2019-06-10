@@ -72,6 +72,28 @@ class Game extends React.Component {
 
     }
 
+    handlePlayerFieldClick(id){
+
+        fetch('http://localhost:5000/api/playerField/setShip',
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                body: JSON.stringify(
+                    {
+                        id: id,
+                    })
+            })
+            .then(function (response) {
+                return response.json()
+            })
+            .then((json) => this.updatePlayerField(json))
+
+    }
+
     updatePlayerField(squares) {
         const field = this.state.playerField;
 
@@ -134,6 +156,7 @@ class Game extends React.Component {
             <div className="game">
                 <PlayerField playerField={this.state.playerField}
                              handleMouseOver={this.handleMouseOver.bind(this)}
+                             handlePlayerFieldClick={this.handlePlayerFieldClick.bind(this)}
                 />
                 <ComputerField computerField={this.state.computerField}
                                handlePlayerShot={this.handlePlayerShot.bind(this)}/>
