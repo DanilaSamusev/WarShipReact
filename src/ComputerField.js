@@ -10,11 +10,13 @@ class ComputerField extends React.Component {
                 {
                     this.props.computerField.map((square) => {
                         return (
-                            <Square key={square.id}
-                                    onClick={() => this.props.handlePlayerShot(square.id, square.isClicked)}
-                                    id={square.id}
-                                    isClicked={square.isClicked}
-                                    hasShip={square.hasShip}/>
+                            <Square
+                                id={square.id}
+                                key={square.id}
+                                hasShip={square.hasShip}
+                                isClicked={square.isClicked}
+                                onClick={() => this.props.handlePlayerShot(square.id, square.isClicked)}
+                            />
                         )
                     })}
             </div>

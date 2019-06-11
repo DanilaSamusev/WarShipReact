@@ -15,7 +15,7 @@ class Square extends React.Component {
             }
         }
 
-        if (this.props.isChecked === true){
+        if (this.props.isChecked === true) {
             style = {backgroundColor: 'grey'};
         }
 
@@ -24,11 +24,12 @@ class Square extends React.Component {
         }
 
         return (
-            <div onClick={this.props.onClick}
-                 className="square"
-                 style={style}
-                 onMouseOver={this.props.onMouseOver}
-                 onMouseOut={this.props.onMouseOver}
+            <div
+                className="square"
+                style={style}
+                onClick={this.props.onClick}
+                onMouseOut={this.props.onMouseOut}
+                onMouseOver={this.props.onMouseOver}
             ></div>
         )
     }

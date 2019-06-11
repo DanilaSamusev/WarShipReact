@@ -29,7 +29,7 @@ class Game extends React.Component {
                 return response.json()
             })
             .then((data) => this.setState({
-                    computerField: data.squares,
+                    computerField: data,
                 })
             );
 
@@ -45,9 +45,31 @@ class Game extends React.Component {
                 return response.json()
             })
             .then((data) => this.setState({
-                    playerField: data.squares,
+                    playerField: data,
                 })
             )
+    }
+
+    handleMouseOut(id) {
+
+        fetch('http://localhost:5000/api/playerField/mouseOut',
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                body: JSON.stringify(
+                    {
+                        id: id,
+                    })
+            })
+            .then(function (response) {
+                return response.json()
+            })
+            .then((json) => this.updatePlayerField(json))
+
     }
 
     handleMouseOver(id) {
@@ -71,6 +93,7 @@ class Game extends React.Component {
             .then((json) => this.updatePlayerField(json))
 
     }
+
 
     handlePlayerFieldClick(id){
 
@@ -156,6 +179,7 @@ class Game extends React.Component {
             <div className="game">
                 <PlayerField playerField={this.state.playerField}
                              handleMouseOver={this.handleMouseOver.bind(this)}
+                             handleMouseOut={this.handleMouseOut.bind(this)}
                              handlePlayerFieldClick={this.handlePlayerFieldClick.bind(this)}
                 />
                 <ComputerField computerField={this.state.computerField}
