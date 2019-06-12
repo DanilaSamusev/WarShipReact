@@ -54,7 +54,7 @@ class PlayerField extends React.Component {
             .then(function (response) {
                 return response.json()
             })
-            .then((json) => this.updatePlayerField(json))
+            .then((json) => this.updatePlayerField(json));
 
         this.setState({
             shipsCount: this.state.shipsCount + 1,
