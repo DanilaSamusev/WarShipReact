@@ -1,27 +1,6 @@
-.playerField, .computerField{
-    display: flex;
-    flex-wrap: wrap;
-    width: 22%;
-    margin-top: 2px;
-
-}
-
-
-
-.square {
-    background: #fff;
-    border: 1px solid black;
-    font-size: 24px;
-    height: 40px;
-    margin-right: -1px;
-    margin-top: -3px;
-    padding: 0;
-    text-align: center;
-    width: 40px;
-}
-
 .game{
     display: flex;
+    justify-content: center;
     border: 1px solid black;
 }
 

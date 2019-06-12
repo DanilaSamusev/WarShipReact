@@ -1,0 +1,13 @@
+.computerField{
+    display: flex;
+    flex-wrap: wrap;
+    height: min-content;
+    width: 23%;
+}
+
+.computerSquare {
+    background: #fff;
+    border: 1px solid black;
+    height: 40px;
+    width: 40px;
+}

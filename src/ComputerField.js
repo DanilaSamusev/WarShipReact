@@ -1,5 +1,6 @@
 import React from 'react';
 import Square from './Square'
+import "./computerField.css"
 import "./index.css"
 
 class ComputerField extends React.Component {
@@ -77,6 +78,7 @@ class ComputerField extends React.Component {
                             <Square
                                 id={square.id}
                                 key={square.id}
+                                className="computerSquare"
                                 hasShip={square.hasShip}
                                 isClicked={square.isClicked}
                                 onClick={() => this.handleClick(square.id, square.isClicked)}

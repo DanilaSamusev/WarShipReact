@@ -1,6 +1,7 @@
 import React from 'react';
-import "./index.css"
 import Square from "./Square";
+import "./index.css"
+import "./playerField.css"
 
 class PlayerField extends React.Component {
 
@@ -145,6 +146,7 @@ class PlayerField extends React.Component {
                                 isClicked={square.isClicked}
                                 isChecked={square.isChecked}
                                 hasShip={square.hasShip}
+                                className="playerSquare"
                                 onMouseOut={() => this.handleMouseOut(square.id)}
                                 onMouseOver={() => this.handleMouseOver(square.id)}
                                 onClick={() => this.handleClick(square.id)}
