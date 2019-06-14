@@ -11,6 +11,7 @@ class PlayerField extends React.Component {
         this.state = {
             playerField: [],
             shipsCount: 0,
+            direction: 0,
         };
     }
 
@@ -33,13 +34,30 @@ class PlayerField extends React.Component {
             );
     }
 
-    handleClick(id) {
+    handleClick(id){
+        if (this.state.direction === 0){
+            this.setState({
+                direction: 1,
+            })
+        }
+        else{
+            this.setState({
+                direction: 0,
+            })
+        }
+
+        this.handleMouseOver(id);
+    }
+
+    handleDoubleClick(id) {
 
         if (this.state.shipsCount === 10) {
             return;
         }
 
-        fetch('http://localhost:5000/api/playerField/setShip',
+        const query = '?id=' + id + '&direction=' + this.state.direction;
+
+        fetch('http://localhost:5000/api/playerField/setShip' + query,
             {
                 method: 'put',
                 headers:
@@ -47,10 +65,6 @@ class PlayerField extends React.Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                body: JSON.stringify(
-                    {
-                        id: id,
-                    })
             })
             .then(function (response) {
                 return response.json()
@@ -68,7 +82,9 @@ class PlayerField extends React.Component {
             return;
         }
 
-        fetch('http://localhost:5000/api/playerField',
+        const query = '?id=' + id + '&direction=' + this.state.direction;
+
+        fetch('http://localhost:5000/api/playerField/checkPoints' + query,
             {
                 method: 'put',
                 headers:
@@ -76,10 +92,6 @@ class PlayerField extends React.Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                body: JSON.stringify(
-                    {
-                        id: id,
-                    })
             })
             .then(function (response) {
                 return response.json()
@@ -95,7 +107,9 @@ class PlayerField extends React.Component {
             return;
         }
 
-        fetch('http://localhost:5000/api/playerField/mouseOut',
+        const query = '?id=' + id + '&direction=' + this.state.direction;
+
+        fetch('http://localhost:5000/api/playerField/mouseOut' + query,
             {
                 method: 'put',
                 headers:
@@ -103,10 +117,6 @@ class PlayerField extends React.Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                body: JSON.stringify(
-                    {
-                        id: id,
-                    })
             })
             .then(function (response) {
                 return response.json()
@@ -149,6 +159,7 @@ class PlayerField extends React.Component {
                                 className="playerSquare"
                                 onMouseOut={() => this.handleMouseOut(square.id)}
                                 onMouseOver={() => this.handleMouseOver(square.id)}
+                                onDoubleClick={() => this.handleDoubleClick(square.id)}
                                 onClick={() => this.handleClick(square.id)}
                             />
                         )
