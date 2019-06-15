@@ -29,7 +29,6 @@ class Square extends React.Component {
                 style={style}
                 onDoubleClick={this.props.onDoubleClick}
                 onClick={this.props.onClick}
-                onMouseOut={this.props.onMouseOut}
                 onMouseOver={this.props.onMouseOver}
             />
         )

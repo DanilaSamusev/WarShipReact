@@ -34,20 +34,30 @@ class PlayerField extends React.Component {
             );
     }
 
-    handleClick(id){
-        if (this.state.direction === 0){
-            this.setState({
-                direction: 1,
-            })
+    handleClick(id) {
+
+        if (this.state.direction === 0) {
+            this.setState(
+                (state) => {
+                    return {
+                        direction: state.direction + 1
+                    };
+                },
+                () => this.handleMouseOver(id))
         }
-        else{
-            this.setState({
-                direction: 0,
-            })
+        else {
+            this.setState(
+                (state) => {
+                    return {
+                        direction: state.direction - 1
+                    };
+
+                },
+                () => this.handleMouseOver(id))
         }
 
-        this.handleMouseOver(id);
     }
+
 
     handleDoubleClick(id) {
 
@@ -84,6 +94,7 @@ class PlayerField extends React.Component {
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
+
         fetch('http://localhost:5000/api/playerField/checkPoints' + query,
             {
                 method: 'put',
@@ -97,32 +108,6 @@ class PlayerField extends React.Component {
                 return response.json()
             })
             .then((json) => this.updatePlayerField(json));
-
-
-    }
-
-    handleMouseOut(id) {
-
-        if (this.state.shipsCount === 10) {
-            return;
-        }
-
-        const query = '?id=' + id + '&direction=' + this.state.direction;
-
-        fetch('http://localhost:5000/api/playerField/mouseOut' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            })
-            .then(function (response) {
-                return response.json()
-            })
-            .then((json) => this.updatePlayerField(json))
-
     }
 
     updatePlayerField(squares) {
@@ -157,7 +142,6 @@ class PlayerField extends React.Component {
                                 isChecked={square.isChecked}
                                 hasShip={square.hasShip}
                                 className="playerSquare"
-                                onMouseOut={() => this.handleMouseOut(square.id)}
                                 onMouseOver={() => this.handleMouseOver(square.id)}
                                 onDoubleClick={() => this.handleDoubleClick(square.id)}
                                 onClick={() => this.handleClick(square.id)}
