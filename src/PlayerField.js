@@ -58,7 +58,6 @@ class PlayerField extends React.Component {
 
     }
 
-
     handleDoubleClick(id) {
 
         if (this.state.shipsCount === 10) {
@@ -67,7 +66,7 @@ class PlayerField extends React.Component {
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
-        fetch('http://localhost:5000/api/playerField/setShip' + query,
+        fetch('http://localhost:5000/api/playerField/lendShip' + query,
             {
                 method: 'put',
                 headers:
@@ -104,10 +103,15 @@ class PlayerField extends React.Component {
                         'Content-Type': 'application/json',
                     },
             })
-            .then(function (response) {
-                return response.json()
-            })
-            .then((json) => this.updatePlayerField(json));
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    this.updatePlayerField(data);
+                } catch (err) {
+
+                }
+            });
     }
 
     updatePlayerField(squares) {
