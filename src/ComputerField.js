@@ -32,9 +32,12 @@ class ComputerField extends React.Component {
             )
     }
 
-    handleClick(id, isClicked) {
+    handleClick(id) {
 
-        fetch('http://localhost:5000/api/computerField',
+        const query = '?id=' + id;
+
+
+        fetch('http://localhost:5000/api/computerField' + query,
             {
                 method: 'put',
                 headers:
@@ -42,11 +45,6 @@ class ComputerField extends React.Component {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                body: JSON.stringify(
-                    {
-                        id: id,
-                        isClicked: isClicked,
-                    })
             })
             .then(function (response) {
                 return response.json()
