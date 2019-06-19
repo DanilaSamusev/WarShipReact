@@ -25,9 +25,8 @@ class Square extends React.Component {
 
         return (
             <div
-                className={this.props.className}
                 style={style}
-                onDoubleClick={this.props.onDoubleClick}
+                className={this.props.className}
                 onClick={this.props.onClick}
                 onMouseOver={this.props.onMouseOver}
             />

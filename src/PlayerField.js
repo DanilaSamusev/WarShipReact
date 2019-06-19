@@ -34,31 +34,37 @@ class PlayerField extends React.Component {
             );
     }
 
-    handleClick(id) {
+    handleClick(event, id) {
 
+        if (event.shiftKey) {
+            this.changeDirection(id)
+        } else {
+            this.plantShip(id);
+        }
+    }
+
+    changeDirection(id) {
         if (this.state.direction === 0) {
             this.setState(
                 (state) => {
                     return {
-                        direction: state.direction + 1
+                        direction: 1
                     };
                 },
                 () => this.handleMouseOver(id))
-        }
-        else {
+        } else {
             this.setState(
                 (state) => {
                     return {
-                        direction: state.direction - 1
+                        direction: 0
                     };
 
                 },
                 () => this.handleMouseOver(id))
         }
-
     }
 
-    handleDoubleClick(id) {
+    plantShip(id) {
 
         if (this.state.shipsCount === 10) {
             return;
@@ -147,8 +153,7 @@ class PlayerField extends React.Component {
                                 hasShip={square.hasShip}
                                 className="playerSquare"
                                 onMouseOver={() => this.handleMouseOver(square.id)}
-                                onDoubleClick={() => this.handleDoubleClick(square.id)}
-                                onClick={() => this.handleClick(square.id)}
+                                onClick={(event) => this.handleClick(event, square.id)}
                             />
                         )
                     })}
