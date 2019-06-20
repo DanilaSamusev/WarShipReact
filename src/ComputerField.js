@@ -27,7 +27,7 @@ class ComputerField extends React.Component {
                 return response.json()
             })
             .then((data) => this.setState({
-                computerField: data,
+                    computerField: data,
                 })
             )
     }
@@ -35,7 +35,6 @@ class ComputerField extends React.Component {
     handleClick(id) {
 
         const query = '?id=' + id;
-
 
         fetch('http://localhost:5000/api/computerField' + query,
             {
@@ -46,10 +45,15 @@ class ComputerField extends React.Component {
                         'Content-Type': 'application/json',
                     },
             })
-            .then(function (response) {
-                return response.json()
-            })
-            .then((json) => this.updateComputerField(json.id, json.isClicked, json.hasShip))
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const json = JSON.parse(text);
+                    this.updateComputerField(json.id, json.isClicked, json.hasShip)
+                } catch (ex) {
+
+                }
+            });
     }
 
     updateComputerField(id, isClicked, hasShip) {

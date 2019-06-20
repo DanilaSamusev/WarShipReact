@@ -25,13 +25,17 @@ class PlayerField extends React.Component {
                         'Accept': 'application/json',
                     },
             })
-            .then(function (response) {
-                return response.json()
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const json = JSON.parse(text);
+                    this.setState({
+                        playerField: json,
+                    })
+                } catch (ex) {
+                    alert("ошибка получения поля игрока!")
+                }
             })
-            .then((data) => this.setState({
-                    playerField: data,
-                })
-            );
     }
 
     handleClick(event, id) {
@@ -72,7 +76,7 @@ class PlayerField extends React.Component {
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
-        fetch('http://localhost:5000/api/playerField/lendShip' + query,
+        fetch('http://localhost:5000/api/playerField/plantShip' + query,
             {
                 method: 'put',
                 headers:
@@ -81,14 +85,18 @@ class PlayerField extends React.Component {
                         'Content-Type': 'application/json',
                     },
             })
-            .then(function (response) {
-                return response.json()
-            })
-            .then((json) => this.updatePlayerField(json));
-
-        this.setState({
-            shipsCount: this.state.shipsCount + 1,
-        })
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const json = JSON.parse(text);
+                    this.updatePlayerField(json);
+                    this.setState({
+                        shipsCount: this.state.shipsCount + 1,
+                    })
+                } catch (ex) {
+                    console.log("plantShipError")
+                }
+            });
     }
 
     handleMouseOver(id) {
@@ -98,7 +106,6 @@ class PlayerField extends React.Component {
         }
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
-
 
         fetch('http://localhost:5000/api/playerField/checkPoints' + query,
             {
@@ -112,9 +119,9 @@ class PlayerField extends React.Component {
             .then(response => response.text())
             .then(text => {
                 try {
-                    const data = JSON.parse(text);
-                    this.updatePlayerField(data);
-                } catch (err) {
+                    const json = JSON.parse(text);
+                    this.updatePlayerField(json);
+                } catch (ex) {
 
                 }
             });
