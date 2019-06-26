@@ -6,11 +6,15 @@ class Square extends React.Component {
         var style = {backgroundColor: 'white'};
 
         if (this.props.isChecked === true) {
-            style = {backgroundColor: 'grey'};
+            style = {backgroundColor: '#dfe0de'};
         }
 
         if (this.props.hasShip === true) {
-            style = {backgroundColor: 'yellow'}
+            style = {backgroundColor: 'yellow'};
+
+            if (this.props.className === "playerSquare"){
+                style = {backgroundColor: 'grey'};
+            }
         }
 
         if (this.props.isClicked === true) {
