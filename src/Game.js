@@ -145,7 +145,7 @@ class Game extends React.Component {
     }
 
     makePlayerShot(id) {
-        alert("Стреляет игрок");
+        
         const query = '?id=' + id;
 
         fetch('http://localhost:5000/api/computerField/makeShot' + query,
@@ -175,7 +175,7 @@ class Game extends React.Component {
 
     makeComputerShot(id) {
 
-        alert("Стреляет комп");
+
         this.setState({
             isShootingAvailable: false,
         });
@@ -213,13 +213,13 @@ class Game extends React.Component {
     }
 
     startShooting(id) {
-        alert("Начинаяем перестрелку!");
+
 
         if (this.state.isPlayersTurn) {
 
             this.makePlayerShot(id);
 
-            alert("Ход игрока: " + this.state.isPlayersTurn);
+
             if (this.state.isPlayersTurn) {
                 return null;
             } else {

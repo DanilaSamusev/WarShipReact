@@ -9,7 +9,6 @@ class PlayerField extends React.Component {
         super(props);
 
         this.state = {
-            shipsCount: 0,
             direction: 0,
         };
     }
@@ -46,10 +45,6 @@ class PlayerField extends React.Component {
 
     plantShip(id) {
 
-        if (this.state.shipsCount === 10) {
-            return;
-        }
-
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
         fetch('http://localhost:5000/api/playerField/plantShip' + query,
@@ -67,7 +62,7 @@ class PlayerField extends React.Component {
                     const json = JSON.parse(text);
                     this.props.updatePlayerField(json);
                     this.setState({
-                        shipsCount: this.state.shipsCount + 1,
+                        shipsOnField: this.state.shipsOnField + 1,
                     })
                 } catch (ex) {
                     alert("unable to plant a ship")
@@ -77,13 +72,9 @@ class PlayerField extends React.Component {
 
     handleMouseOver(id) {
 
-        if (this.state.shipsCount === 10) {
-            return;
-        }
-
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
-        fetch('http://localhost:5000/api/playerField/markSquaresForShip' + query,
+        fetch('http://localhost:5000/api/playerField/markSquaresForShipPlanting' + query,
             {
                 method: 'put',
                 headers:
@@ -98,7 +89,7 @@ class PlayerField extends React.Component {
                     const json = JSON.parse(text);
                     this.props.updatePlayerField(json);
                 } catch (ex) {
-                    alert(ex.toString())
+                    
                 }
             });
     }
