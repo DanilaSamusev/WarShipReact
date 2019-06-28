@@ -89,6 +89,7 @@ class Game extends React.Component {
                 isChecked: square.isChecked,
                 hasShip: square.hasShip,
             };
+                console.log(1);
         }
 
         this.setState(
@@ -110,45 +111,19 @@ class Game extends React.Component {
             hasShip: square.hasShip,
         };
 
-        this.setState({
-            computerField: field,
-        });
-    }
-
-    handleClick(id) {
-
-        const query = '?id=' + id; //
-
-        fetch('http://localhost:5000/api/computerField' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.updateComputerField(json);
-                    if (!json.hasShip) {
-                        this.setState({
-                            isPlayersTurn: false,
-                        })
-                    }
-                } catch (ex) {
-                    alert(ex.toString());
-                }
+        this.setState(
+            () => {
+                return {
+                    computerField: field,
+                };
             });
     }
 
     makePlayerShot(id) {
-        
+
         const query = '?id=' + id;
 
-        fetch('http://localhost:5000/api/computerField/makeShot' + query,
+        fetch('http://localhost:5000/api/computerField/makePlayerShot' + query,
             {
                 method: 'put',
                 headers:
@@ -162,27 +137,17 @@ class Game extends React.Component {
                 try {
                     const json = JSON.parse(text);
                     this.updateComputerField(json);
-                    if (!json.hasShip) {
-                        this.setState({
-                            isPlayersTurn: false,
-                        })
-                    }
                 } catch (ex) {
                     alert(ex.toString());
                 }
             });
-    }
 
-    makeComputerShot(id) {
+        return Promise.resolve();
+    };
 
+    makeComputerShot() {
 
-        this.setState({
-            isShootingAvailable: false,
-        });
-
-        const query = '?id=' + id;
-
-        fetch('http://localhost:5000/api/playerField/makeShot' + query,
+        fetch('http://localhost:5000/api/playerField/makeShot',
             {
                 method: 'put',
                 headers:
@@ -195,40 +160,27 @@ class Game extends React.Component {
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.updateComputerField(json);
-                    if (!json.hasShip) {
-                        this.setState(() => {
-                            return {isPlayersTurn: true}
-                        })
-                    }
+                    this.updatePlayerField(json);
                 } catch (ex) {
                     alert(ex.toString());
                 }
             });
 
-        this.setState({
-            isShootingAvailable: true,
-        });
 
-    }
+    };
+
+    didPlayerKillDeck = new Promise(
+        function (resolve, reject) {
+            setTimeout(() => resolve(15), 2000);
+        }
+    );
+
+    comp = function(prevPromise){
+        return Promise.resolve(prevPromise + 1);
+    };
 
     startShooting(id) {
-
-
-        if (this.state.isPlayersTurn) {
-
-            this.makePlayerShot(id);
-
-
-            if (this.state.isPlayersTurn) {
-                return null;
-            } else {
-
-                this.makeComputerShot(id);
-
-
-            }
-        }
+        this.makePlayerShot(id).then(() => this.makeComputerShot());
     }
 
     render() {
