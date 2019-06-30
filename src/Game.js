@@ -11,13 +11,12 @@ class Game extends React.Component {
         this.state = {
             playerField: [],
             computerField: [],
-            isPlayersTurn: true,
-            isShootingAvailable: true,
         };
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
         this.updateComputerField = this.updateComputerField.bind(this);
-        this.startShooting = this.startShooting.bind(this);
+        this.makeShooting = this.makeShooting.bind(this);
+
     }
 
     componentWillMount() {
@@ -78,6 +77,10 @@ class Game extends React.Component {
 
     updatePlayerField(squares) {
 
+        if (squares === null){
+            return;
+        }
+
         const field = this.state.playerField;
 
         for (var i = 0; i < squares.length; i++) {
@@ -89,7 +92,6 @@ class Game extends React.Component {
                 isChecked: square.isChecked,
                 hasShip: square.hasShip,
             };
-                console.log(1);
         }
 
         this.setState(
@@ -101,15 +103,23 @@ class Game extends React.Component {
 
     }
 
-    updateComputerField(square) {
+    updateComputerField(squares) {
+
+        if (squares  === null){
+            return;
+        }
 
         const field = this.state.computerField;
 
-        field[square.id] = {
-            id: square.id,
-            isClicked: square.isClicked,
-            hasShip: square.hasShip,
-        };
+        for (var i = 0; i < squares.length; i++) {
+            var square = squares[i];
+
+            field[square.id] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                hasShip: square.hasShip,
+            };
+        }
 
         this.setState(
             () => {
@@ -119,76 +129,48 @@ class Game extends React.Component {
             });
     }
 
-    makePlayerShot(id) {
+    myfeth(query) {
+        return fetch('http://localhost:5000/api/' + query,
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+            }).then(response => response.text())
+    };
 
+    makeShooting(id) {
         const query = '?id=' + id;
+        var computerSquare;
+        var playerSquares;
 
-        fetch('http://localhost:5000/api/computerField/makePlayerShot' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            })
-            .then(response => response.text())
+        this.myfeth('computerField/makePlayerShot' + query)
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.updateComputerField(json);
+                    computerSquare = json[0];
+                    playerSquares = json[1];
+                    console.log(json[0]);
+
+                    this.updateComputerField(computerSquare);
+                    this.updatePlayerField(playerSquares);
                 } catch (ex) {
-                    alert(ex.toString());
+
                 }
             });
 
-        return Promise.resolve();
-    };
-
-    makeComputerShot() {
-
-        fetch('http://localhost:5000/api/playerField/makeShot',
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.updatePlayerField(json);
-                } catch (ex) {
-                    alert(ex.toString());
-                }
-            });
-
-
-    };
-
-    didPlayerKillDeck = new Promise(
-        function (resolve, reject) {
-            setTimeout(() => resolve(15), 2000);
-        }
-    );
-
-    comp = function(prevPromise){
-        return Promise.resolve(prevPromise + 1);
-    };
-
-    startShooting(id) {
-        this.makePlayerShot(id).then(() => this.makeComputerShot());
     }
 
     render() {
         return (
             <div className="game">
-                <ComputerField computerField={this.state.computerField} updateComputerField={this.updateComputerField}
-                               onClick={this.startShooting}/>
-                <PlayerField playerField={this.state.playerField} updatePlayerField={this.updatePlayerField}/>
+                <ComputerField computerField={this.state.computerField}
+                               updateComputerField={this.updateComputerField}
+                               onClick={this.makeShooting}/>
+                <PlayerField playerField={this.state.playerField}
+                             updatePlayerField={this.updatePlayerField}/>
             </div>
         )
     }
