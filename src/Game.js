@@ -75,9 +75,13 @@ class Game extends React.Component {
             })
     }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return true;
+    }
+
     updatePlayerField(squares) {
 
-        if (squares === null){
+        if (squares === null) {
             return;
         }
 
@@ -92,20 +96,19 @@ class Game extends React.Component {
                 isChecked: square.isChecked,
                 hasShip: square.hasShip,
             };
+
+            this.setState(
+                () => {
+                    return {
+                        playerField: field,
+                    };
+                })
         }
-
-        this.setState(
-            () => {
-                return {
-                    playerField: field,
-                };
-            });
-
     }
 
     updateComputerField(squares) {
 
-        if (squares  === null){
+        if (squares === null) {
             return;
         }
 
@@ -120,6 +123,7 @@ class Game extends React.Component {
                 hasShip: square.hasShip,
             };
         }
+
 
         this.setState(
             () => {
