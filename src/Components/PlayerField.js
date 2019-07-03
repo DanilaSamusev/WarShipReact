@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from "./Square";
-import "./index.css"
-import "./playerField.css"
+import "../css/index.css"
+import "../css/playerField.css"
 
 class PlayerField extends React.Component {
 

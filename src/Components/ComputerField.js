@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from './Square'
-import "./computerField.css"
-import "./index.css"
+import "../css/computerField.css"
+import "../css/index.css"
 
 class ComputerField extends React.Component {
 

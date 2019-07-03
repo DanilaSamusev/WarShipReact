@@ -1,7 +1,9 @@
 import React from 'react';
-import "./index.css"
-import ComputerField from "./ComputerField";
+import "../css/index.css"
+import "../css/game.css"
+import ComputerField from "../Components/ComputerField";
 import PlayerField from "./PlayerField";
+import InfoPanel from "../Components/InfoPanel"
 
 class Game extends React.Component {
 
@@ -11,12 +13,13 @@ class Game extends React.Component {
         this.state = {
             playerField: [],
             computerField: [],
+            shotInfo: '',
         };
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
         this.updateComputerField = this.updateComputerField.bind(this);
-        this.makeShooting = this.makeShooting.bind(this);
-
+        this.makePlayerShot = this.makePlayerShot.bind(this);
+        this.makeComputerShot = this.makeComputerShot.bind(this);
     }
 
     componentWillMount() {
@@ -72,11 +75,7 @@ class Game extends React.Component {
                 } catch (ex) {
                     alert("unable to receive computerField")
                 }
-            })
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return true;
+            });
     }
 
     updatePlayerField(squares) {
@@ -96,14 +95,14 @@ class Game extends React.Component {
                 isChecked: square.isChecked,
                 hasShip: square.hasShip,
             };
-
-            this.setState(
-                () => {
-                    return {
-                        playerField: field,
-                    };
-                })
         }
+
+        this.setState(
+            () => {
+                return {
+                    playerField: field,
+                };
+            });
     }
 
     updateComputerField(squares) {
@@ -124,7 +123,6 @@ class Game extends React.Component {
             };
         }
 
-
         this.setState(
             () => {
                 return {
@@ -133,7 +131,7 @@ class Game extends React.Component {
             });
     }
 
-    myfeth(query) {
+    myFetch(query) {
         return fetch('http://localhost:5000/api/' + query,
             {
                 method: 'put',
@@ -145,26 +143,55 @@ class Game extends React.Component {
             }).then(response => response.text())
     };
 
-    makeShooting(id) {
+    makePlayerShot(id) {
         const query = '?id=' + id;
         var computerSquare;
-        var playerSquares;
 
-        this.myfeth('computerField/makePlayerShot' + query)
+        this.myFetch('computerField/playerShot' + query)
             .then(text => {
                 try {
-                    const json = JSON.parse(text);
-                    computerSquare = json[0];
-                    playerSquares = json[1];
-                    console.log(json[0]);
+                    computerSquare = JSON.parse(text);
+                    this.updateComputerField(new Array(computerSquare));
+                    this.changeShotInfo(computerSquare, 'Player');
+                } catch (ex) {
+                    console.log(ex.toString())
+                }
+            });
+    }
 
-                    this.updateComputerField(computerSquare);
-                    this.updatePlayerField(playerSquares);
+    makeComputerShot() {
+        var playerSquare;
+
+        console.log("1");
+
+        this.myFetch('playerField/computerShot')
+            .then(text => {
+                try {
+                    playerSquare = JSON.parse(text);
+                    this.updatePlayerField(new Array(playerSquare));
+                    this.changeShotInfo(playerSquare, 'Computer');
                 } catch (ex) {
 
                 }
             });
+    }
 
+    changeShotInfo(square, playerName){
+
+        if (square.hasShip){
+            this.changeShotInfoState(playerName + ' has shot a ship!')
+        }
+        else{
+            this.changeShotInfoState(playerName + ' has missed!')
+        }
+    }
+
+    changeShotInfoState(info){
+        this.setState(() => {
+            return{
+                shotInfo: info,
+            }
+        })
     }
 
     render() {
@@ -172,9 +199,13 @@ class Game extends React.Component {
             <div className="game">
                 <ComputerField computerField={this.state.computerField}
                                updateComputerField={this.updateComputerField}
-                               onClick={this.makeShooting}/>
-                <PlayerField playerField={this.state.playerField}
-                             updatePlayerField={this.updatePlayerField}/>
+                               onClick={this.makePlayerShot}/>
+                {/*<div className="playerPanel">
+                    <PlayerField playerField={this.state.playerField}
+                                 updatePlayerField={this.updatePlayerField}/>
+                    <InfoPanel onClick={this.makeComputerShot} shotInfo={this.state.shotInfo}/>
+                </div>*/}
+
             </div>
         )
     }
