@@ -1,6 +1,7 @@
 import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
+import "../css/playerPanel.css"
 import ComputerField from "../Components/ComputerField";
 import PlayerField from "./PlayerField";
 import InfoPanel from "../Components/InfoPanel"
@@ -200,12 +201,11 @@ class Game extends React.Component {
                 <ComputerField computerField={this.state.computerField}
                                updateComputerField={this.updateComputerField}
                                onClick={this.makePlayerShot}/>
-                {/*<div className="playerPanel">
+                <div className="playerPanel">
                     <PlayerField playerField={this.state.playerField}
                                  updatePlayerField={this.updatePlayerField}/>
                     <InfoPanel onClick={this.makeComputerShot} shotInfo={this.state.shotInfo}/>
-                </div>*/}
-
+                </div>
             </div>
         )
     }
