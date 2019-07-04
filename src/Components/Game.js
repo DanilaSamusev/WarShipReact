@@ -14,6 +14,7 @@ class Game extends React.Component {
         this.state = {
             playerField: [],
             computerField: [],
+            isPlayerTurn: null,
             shotInfo: '',
         };
 
@@ -28,6 +29,31 @@ class Game extends React.Component {
         this.getPlayerField();
         this.getComputerField();
 
+    }
+
+    getGameData(){
+        fetch('http://localhost:5000/api/playerField',
+            {
+                method: 'get',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                    },
+            })
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const json = JSON.parse(text);
+                    this.setState(
+                        () => {
+                            return {
+                                playerField: json
+                            };
+                        });
+                } catch (ex) {
+
+                }
+            });
     }
 
     getPlayerField() {
@@ -51,7 +77,7 @@ class Game extends React.Component {
                             };
                         });
                 } catch (ex) {
-                    alert("unable to receive playerField")
+
                 }
             });
     }
@@ -74,7 +100,7 @@ class Game extends React.Component {
                         computerField: json,
                     })
                 } catch (ex) {
-                    alert("unable to receive computerField")
+
                 }
             });
     }
@@ -155,7 +181,7 @@ class Game extends React.Component {
                     this.updateComputerField(new Array(computerSquare));
                     this.changeShotInfo(computerSquare, 'Player');
                 } catch (ex) {
-                    console.log(ex.toString())
+
                 }
             });
     }

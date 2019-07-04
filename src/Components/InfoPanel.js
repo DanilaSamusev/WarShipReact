@@ -6,8 +6,8 @@ class InfoPanel extends React.Component {
     render() {
         return(
             <div className="infoPanel">
-                <p>{this.props.shotInfo}</p>
-                <button onClick={this.props.onClick}>Ok</button>
+                <input className="info" value={this.props.shotInfo}></input>
+                <button className="nextButton" onClick={this.props.onClick}>Next</button>
             </div>
         )
     }
