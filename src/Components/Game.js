@@ -25,14 +25,11 @@ class Game extends React.Component {
     }
 
     componentWillMount() {
-
-        this.getPlayerField();
-        this.getComputerField();
-
+        this.getGameData();
     }
 
     getGameData(){
-        fetch('http://localhost:5000/api/playerField',
+        fetch('http://localhost:5000/api/game',
             {
                 method: 'get',
                 headers:
@@ -44,61 +41,18 @@ class Game extends React.Component {
             .then(text => {
                 try {
                     const json = JSON.parse(text);
+
+                    console.log(json);
+
                     this.setState(
                         () => {
                             return {
-                                playerField: json
+                                playerField: json.playerSquares,
+                                computerField: json.computerSquares,
+                                isPlayerTurn: json.isPlayerTurn,
                             };
                         });
-                } catch (ex) {
 
-                }
-            });
-    }
-
-    getPlayerField() {
-
-        fetch('http://localhost:5000/api/playerField',
-            {
-                method: 'get',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.setState(
-                        () => {
-                            return {
-                                playerField: json
-                            };
-                        });
-                } catch (ex) {
-
-                }
-            });
-    }
-
-    getComputerField() {
-
-        fetch('http://localhost:5000/api/computerField',
-            {
-                method: 'get',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.setState({
-                        computerField: json,
-                    })
                 } catch (ex) {
 
                 }
@@ -180,6 +134,16 @@ class Game extends React.Component {
                     computerSquare = JSON.parse(text);
                     this.updateComputerField(new Array(computerSquare));
                     this.changeShotInfo(computerSquare, 'Player');
+
+                    if (!computerSquare.hasShip){
+                        this.setState(
+                            () => {
+                                return {
+                                    isPlayerTurn: false,
+                                };
+                            });
+                    }
+
                 } catch (ex) {
 
                 }
@@ -197,6 +161,16 @@ class Game extends React.Component {
                     playerSquare = JSON.parse(text);
                     this.updatePlayerField(new Array(playerSquare));
                     this.changeShotInfo(playerSquare, 'Computer');
+
+                    if (!playerSquare.hasShip){
+                        this.setState(
+                            () => {
+                                return {
+                                    isPlayerTurn: true,
+                                };
+                            });
+                    }
+
                 } catch (ex) {
 
                 }
@@ -230,7 +204,7 @@ class Game extends React.Component {
                 <div className="playerPanel">
                     <PlayerField playerField={this.state.playerField}
                                  updatePlayerField={this.updatePlayerField}/>
-                    <InfoPanel onClick={this.makeComputerShot} shotInfo={this.state.shotInfo}/>
+                    <InfoPanel onClick={this.makeComputerShot} shotInfo={this.state.shotInfo} isPlayerTurn={this.state.isPlayerTurn}/>
                 </div>
             </div>
         )
