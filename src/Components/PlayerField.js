@@ -74,7 +74,7 @@ class PlayerField extends React.Component {
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
-        fetch('http://localhost:5000/api/playerField/markSquaresForShipPlanting' + query,
+        fetch('http://localhost:5000/api/playerField/squaresForShipPlanting' + query,
             {
                 method: 'put',
                 headers:
@@ -83,15 +83,26 @@ class PlayerField extends React.Component {
                         'Content-Type': 'application/json',
                     },
             })
+            .then(response => {
+
+                if (response.status >= 200 && response.status < 400) {
+                    return response;
+                } else {
+                    throw new Error("All ships have been planted")
+                }
+
+            })
             .then(response => response.text())
             .then(text => {
                 try {
                     const json = JSON.parse(text);
                     this.props.updatePlayerField(json);
                 } catch (ex) {
-                    
+
                 }
-            });
+            }).catch(function (error) {
+            console.log('error : ' + error.message)
+        });
     }
 
     render() {
