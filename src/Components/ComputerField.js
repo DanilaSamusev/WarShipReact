@@ -15,7 +15,7 @@ class ComputerField extends React.Component {
                                 id={square.id}
                                 key={square.id}
                                 className="computerSquare"
-                                hasShip={square.hasShip}
+                                shipNumber={square.shipNumber}
                                 isClicked={square.isClicked}
                                 onClick={() => this.props.onClick(square.id)}
                             />

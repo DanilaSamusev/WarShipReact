@@ -74,7 +74,7 @@ class Game extends React.Component {
                 id: square.id,
                 isClicked: square.isClicked,
                 isChecked: square.isChecked,
-                hasShip: square.hasShip,
+                shipNumber: square.shipNumber,
             };
         }
 
@@ -100,7 +100,7 @@ class Game extends React.Component {
             field[square.id] = {
                 id: square.id,
                 isClicked: square.isClicked,
-                hasShip: square.hasShip,
+                shipNumber: square.shipNumber,
             };
         }
 

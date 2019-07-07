@@ -116,7 +116,7 @@ class PlayerField extends React.Component {
                                 id={square.id}
                                 isClicked={square.isClicked}
                                 isChecked={square.isChecked}
-                                hasShip={square.hasShip}
+                                shipNumber={square.shipNumber}
                                 className="playerSquare"
                                 onMouseOver={() => this.handleMouseOver(square.id)}
                                 onClick={(event) => this.handleClick(event, square.id)}
