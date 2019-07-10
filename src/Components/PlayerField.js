@@ -1,7 +1,7 @@
 import React from 'react';
 import Square from "./Square";
-import "./index.css"
-import "./playerField.css"
+import "../css/index.css"
+import "../css/playerField.css"
 
 class PlayerField extends React.Component {
 
@@ -9,48 +9,23 @@ class PlayerField extends React.Component {
         super(props);
 
         this.state = {
-            playerField: [],
-            shipsCount: 0,
             direction: 0,
         };
-    }
-
-    componentWillMount() {
-
-        fetch('http://localhost:5000/api/playerField',
-            {
-                method: 'get',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.setState({
-                        playerField: json,
-                    })
-                } catch (ex) {
-                    alert("ошибка получения поля игрока!")
-                }
-            })
     }
 
     handleClick(event, id) {
 
         if (event.shiftKey) {
-            this.changeDirection(id)
+            this.changeShipDirection(id)
         } else {
             this.plantShip(id);
         }
     }
 
-    changeDirection(id) {
+    changeShipDirection(id) {
         if (this.state.direction === 0) {
             this.setState(
-                (state) => {
+                () => {
                     return {
                         direction: 1
                     };
@@ -58,7 +33,7 @@ class PlayerField extends React.Component {
                 () => this.handleMouseOver(id))
         } else {
             this.setState(
-                (state) => {
+                () => {
                     return {
                         direction: 0
                     };
@@ -69,10 +44,6 @@ class PlayerField extends React.Component {
     }
 
     plantShip(id) {
-
-        if (this.state.shipsCount === 10) {
-            return;
-        }
 
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
@@ -89,25 +60,21 @@ class PlayerField extends React.Component {
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.updatePlayerField(json);
+                    this.props.updatePlayerField(json);
                     this.setState({
-                        shipsCount: this.state.shipsCount + 1,
+                        shipsOnField: this.state.shipsOnField + 1,
                     })
                 } catch (ex) {
-                    console.log("plantShipError")
+                    alert("unable to plant a ship")
                 }
             });
     }
 
     handleMouseOver(id) {
 
-        if (this.state.shipsCount === 10) {
-            return;
-        }
-
         const query = '?id=' + id + '&direction=' + this.state.direction;
 
-        fetch('http://localhost:5000/api/playerField/checkPoints' + query,
+        fetch('http://localhost:5000/api/playerField/squaresForShipPlanting' + query,
             {
                 method: 'put',
                 headers:
@@ -116,33 +83,25 @@ class PlayerField extends React.Component {
                         'Content-Type': 'application/json',
                     },
             })
+            .then(response => {
+
+                if (response.status >= 200 && response.status < 400) {
+                    return response;
+                } else {
+                    throw new Error("All ships have been planted")
+                }
+
+            })
             .then(response => response.text())
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.updatePlayerField(json);
+                    this.props.updatePlayerField(json);
                 } catch (ex) {
 
                 }
-            });
-    }
-
-    updatePlayerField(squares) {
-        const field = this.state.playerField;
-
-        for (var i = 0; i < squares.length; i++) {
-            var square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                hasShip: square.hasShip,
-            };
-        }
-
-        this.setState({
-            playerField: field,
+            }).catch(function (error) {
+            console.log('error : ' + error.message)
         });
     }
 
@@ -150,14 +109,14 @@ class PlayerField extends React.Component {
         return (
             <div className="playerField">
                 {
-                    this.state.playerField.map((square) => {
+                    this.props.playerField.map((square) => {
                         return (
                             <Square
                                 key={square.id}
                                 id={square.id}
                                 isClicked={square.isClicked}
                                 isChecked={square.isChecked}
-                                hasShip={square.hasShip}
+                                shipNumber={square.shipNumber}
                                 className="playerSquare"
                                 onMouseOver={() => this.handleMouseOver(square.id)}
                                 onClick={(event) => this.handleClick(event, square.id)}

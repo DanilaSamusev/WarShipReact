@@ -1,13 +1,13 @@
 .playerField{
     display: flex;
     flex-wrap: wrap;
-    height: min-content;
-    width: 18%;
+    height: 42%;
+    width: 32%;
 }
 
 .playerSquare {
     background: #fff;
     border: 1px solid black;
-    height: 30px;
-    width: 30px;
+    height: 10%;
+    width: 9%;
 }

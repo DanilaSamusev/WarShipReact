@@ -6,19 +6,19 @@ class Square extends React.Component {
         var style = {backgroundColor: 'white'};
 
         if (this.props.isChecked === true) {
-            style = {backgroundColor: 'grey'};
+            style = {backgroundColor: '#dfe0de'};
         }
 
-        if (this.props.hasShip === true) {
-            style = {backgroundColor: 'yellow'}
+        if (this.props.shipNumber > -1) {
+            style = {backgroundColor: 'grey'};
+
         }
 
         if (this.props.isClicked === true) {
 
-            if (this.props.hasShip === true) {
+            if (this.props.shipNumber > -1) {
                 style = {backgroundColor: 'red'}
-            }
-            else {
+            } else {
                 style = {backgroundColor: 'blue'}
             }
         }
