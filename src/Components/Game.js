@@ -2,6 +2,7 @@ import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
 import "../css/playerPanel.css"
+
 import ComputerField from "../Components/ComputerField";
 import PlayerField from "./PlayerField";
 import InfoPanel from "../Components/InfoPanel"
@@ -135,7 +136,7 @@ class Game extends React.Component {
                     this.updateComputerField(new Array(computerSquare));
                     this.changeShotInfo(computerSquare, 'Player');
 
-                    if (!computerSquare.hasShip){
+                    if (computerSquare.shipNumber === -1){
                         this.setState(
                             () => {
                                 return {
@@ -162,7 +163,7 @@ class Game extends React.Component {
                     this.updatePlayerField(new Array(playerSquare));
                     this.changeShotInfo(playerSquare, 'Computer');
 
-                    if (!playerSquare.hasShip){
+                    if (playerSquare.shipNumber === -1){
                         this.setState(
                             () => {
                                 return {
@@ -179,7 +180,7 @@ class Game extends React.Component {
 
     changeShotInfo(square, playerName){
 
-        if (square.hasShip){
+        if (square.shipNumber !== -1){
             this.changeShotInfoState(playerName + ' has shot a ship!')
         }
         else{
