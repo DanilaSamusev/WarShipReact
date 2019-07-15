@@ -5,11 +5,119 @@ import "../css/index.css"
 
 class ComputerField extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            computerField: [],
+            direction: 0,
+            shotInfo: '',
+        };
+
+        this.updateComputerField = this.updateComputerField.bind(this);
+        this.makePlayerShot = this.makePlayerShot.bind(this);
+    }
+
+    componentWillMount() {
+
+        this.setState(
+            () => {
+                return {
+                    computerField: JSON.parse(sessionStorage.getItem('computerField')),
+                };
+            });
+
+    }
+
+    makePlayerShot(id) {
+        const query = '?id=' + id;
+        var computerSquare;
+
+        this.myFetch('computerField/playerShot' + query)
+            .then(text => {
+                try {
+                    computerSquare = JSON.parse(text);
+                    this.updateComputerField(new Array(computerSquare));
+
+                    this.changeShotInfo(computerSquare, 'Player');
+
+                    if (computerSquare.shipNumber === -1){
+                        this.setState(
+                            () => {
+                                return {
+                                    isPlayerTurn: false,
+                                };
+                            });
+                    }
+
+                } catch (ex) {
+
+                }
+            });
+    }
+
+    changeShotInfo(square, playerName){
+
+        if (square.shipNumber !== -1){
+            this.changeShotInfoState(playerName + ' has shot a ship!')
+        }
+        else{
+            this.changeShotInfoState(playerName + ' has missed!')
+        }
+    }
+
+    changeShotInfoState(info){
+
+        sessionStorage.setItem('info', info)
+
+    }
+
+    updateComputerField(squares) {
+
+        if (squares === null) {
+            return;
+        }
+
+        const field = this.state.computerField;
+
+        for (var i = 0; i < squares.length; i++) {
+            var square = squares[i];
+
+            field[square.id] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                shipNumber: square.shipNumber,
+            };
+        }
+
+        this.setState(
+            () => {
+                return {
+                    computerField: field,
+                };
+            }, () => sessionStorage.setItem('computerField', JSON.stringify(field)));
+    }
+
+    myFetch(query) {
+        return fetch('http://localhost:5000/api/' + query,
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+            }).then(response => response.text())
+    };
+
     render() {
+
+
+
         return (
             <div className="computerField">
                 {
-                    this.props.computerField.map((square) => {
+                    this.state.computerField.map((square) => {
                         return (
                             <Square
                                 id={square.id}
@@ -17,7 +125,7 @@ class ComputerField extends React.Component {
                                 className="computerSquare"
                                 shipNumber={square.shipNumber}
                                 isClicked={square.isClicked}
-                                onClick={() => this.props.onClick(square.id)}
+                                onClick={() => this.makePlayerShot(square.id)}
                             />
                         )
                     })}

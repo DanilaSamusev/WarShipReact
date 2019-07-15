@@ -9,8 +9,23 @@ class PlayerField extends React.Component {
         super(props);
 
         this.state = {
+            playerField: [],
             direction: 0,
         };
+
+        this.updatePlayerField = this.updatePlayerField.bind(this);
+        this.makeComputerShot = this.makeComputerShot.bind(this);
+    }
+
+    componentWillMount() {
+
+        this.setState(
+            () => {
+                return {
+                    playerField: JSON.parse(sessionStorage.getItem('playerField')),
+                };
+            });
+
     }
 
     handleClick(event, id) {
@@ -60,7 +75,7 @@ class PlayerField extends React.Component {
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.props.updatePlayerField(json);
+                    this.updatePlayerField(json);
                     this.setState({
                         shipsOnField: this.state.shipsOnField + 1,
                     })
@@ -96,7 +111,7 @@ class PlayerField extends React.Component {
             .then(text => {
                 try {
                     const json = JSON.parse(text);
-                    this.props.updatePlayerField(json);
+                    this.updatePlayerField(json);
                 } catch (ex) {
 
                 }
@@ -105,11 +120,81 @@ class PlayerField extends React.Component {
         });
     }
 
+    makeComputerShot() {
+        var playerSquare;
+
+        console.log("1");
+
+        this.myFetch('playerField/computerShot')
+            .then(text => {
+                try {
+                    playerSquare = JSON.parse(text);
+                    this.updatePlayerField(new Array(playerSquare));
+                    this.changeShotInfo(playerSquare, 'Computer');
+
+                    if (playerSquare.shipNumber === -1) {
+                        this.setState(
+                            () => {
+                                return {
+                                    isPlayerTurn: true,
+                                };
+                            });
+                    }
+
+                } catch (ex) {
+
+                }
+            });
+    }
+
+    updatePlayerField(squares) {
+
+        if (squares === null) {
+            return;
+        }
+
+        const field = this.state.playerField;
+
+        for (var i = 0; i < squares.length; i++) {
+            var square = squares[i];
+
+            field[square.id] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                isChecked: square.isChecked,
+                shipNumber: square.shipNumber,
+            };
+        }
+
+        this.setState(
+            () => {
+                return {
+                    playerField: field,
+                };
+            }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
+    };
+
+
+    myFetch(query) {
+        return fetch('http://localhost:5000/api/' + query,
+            {
+                method: 'put',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+            }).then(response => response.text())
+    };
+
     render() {
+
+
+
         return (
             <div className="playerField">
                 {
-                    this.props.playerField.map((square) => {
+                    this.state.playerField.map((square) => {
                         return (
                             <Square
                                 key={square.id}
