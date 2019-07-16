@@ -18,14 +18,20 @@ class ComputerField extends React.Component {
         this.makePlayerShot = this.makePlayerShot.bind(this);
     }
 
-    componentWillMount() {
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
 
-        this.setState(
-            () => {
-                return {
-                    computerField: JSON.parse(sessionStorage.getItem('computerField')),
-                };
-            });
+        if (nextProps.computerField !== this.state.computerField){
+            this.setState(
+                () => {
+                    return {
+                        computerField: this.props.computerField,
+                    };
+                });
+
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -38,8 +44,6 @@ class ComputerField extends React.Component {
                 try {
                     computerSquare = JSON.parse(text);
                     this.updateComputerField(new Array(computerSquare));
-
-                    this.changeShotInfo(computerSquare, 'Player');
 
                     if (computerSquare.shipNumber === -1){
                         this.setState(
@@ -54,22 +58,6 @@ class ComputerField extends React.Component {
 
                 }
             });
-    }
-
-    changeShotInfo(square, playerName){
-
-        if (square.shipNumber !== -1){
-            this.changeShotInfoState(playerName + ' has shot a ship!')
-        }
-        else{
-            this.changeShotInfoState(playerName + ' has missed!')
-        }
-    }
-
-    changeShotInfoState(info){
-
-        sessionStorage.setItem('info', info)
-
     }
 
     updateComputerField(squares) {
@@ -111,8 +99,6 @@ class ComputerField extends React.Component {
     };
 
     render() {
-
-
 
         return (
             <div className="computerField">

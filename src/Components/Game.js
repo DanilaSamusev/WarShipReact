@@ -11,6 +11,12 @@ class Game extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            computerField: [],
+            playerField: [],
+        };
+
     }
 
     componentWillMount() {
@@ -19,43 +25,42 @@ class Game extends React.Component {
 
     setGameData() {
 
-        if (JSON.parse(sessionStorage.getItem('computerField')) === null ||
-            JSON.parse(sessionStorage.getItem('playerField')) === null ||
-            JSON.parse(sessionStorage.getItem('isPlayerTurn')) === null) {
-            fetch('http://localhost:5000/api/game',
-                {
-                    method: 'get',
-                    headers:
-                        {
-                            'Accept': 'application/json',
-                        },
-                })
-                .then(response => response.text())
-                .then(text => {
-                    try {
-                        const json = JSON.parse(text);
 
-                        sessionStorage.setItem("playerField", JSON.stringify(json.playerSquares));
-                        sessionStorage.setItem("computerField", JSON.stringify(json.computerSquares));
-                        sessionStorage.setItem("isPlayerTurn", JSON.stringify(json.isPlayerTurn));
+        fetch('http://localhost:5000/api/game',
+            {
+                method: 'get',
+                headers:
+                    {
+                        'Accept': 'application/json',
+                    },
+            })
+            .then(response => response.text())
+            .then(text => {
+                try {
+                    const json = JSON.parse(text);
 
-                    } catch (ex) {
+                    this.setState(
+                        () => {
+                            return {
+                                computerField: json.computerSquares,
+                                playerField: json.playerSquares,
+                            };
+                        });
 
-                    }
-                });
-        }
+                } catch (ex) {
+
+                }
+            });
     }
 
+
     render() {
-
-        
-
 
         return (
             <div className="game">
 
-                <ComputerField/>
-                <PlayerField/>
+                <ComputerField computerField={this.state.computerField}/>
+                <PlayerField playerField={this.state.playerField}/>
                 <InfoPanel/>
 
             </div>

@@ -17,15 +17,18 @@ class PlayerField extends React.Component {
         this.makeComputerShot = this.makeComputerShot.bind(this);
     }
 
-    componentWillMount() {
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
 
-        this.setState(
-            () => {
-                return {
-                    playerField: JSON.parse(sessionStorage.getItem('playerField')),
-                };
-            });
+        if (nextProps.playerField !== this.state.playerField){
+            this.setState(
+                () => {
+                    return {
+                        playerField: this.props.playerField,
+                    };
+                });
+        }
 
+        return true;
     }
 
     handleClick(event, id) {
@@ -188,8 +191,6 @@ class PlayerField extends React.Component {
     };
 
     render() {
-
-
 
         return (
             <div className="playerField">
