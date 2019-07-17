@@ -17,6 +17,18 @@ class PlayerField extends React.Component {
         this.makeComputerShot = this.makeComputerShot.bind(this);
     }
 
+    componentWillMount() {
+
+        if (this.props.playerField !== null){
+            this.setState(
+                () => {
+                    return {
+                        playerField: this.props.playerField,
+                    };
+                });
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState, nextContext) {
 
         if (nextProps.playerField !== this.state.playerField){
@@ -126,7 +138,6 @@ class PlayerField extends React.Component {
     makeComputerShot() {
         var playerSquare;
 
-        console.log("1");
 
         this.myFetch('playerField/computerShot')
             .then(text => {

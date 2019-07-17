@@ -11,28 +11,37 @@ class ComputerField extends React.Component {
         this.state = {
             computerField: [],
             direction: 0,
-            shotInfo: '',
         };
 
         this.updateComputerField = this.updateComputerField.bind(this);
         this.makePlayerShot = this.makePlayerShot.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    componentWillMount() {
 
-        if (nextProps.computerField !== this.state.computerField){
+        if (this.props.computerField !== null){
             this.setState(
                 () => {
                     return {
                         computerField: this.props.computerField,
                     };
                 });
+        }
+    }
 
-            return true;
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+
+        if (nextProps.computerField !== this.state.computerField){
+
+            this.setState(
+                () => {
+                    return {
+                        computerField: this.props.computerField,
+                    };
+                });
         }
 
-        return false;
-
+        return true;
     }
 
     makePlayerShot(id) {

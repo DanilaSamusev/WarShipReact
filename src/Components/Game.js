@@ -5,7 +5,6 @@ import "../css/playerPanel.css"
 
 import ComputerField from "../Components/ComputerField";
 import PlayerField from "./PlayerField";
-import InfoPanel from "../Components/InfoPanel"
 
 class Game extends React.Component {
 
@@ -25,34 +24,51 @@ class Game extends React.Component {
 
     setGameData() {
 
+        var playerField = JSON.parse(sessionStorage.getItem('playerField'));
+        var computerField = JSON.parse(sessionStorage.getItem('computerField'));
 
-        fetch('http://localhost:5000/api/game',
-            {
-                method: 'get',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
+        if (playerField === null || computerField === null) {
 
-                    this.setState(
-                        () => {
-                            return {
-                                computerField: json.computerSquares,
-                                playerField: json.playerSquares,
-                            };
-                        });
+            fetch('http://localhost:5000/api/game',
+                {
+                    method: 'get',
+                    headers:
+                        {
+                            'Accept': 'application/json',
+                        },
+                })
+                .then(response => response.text())
+                .then(text => {
+                    try {
+                        const json = JSON.parse(text);
 
-                } catch (ex) {
+                        sessionStorage.setItem('playerField', JSON.stringify(json.playerSquares));
+                        sessionStorage.setItem('computerField', JSON.stringify(json.computerSquares));
 
-                }
-            });
+                        this.setState(
+                            () => {
+                                return {
+                                    playerField: json.playerSquares,
+                                    computerField: json.computerSquares,
+                                };
+                            });
+
+                    } catch (ex) {
+
+                    }
+                });
+        } else {
+
+            this.setState(
+                () => {
+                    return {
+                        playerField: playerField,
+                        computerField: computerField,
+                    };
+                });
+        }
+
     }
-
 
     render() {
 
@@ -61,7 +77,6 @@ class Game extends React.Component {
 
                 <ComputerField computerField={this.state.computerField}/>
                 <PlayerField playerField={this.state.playerField}/>
-                <InfoPanel/>
 
             </div>
         )
