@@ -12,7 +12,7 @@ class PlayerField extends React.Component {
         this.state = {
             playerField: [],
             direction: 0,
-            shipsOnField: 0,
+            shipsOnField: 4,
         };
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
@@ -77,7 +77,19 @@ class PlayerField extends React.Component {
 
     plantShip(id) {
 
-        
+        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+        let playerFleet = gameData.playerFleet;
+
+        var pointsToPlant = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+
+        if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)){
+
+            let currentShip = playerFleet.ships[this.state.shipsOnField];
+
+
+
+        }
+
     }
 
     handleMouseOver(id) {
@@ -154,11 +166,11 @@ class PlayerField extends React.Component {
         squareNumbers[0] = firstSquareNumber;
 
         if (direction === 0) {
-            for (var i = 1; i < squareNumbers.length; i++) {
+            for (let i = 1; i < squareNumbers.length; i++) {
                 squareNumbers[i] = squareNumbers[i - 1] + 1;
             }
         } else {
-            for (var i = 1; i < squareNumbers.length; i++) {
+            for (let i = 1; i < squareNumbers.length; i++) {
                 squareNumbers[i] = squareNumbers[i - 1] - 10;
             }
         }
@@ -168,12 +180,14 @@ class PlayerField extends React.Component {
 
     areSquareNumbersValid(squareNumbers, direction) {
 
-        if (!this.areSquareNumbersValidForBounds(squareNumbers)) {
+        if (!this.areSquareNumbersValidForBounds(squareNumbers, direction)) {
 
             return false;
         }
 
-        for (var i = 0; i < squareNumbers.length; i++) {
+
+
+        for (let i = 0; i < squareNumbers.length; i++) {
 
             if (!this.isPointNumberValid(squareNumbers[i], direction)) {
                 return false;
@@ -183,13 +197,25 @@ class PlayerField extends React.Component {
         return true;
     }
 
-    areSquareNumbersValidForBounds(squareNumbers) {
+    areSquareNumbersValidForBounds(squareNumbers, direction) {
 
-        for (var i = 0; i < squareNumbers.length; i++) {
+        for (let i = 0; i < squareNumbers.length; i++) {
 
             if (squareNumbers[i] < 0 ||
                 squareNumbers[i] > 99) {
                 return false;
+            }
+        }
+
+        console.log(squareNumbers[0] / 10);
+
+        if (direction === 0){
+            for (let i = 0; i < squareNumbers.length; i++) {
+
+                if (Math.trunc(squareNumbers[0] / 10) !==
+                    Math.trunc(squareNumbers[i] / 10)) {
+                    return false;
+                }
             }
         }
 
@@ -220,20 +246,16 @@ class PlayerField extends React.Component {
             ];
         }
 
+
+
         for (var i = 0; i < nearestSquareNumbers.length; i++) {
 
             if (nearestSquareNumbers[i] >= 0 &&
                 nearestSquareNumbers[i] <= 99) {
 
-
-
                 if (this.state.playerField[nearestSquareNumbers[i]].shipNumber !== -1) {
 
                     return false;
-                }
-
-                if (direction !== 0 && nearestSquareNumbers[0] / 10 !== nearestSquareNumbers[i] / 10) {
-                    return false
                 }
 
             }
