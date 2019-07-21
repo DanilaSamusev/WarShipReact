@@ -12,7 +12,7 @@ class PlayerField extends React.Component {
         this.state = {
             playerField: [],
             direction: 0,
-            shipsOnField: 4,
+            shipsOnField: 0,
         };
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
@@ -78,15 +78,12 @@ class PlayerField extends React.Component {
     plantShip(id) {
 
         let gameData = JSON.parse(sessionStorage.getItem('gameData'));
-        let playerFleet = gameData.playerFleet;
 
         var pointsToPlant = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-        if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)){
+        if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)) {
 
-            let currentShip = playerFleet.ships[this.state.shipsOnField];
-
-
+            this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id)
 
         }
 
@@ -186,7 +183,6 @@ class PlayerField extends React.Component {
         }
 
 
-
         for (let i = 0; i < squareNumbers.length; i++) {
 
             if (!this.isPointNumberValid(squareNumbers[i], direction)) {
@@ -207,9 +203,7 @@ class PlayerField extends React.Component {
             }
         }
 
-        console.log(squareNumbers[0] / 10);
-
-        if (direction === 0){
+        if (direction === 0) {
             for (let i = 0; i < squareNumbers.length; i++) {
 
                 if (Math.trunc(squareNumbers[0] / 10) !==
@@ -222,7 +216,7 @@ class PlayerField extends React.Component {
         return true;
     }
 
-    isPointNumberValid(squareNumber, direction) {
+    isPointNumberValid(squareNumber) {
 
         var nearestSquareNumbers = [
             squareNumber - 11, squareNumber - 10, squareNumber - 9,
@@ -247,7 +241,6 @@ class PlayerField extends React.Component {
         }
 
 
-
         for (var i = 0; i < nearestSquareNumbers.length; i++) {
 
             if (nearestSquareNumbers[i] >= 0 &&
@@ -268,8 +261,6 @@ class PlayerField extends React.Component {
 /////////////////////////////////////////////////////////////////////////////
     makeComputerShot() {
         var playerSquare;
-
-
     }
 
     updatePlayerField(squares) {
@@ -298,10 +289,44 @@ class PlayerField extends React.Component {
                 };
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
     }
-    ;
+
+    setHasShip(squareNumbers, shipNumber) {
+
+        const field = this.state.playerField;
+
+        for (var i = 0; i < squareNumbers.length; i++) {
+
+            var square = field[squareNumbers[i]];
+
+            field[squareNumbers[i]] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                isChecked: square.isChecked,
+                shipNumber: shipNumber,
+            };
+        }
+
+        this.setState(
+            () => {
+                return {
+                    playerField: field,
+                };
+            }, () => {
+                let gameData = JSON
+                    .parse(sessionStorage.getItem('gameData'));
+                gameData.playerField.squares = this.state.playerField;
+
+                console.log(this.state.playerField);
+
+                sessionStorage.setItem("gameData", JSON.stringify(gameData));
+            });
+
+    }
 
 
     render() {
+
+
 
         return (
             <div className="playerField">

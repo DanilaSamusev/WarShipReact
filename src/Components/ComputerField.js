@@ -75,7 +75,6 @@ class ComputerField extends React.Component {
     }
 
     render() {
-
         return (
             <div className="computerField">
                 {
