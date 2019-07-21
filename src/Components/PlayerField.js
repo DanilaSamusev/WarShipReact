@@ -2,6 +2,7 @@ import React from 'react';
 import Square from "./Square";
 import "../css/index.css"
 import "../css/playerField.css"
+import "../test.js"
 
 class PlayerField extends React.Component {
 
@@ -76,29 +77,7 @@ class PlayerField extends React.Component {
 
     plantShip(id) {
 
-        const query = '?id=' + id + '&direction=' + this.state.direction;
-
-        fetch('http://localhost:5000/api/playerField/plantShip' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
-                    this.updatePlayerField(json);
-                    this.setState({
-                        shipsOnField: this.state.shipsOnField + 1,
-                    })
-                } catch (ex) {
-                    alert("unable to plant a ship")
-                }
-            });
+        
     }
 
     handleMouseOver(id) {
@@ -116,7 +95,7 @@ class PlayerField extends React.Component {
     paintSquares(squareNumbers) {
 
         const field = this.state.playerField;
-        
+
         for (var j = 0; j < field.length; j++) {
 
             var square1 = this.state.playerField[j];
@@ -269,25 +248,6 @@ class PlayerField extends React.Component {
         var playerSquare;
 
 
-        this.myFetch('playerField/computerShot')
-            .then(text => {
-                try {
-                    playerSquare = JSON.parse(text);
-                    this.updatePlayerField(new Array(playerSquare));
-
-                    if (playerSquare.shipNumber === -1) {
-                        this.setState(
-                            () => {
-                                return {
-                                    isPlayerTurn: true,
-                                };
-                            });
-                    }
-
-                } catch (ex) {
-
-                }
-            });
     }
 
     updatePlayerField(squares) {
@@ -318,19 +278,6 @@ class PlayerField extends React.Component {
     }
     ;
 
-
-    myFetch(query) {
-        return fetch('http://localhost:5000/api/' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            }).then(response => response.text())
-    }
-    ;
 
     render() {
 

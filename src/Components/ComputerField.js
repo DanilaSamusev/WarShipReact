@@ -10,7 +10,6 @@ class ComputerField extends React.Component {
 
         this.state = {
             computerField: [],
-            direction: 0,
         };
 
         this.updateComputerField = this.updateComputerField.bind(this);
@@ -45,28 +44,8 @@ class ComputerField extends React.Component {
     }
 
     makePlayerShot(id) {
-        const query = '?id=' + id;
-        var computerSquare;
 
-        this.myFetch('computerField/playerShot' + query)
-            .then(text => {
-                try {
-                    computerSquare = JSON.parse(text);
-                    this.updateComputerField(new Array(computerSquare));
 
-                    if (computerSquare.shipNumber === -1){
-                        this.setState(
-                            () => {
-                                return {
-                                    isPlayerTurn: false,
-                                };
-                            });
-                    }
-
-                } catch (ex) {
-
-                }
-            });
     }
 
     updateComputerField(squares) {
@@ -94,18 +73,6 @@ class ComputerField extends React.Component {
                 };
             }, () => sessionStorage.setItem('computerField', JSON.stringify(field)));
     }
-
-    myFetch(query) {
-        return fetch('http://localhost:5000/api/' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            }).then(response => response.text())
-    };
 
     render() {
 
