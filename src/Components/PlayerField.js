@@ -2,6 +2,7 @@ import React from 'react';
 import Square from "./Square";
 import "../css/index.css"
 import "../css/playerField.css"
+import {SquarePainterManager} from "../SquarePainterManager.js"
 import "../test.js"
 
 class PlayerField extends React.Component {
@@ -65,11 +66,12 @@ class PlayerField extends React.Component {
 
         if (this.state.shipsOnField !== 10) {
 
+            let manager = new SquarePainterManager();
             let gameData = JSON.parse(sessionStorage.getItem('gameData'));
 
-            var pointsToPlant = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+            var pointsToPlant = manager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-            if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)) {
+            if (manager.areSquareNumbersValid(pointsToPlant, this.state.direction, this.state.playerField)) {
 
                 this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id);
                 this.setShipDeckPosition(pointsToPlant, this.state.shipsOnField);
@@ -88,9 +90,11 @@ class PlayerField extends React.Component {
 
         if (this.state.shipsOnField !== 10) {
 
-            var squareNumbers = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+            let manager = new SquarePainterManager();
 
-            if (this.areSquareNumbersValid(squareNumbers, this.state.direction)) {
+            var squareNumbers = manager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+
+            if (manager.areSquareNumbersValid(squareNumbers, this.state.direction, this.state.playerField)) {
 
                 this.paintSquares(squareNumbers);
             }
@@ -133,128 +137,6 @@ class PlayerField extends React.Component {
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
     }
 
-
-////////////////////////////////////////////////////////////
-
-    getSquareNumbersToPaint(direction, shipsOnField, firstSquareNumber) {
-
-        var squareNumbers;
-
-        if (shipsOnField >= 0 && shipsOnField < 4) {
-            squareNumbers = new Array(1);
-        }
-
-        if (shipsOnField >= 4 && shipsOnField < 7) {
-            squareNumbers = new Array(2);
-        }
-
-        if (shipsOnField >= 7 && shipsOnField < 9) {
-            squareNumbers = new Array(3);
-        }
-
-        if (shipsOnField >= 9 && shipsOnField < 10) {
-            squareNumbers = new Array(4);
-        }
-
-        squareNumbers[0] = firstSquareNumber;
-
-        if (direction === 0) {
-            for (let i = 1; i < squareNumbers.length; i++) {
-                squareNumbers[i] = squareNumbers[i - 1] + 1;
-            }
-        } else {
-            for (let i = 1; i < squareNumbers.length; i++) {
-                squareNumbers[i] = squareNumbers[i - 1] - 10;
-            }
-        }
-
-        return squareNumbers;
-    }
-
-    areSquareNumbersValid(squareNumbers, direction) {
-
-        if (!this.areSquareNumbersValidForBounds(squareNumbers, direction)) {
-
-            return false;
-        }
-
-
-        for (let i = 0; i < squareNumbers.length; i++) {
-
-            if (!this.isPointNumberValid(squareNumbers[i], direction)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    areSquareNumbersValidForBounds(squareNumbers, direction) {
-
-        for (let i = 0; i < squareNumbers.length; i++) {
-
-            if (squareNumbers[i] < 0 ||
-                squareNumbers[i] > 99) {
-                return false;
-            }
-        }
-
-        if (direction === 0) {
-            for (let i = 0; i < squareNumbers.length; i++) {
-
-                if (Math.trunc(squareNumbers[0] / 10) !==
-                    Math.trunc(squareNumbers[i] / 10)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    isPointNumberValid(squareNumber) {
-
-        var nearestSquareNumbers = [
-            squareNumber - 11, squareNumber - 10, squareNumber - 9,
-            squareNumber - 1, squareNumber, squareNumber + 1,
-            squareNumber + 9, squareNumber + 10, squareNumber + 11
-        ];
-
-        if (squareNumber % 10 === 9) {
-            nearestSquareNumbers = [
-                squareNumber - 11, squareNumber - 10,
-                squareNumber - 1, squareNumber,
-                squareNumber + 9, squareNumber + 10
-            ];
-        }
-
-        if (squareNumber % 10 === 0) {
-            nearestSquareNumbers = [
-                squareNumber - 10, squareNumber - 9,
-                squareNumber + 1, squareNumber,
-                squareNumber + 10, squareNumber + 11
-            ];
-        }
-
-
-        for (var i = 0; i < nearestSquareNumbers.length; i++) {
-
-            if (nearestSquareNumbers[i] >= 0 &&
-                nearestSquareNumbers[i] <= 99) {
-
-                if (this.state.playerField[nearestSquareNumbers[i]].shipNumber !== -1) {
-
-                    return false;
-                }
-
-            }
-        }
-
-        return true;
-
-    };
-
-/////////////////////////////////////////////////////////////////////////////
     makeComputerShot() {
         var playerSquare;
     }
