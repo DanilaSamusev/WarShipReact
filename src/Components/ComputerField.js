@@ -18,7 +18,7 @@ class ComputerField extends React.Component {
 
     componentWillMount() {
 
-        if (this.props.computerField !== null){
+        if (this.props.computerField !== null) {
             this.setState(
                 () => {
                     return {
@@ -30,7 +30,15 @@ class ComputerField extends React.Component {
 
     makePlayerShot(id) {
 
+        let square = this.state.computerField[id];
 
+        square.isClicked = true;
+
+        if (square.shipNumber !== -1) {
+            this.shotDeck(square.shipNumber);
+        }
+
+        this.updateComputerField(new Array(square));
     }
 
     updateComputerField(squares) {
@@ -56,7 +64,24 @@ class ComputerField extends React.Component {
                 return {
                     computerField: field,
                 };
-            }, () => sessionStorage.setItem('computerField', JSON.stringify(field)));
+            }, () => {
+                let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+                gameData.computerField.squares = this.state.computerField;
+                sessionStorage.setItem('gameData', JSON.stringify(gameData))
+            });
+    }
+
+    shotDeck(shipId) {
+
+        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+
+        gameData.computerFleet.ships[shipId].hitsNumber = gameData.computerFleet.ships[shipId].hitsNumber + 1;
+
+        if (gameData.computerFleet.ships[shipId].hitsNumber === gameData.computerFleet.ships[shipId].decks.length) {
+            gameData.computerFleet.ships[shipId].isAlive = false;
+        }
+
+        sessionStorage.setItem('gameData', JSON.stringify(gameData));
     }
 
     render() {
