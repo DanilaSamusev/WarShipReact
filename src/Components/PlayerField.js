@@ -26,6 +26,7 @@ class PlayerField extends React.Component {
                 () => {
                     return {
                         playerField: this.props.playerField,
+                        shipsOnField: this.props.shipsOnField,
                     };
                 });
         }
@@ -69,7 +70,6 @@ class PlayerField extends React.Component {
                     return {
                         direction: 0
                     };
-
                 },
                 () => this.handleMouseOver(id))
         }
@@ -77,28 +77,37 @@ class PlayerField extends React.Component {
 
     plantShip(id) {
 
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+        if (this.state.shipsOnField !== 10) {
 
-        var pointsToPlant = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+            let gameData = JSON.parse(sessionStorage.getItem('gameData'));
 
-        if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)) {
+            var pointsToPlant = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-            this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id)
+            if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)) {
 
+                this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id);
+
+                this.setState(
+                    () => {
+                        return {
+                            shipsOnField: this.state.shipsOnField + 1,
+                        };
+                    }, () => this.saveShipsOnFieldValue(this.state.shipsOnField));
+            }
         }
-
     }
 
     handleMouseOver(id) {
 
-        var squareNumbers = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+        if (this.state.shipsOnField !== 10) {
 
-        if (this.areSquareNumbersValid(squareNumbers, this.state.direction)) {
+            var squareNumbers = this.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-            this.paintSquares(squareNumbers)
+            if (this.areSquareNumbersValid(squareNumbers, this.state.direction)) {
 
+                this.paintSquares(squareNumbers);
+            }
         }
-
     }
 
     paintSquares(squareNumbers) {
@@ -290,6 +299,14 @@ class PlayerField extends React.Component {
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
     }
 
+    saveShipsOnFieldValue(shipsOnField){
+
+        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+
+        gameData.playerField.shipsOnField = shipsOnField;
+        sessionStorage.setItem('gameData', JSON.stringify(gameData));
+    }
+
     setHasShip(squareNumbers, shipNumber) {
 
         const field = this.state.playerField;
@@ -323,10 +340,7 @@ class PlayerField extends React.Component {
 
     }
 
-
     render() {
-
-
 
         return (
             <div className="playerField">

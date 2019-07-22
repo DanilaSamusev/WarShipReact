@@ -63,7 +63,9 @@ class Game extends React.Component {
             <div className="game">
 
                 <ComputerField computerField={this.state.gameData.computerField.squares}/>
-                <PlayerField playerField={this.state.gameData.playerField.squares}/>
+                <PlayerField playerField={this.state.gameData.playerField.squares}
+                             shipsOnField={this.state.gameData.playerField.shipsOnField}
+                />
 
             </div>
         )
