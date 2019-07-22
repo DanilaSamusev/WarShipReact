@@ -32,20 +32,6 @@ class PlayerField extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-
-        if (nextProps.playerField !== this.state.playerField) {
-            this.setState(
-                () => {
-                    return {
-                        playerField: this.props.playerField,
-                    };
-                });
-        }
-
-        return true;
-    }
-
     handleClick(event, id) {
 
         if (event.shiftKey) {
@@ -86,13 +72,14 @@ class PlayerField extends React.Component {
             if (this.areSquareNumbersValid(pointsToPlant, this.state.direction)) {
 
                 this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id);
+                this.setShipDeckPosition(pointsToPlant, this.state.shipsOnField);
 
                 this.setState(
                     () => {
                         return {
                             shipsOnField: this.state.shipsOnField + 1,
                         };
-                    }, () => this.saveShipsOnFieldValue(this.state.shipsOnField));
+                    }, () => this.saveValueShipsOnField(this.state.shipsOnField));
             }
         }
     }
@@ -299,7 +286,7 @@ class PlayerField extends React.Component {
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
     }
 
-    saveShipsOnFieldValue(shipsOnField){
+    saveValueShipsOnField(shipsOnField){
 
         let gameData = JSON.parse(sessionStorage.getItem('gameData'));
 
@@ -338,6 +325,18 @@ class PlayerField extends React.Component {
                 sessionStorage.setItem("gameData", JSON.stringify(gameData));
             });
 
+    }
+
+    setShipDeckPosition(pointsToPlant, shipNumber){
+
+        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+
+        for (let i = 0; i < pointsToPlant.length; i++){
+
+            gameData.playerFleet.ships[shipNumber].decks[i].position = pointsToPlant[i];
+        }
+
+        sessionStorage.setItem('gameData', JSON.stringify(gameData));
     }
 
     render() {

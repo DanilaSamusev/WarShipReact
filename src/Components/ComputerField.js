@@ -28,21 +28,6 @@ class ComputerField extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-
-        if (nextProps.computerField !== this.state.computerField){
-
-            this.setState(
-                () => {
-                    return {
-                        computerField: this.props.computerField,
-                    };
-                });
-        }
-
-        return true;
-    }
-
     makePlayerShot(id) {
 
 
