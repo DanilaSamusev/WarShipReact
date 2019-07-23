@@ -138,7 +138,9 @@ class PlayerField extends React.Component {
     }
 
     makeComputerShot() {
-        var playerSquare;
+
+        
+
     }
 
     updatePlayerField(squares) {
@@ -240,6 +242,8 @@ class PlayerField extends React.Component {
                             />
                         )
                     })}
+
+                <button onClick={this.makeComputerShot}>Next</button>
             </div>
         )
     }

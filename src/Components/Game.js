@@ -14,6 +14,8 @@ class Game extends React.Component {
         this.state = {
             gameData: null,
         };
+
+        this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
     }
 
     componentDidMount() {
@@ -48,9 +50,20 @@ class Game extends React.Component {
             () => {
                 return {
                     gameData: gameData,
+                    isPlayerTurn: gameData.isPlayerTurn,
                 };
             });
 
+    }
+
+    setIsPlayerTurn(state){
+
+        this.setState(
+            () => {
+                return {
+                    isPlayerTurn: state,
+                };
+            });
     }
 
     render() {
@@ -59,17 +72,38 @@ class Game extends React.Component {
             return null;
         }
 
-        return (
-            <div className="game">
+        if (this.state.isPlayerTurn === true){
+            return (
+                <div className="game">
 
-                <ComputerField computerField={this.state.gameData.computerField.squares}/>
-                <PlayerField playerField={this.state.gameData.playerField.squares}
-                             shipsOnField={this.state.gameData.playerField.shipsOnField}
-                />
+                    <ComputerField computerField={this.state.gameData.computerField.squares}
+                                   setIsPlayerTurn={this.setIsPlayerTurn}
+                    />
+                    <PlayerField playerField={this.state.gameData.playerField.squares}
+                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
+                                 setIsPlayerTurn={this.setIsPlayerTurn}
+                    />
 
-            </div>
-        )
-    }
+                </div>
+            )}
+        else{
+
+            return (
+                <div className="game">
+
+                    <ComputerField computerField={this.state.gameData.computerField.squares}
+                                   setIsPlayerTurn={this.setIsPlayerTurn}
+                    />
+                    <PlayerField playerField={this.state.gameData.playerField.squares}
+                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
+                                 setIsPlayerTurn={this.setIsPlayerTurn}
+                    />
+                </div>
+            )
+
+            }
+        }
+
 }
 
 export default Game;

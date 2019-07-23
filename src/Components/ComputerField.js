@@ -37,6 +37,9 @@ class ComputerField extends React.Component {
         if (square.shipNumber !== -1) {
             this.shotDeck(square.shipNumber);
         }
+        else{
+            this.props.setIsPlayerTurn(false);
+        }
 
         this.updateComputerField(new Array(square));
     }
