@@ -35,7 +35,7 @@ class ComputerField extends React.Component {
         square.isClicked = true;
 
         if (square.shipNumber !== -1) {
-            this.shotDeck(square.shipNumber);
+            this.shootDeck(square.shipNumber);
         }
         else{
             this.props.setIsPlayerTurn(false);
@@ -74,18 +74,7 @@ class ComputerField extends React.Component {
             });
     }
 
-    shotDeck(shipId) {
 
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
-
-        gameData.computerFleet.ships[shipId].hitsNumber = gameData.computerFleet.ships[shipId].hitsNumber + 1;
-
-        if (gameData.computerFleet.ships[shipId].hitsNumber === gameData.computerFleet.ships[shipId].decks.length) {
-            gameData.computerFleet.ships[shipId].isAlive = false;
-        }
-
-        sessionStorage.setItem('gameData', JSON.stringify(gameData));
-    }
 
     render() {
         return (

@@ -3,6 +3,8 @@ import Square from "./Square";
 import "../css/index.css"
 import "../css/playerField.css"
 import {SquarePainterManager} from "../SquarePainterManager.js"
+import {ShootingAI} from "../ShootingAI";
+import {GameDataManager} from "../GameDataManager";
 import "../test.js"
 
 class PlayerField extends React.Component {
@@ -66,22 +68,23 @@ class PlayerField extends React.Component {
 
         if (this.state.shipsOnField !== 10) {
 
-            let manager = new SquarePainterManager();
-            let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+            let squarePainterManager = new SquarePainterManager();
+            let gameDataManager = new GameDataManager();
+            let gameData = gameDataManager.getGameData();
 
-            var pointsToPlant = manager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+            var pointsToPlant = squarePainterManager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-            if (manager.areSquareNumbersValid(pointsToPlant, this.state.direction, this.state.playerField)) {
+            if (squarePainterManager.areSquareNumbersValid(pointsToPlant, this.state.direction, this.state.playerField)) {
 
                 this.setHasShip(pointsToPlant, gameData.playerFleet.ships[this.state.shipsOnField].id);
-                this.setShipDeckPosition(pointsToPlant, this.state.shipsOnField);
+                gameDataManager.setShipDeckPosition(pointsToPlant, this.state.shipsOnField);
 
                 this.setState(
                     () => {
                         return {
                             shipsOnField: this.state.shipsOnField + 1,
                         };
-                    }, () => this.saveValueShipsOnField(this.state.shipsOnField));
+                    }, () => gameDataManager.setValueShipsOnField(this.state.shipsOnField));
             }
         }
     }
@@ -90,11 +93,11 @@ class PlayerField extends React.Component {
 
         if (this.state.shipsOnField !== 10) {
 
-            let manager = new SquarePainterManager();
+            let squarePainterManager = new SquarePainterManager();
 
-            var squareNumbers = manager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
+            var squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction, this.state.shipsOnField, id);
 
-            if (manager.areSquareNumbersValid(squareNumbers, this.state.direction, this.state.playerField)) {
+            if (squarePainterManager.areSquareNumbersValid(squareNumbers, this.state.direction, this.state.playerField)) {
 
                 this.paintSquares(squareNumbers);
             }
@@ -139,7 +142,34 @@ class PlayerField extends React.Component {
 
     makeComputerShot() {
 
-        
+        let shootingAI = new ShootingAI();
+        let gameDataManager = new GameDataManager();
+        let squareNumber = shootingAI.getSquareNumberToShoot();
+
+        this.shootFieldSquare(gameDataManager.getGameData(), squareNumber);
+        gameDataManager.shootDeck(gameDataManager.getGameData());
+
+        if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1){
+
+            let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+
+            if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive){
+                shootingAI.resetMemory();
+            }
+            else{
+                ShootingAI._firstShotSquareNumber = squareNumber;
+            }
+        }
+        else{
+            this.props.setIsPlayerTurn(true);
+        }
+
+    }
+
+    shootFieldSquare(gameData, squareNumber){
+
+        gameData.playerField.squares[squareNumber].isClicked = true;
+        this.updatePlayerField(new Array(gameData.playerField.squares[squareNumber]));
 
     }
 
@@ -168,14 +198,6 @@ class PlayerField extends React.Component {
                     playerField: field,
                 };
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
-    }
-
-    saveValueShipsOnField(shipsOnField){
-
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
-
-        gameData.playerField.shipsOnField = shipsOnField;
-        sessionStorage.setItem('gameData', JSON.stringify(gameData));
     }
 
     setHasShip(squareNumbers, shipNumber) {
@@ -209,18 +231,6 @@ class PlayerField extends React.Component {
                 sessionStorage.setItem("gameData", JSON.stringify(gameData));
             });
 
-    }
-
-    setShipDeckPosition(pointsToPlant, shipNumber){
-
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
-
-        for (let i = 0; i < pointsToPlant.length; i++){
-
-            gameData.playerFleet.ships[shipNumber].decks[i].position = pointsToPlant[i];
-        }
-
-        sessionStorage.setItem('gameData', JSON.stringify(gameData));
     }
 
     render() {
