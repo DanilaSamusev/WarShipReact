@@ -2,6 +2,7 @@ import React from 'react';
 import Square from './Square'
 import "../css/computerField.css"
 import "../css/index.css"
+import {GameDataManager} from "../GameDataManager";
 
 class ComputerField extends React.Component {
 
@@ -30,15 +31,19 @@ class ComputerField extends React.Component {
 
     makePlayerShot(id) {
 
+        let gameDataManager = new GameDataManager();
+        let gameData = gameDataManager.getGameData();
+
         let square = this.state.computerField[id];
 
         square.isClicked = true;
 
         if (square.shipNumber !== -1) {
-            this.shootDeck(square.shipNumber);
+            gameData.shootDeck(square.shipNumber, 'computerFleet');
         }
         else{
             this.props.setIsPlayerTurn(false);
+            gameDataManager.setIsPlayerTurn(false);
         }
 
         this.updateComputerField(new Array(square));

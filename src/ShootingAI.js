@@ -106,7 +106,7 @@ export class ShootingAI {
         if (squareNumberValidator.areSquareNumbersValidForBounds([squareNumber]) &&
             !squareNumberValidator.isSquareNumberAlreadyClicked(squareNumber)) {
             if (ShootingAI._shipPosition === Direction.horizontal) {
-                return squareNumberValidator.areSquareNumbersValidForRows(ShootingAI._firstShotSquareNumber, new [squareNumber])
+                return squareNumberValidator.areSquareNumbersValidForRows(ShootingAI._firstShotSquareNumber, [squareNumber])
             }
 
             return true;

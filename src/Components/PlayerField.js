@@ -21,6 +21,7 @@ class PlayerField extends React.Component {
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
+        this.shoot = this.shoot.bind(this);
     }
 
     componentWillMount() {
@@ -142,33 +143,50 @@ class PlayerField extends React.Component {
             }, () => sessionStorage.setItem("playerField", JSON.stringify(field)))
     }
 
+    shoot() {
+
+        let gameDataManager = new GameDataManager();
+
+        if (gameDataManager.getGameData().isPlayerTurn) {
+            return;
+        }
+
+        setTimeout(() => {
+            this.makeComputerShot();
+            this.shoot();
+        }, 1000);
+
+
+    }
+
     makeComputerShot() {
 
+        console.log(1);
         let shootingAI = new ShootingAI();
         let gameDataManager = new GameDataManager();
         let squareNumber;
 
-        if (ShootingAI._firstShotSquareNumber === -1){
+        if (ShootingAI._firstShotSquareNumber === -1) {
 
             squareNumber = shootingAI.getRandomSquareNumber();
             this.shootFieldSquare(squareNumber);
 
-            if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1){
+            if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
                 let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
 
                 gameDataManager.shootDeck(shipNumber, 'playerFleet');
 
-                if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive){
+                if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
                     shootingAI.resetMemory();
-                }
-                else{
+                } else {
                     ShootingAI._firstShotSquareNumber = squareNumber;
                 }
+            } else {
+                gameDataManager.setIsPlayerTurn(true);
             }
-        }
-        else{
-            if (ShootingAI._shipPosition !== -1){
+        } else {
+            if (ShootingAI._shipPosition !== -1) {
 
                 if (ShootingAI._shipPosition === Direction.horizontal) {
                     squareNumber = shootingAI.getHorizontalSquareNumber();
@@ -178,72 +196,68 @@ class PlayerField extends React.Component {
 
                 this.shootFieldSquare(squareNumber);
 
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1){
-
-                    let shipNumber = shootingAI.getGameData().playerField.squares[squareNumber].shipNumber;
-
-                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
-
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive){
-                        shootingAI.resetMemory();
-                    }
-                    else{
-                        ShootingAI._lastShotSquareNumber = squareNumber;
-                    }
-                }
-                else{
-                    ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
-
-                    if (ShootingAI._shipPosition === Direction.horizontal){
-                        if (ShootingAI._nextShotDirection === Direction.left){
-                            ShootingAI._nextShotDirection = Direction.right;
-                        }
-                        else{
-                            ShootingAI._nextShotDirection = Direction.left;
-                        }
-                    }
-                    else{
-                        if (ShootingAI._nextShotDirection === Direction.top){
-                            ShootingAI._nextShotDirection = Direction.bottom;
-                        }
-                        else{
-                            ShootingAI._nextShotDirection = Direction.top;
-                        }
-                    }
-                }
-            }
-            else{
-
-                squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
-
-                this.shootFieldSquare(squareNumber);
-
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1){
+                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
                     let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
 
                     gameDataManager.shootDeck(shipNumber, 'playerFleet');
 
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive){
+                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
                         shootingAI.resetMemory();
+                    } else {
+                        ShootingAI._lastShotSquareNumber = squareNumber;
                     }
-                    else{
+                } else {
+
+                    gameDataManager.setIsPlayerTurn(true);
+                    ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
+
+                    if (ShootingAI._shipPosition === Direction.horizontal) {
+                        if (ShootingAI._nextShotDirection === Direction.left) {
+                            ShootingAI._nextShotDirection = Direction.right;
+                        } else {
+                            ShootingAI._nextShotDirection = Direction.left;
+                        }
+                    } else {
+                        if (ShootingAI._nextShotDirection === Direction.top) {
+                            ShootingAI._nextShotDirection = Direction.bottom;
+                        } else {
+                            ShootingAI._nextShotDirection = Direction.top;
+                        }
+                    }
+                }
+            } else {
+
+                squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
+
+                this.shootFieldSquare(squareNumber);
+
+                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+
+                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+
+                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
+
+                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                        shootingAI.resetMemory();
+                    } else {
                         ShootingAI._lastShotSquareNumber = squareNumber;
 
                         if (ShootingAI._roundShotDirection === Direction.left ||
-                            ShootingAI._roundShotDirection === Direction.right){
+                            ShootingAI._roundShotDirection === Direction.right) {
                             ShootingAI._shipPosition = Direction.horizontal;
-                        }
-                        else{
+                        } else {
                             ShootingAI._shipPosition = Direction.vertical;
                         }
                     }
+                } else {
+                    gameDataManager.setIsPlayerTurn(true);
                 }
             }
         }
     }
 
-    shootFieldSquare(squareNumber){
+    shootFieldSquare(squareNumber) {
 
         let gameDataManager = new GameDataManager();
 
@@ -332,7 +346,7 @@ class PlayerField extends React.Component {
                         )
                     })}
 
-                <button onClick={this.makeComputerShot}>Next</button>
+                <button onClick={this.shoot}>Next</button>
             </div>
         )
     }

@@ -21,6 +21,16 @@ export class GameDataManager{
         this.setGameData(gameData);
     }
 
+    setIsPlayerTurn(isPlayerTurn){
+
+        let gameData = this.getGameData();
+
+        gameData.isPlayerTurn = isPlayerTurn;
+
+        this.setGameData(gameData);
+
+    }
+
     shootDeck(shipId, fleetName) {
 
         let gameData = this.getGameData();
