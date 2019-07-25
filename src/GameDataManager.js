@@ -11,7 +11,7 @@ export class GameDataManager{
 
     setShipDeckPosition(pointsToPlant, shipNumber){
 
-        let gameData = this.setGameData();
+        let gameData = this.getGameData();
 
         for (let i = 0; i < pointsToPlant.length; i++){
 
@@ -21,17 +21,35 @@ export class GameDataManager{
         this.setGameData(gameData);
     }
 
-    shootDeck(shipId) {
+    shootDeck(shipId, fleetName) {
+
+        let gameData = this.getGameData();
+        let fleet;
+
+        if (fleetName === 'playerFleet'){
+
+            fleet = gameData.playerFleet;
+        }
+        else{
+            fleet = gameData.computerFleet;
+        }
+
+        fleet.ships[shipId].hitsNumber = fleet.ships[shipId].hitsNumber + 1;
+
+        if (fleet.ships[shipId].hitsNumber === fleet.ships[shipId].decks.length) {
+            fleet.ships[shipId].isAlive = false;
+        }
+        this.setGameData(gameData);
+    }
+
+    shootSquare(squareNumber){
 
         let gameData = this.getGameData();
 
-        gameData.computerFleet.ships[shipId].hitsNumber = gameData.computerFleet.ships[shipId].hitsNumber + 1;
-
-        if (gameData.computerFleet.ships[shipId].hitsNumber === gameData.computerFleet.ships[shipId].decks.length) {
-            gameData.computerFleet.ships[shipId].isAlive = false;
-        }
+        gameData.playerField.squares[squareNumber].isClicked = true;
 
         this.setGameData(gameData);
+
     }
 
     getGameData(){

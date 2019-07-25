@@ -1,4 +1,4 @@
-import {GameDataManager} from "../GameDataManager";
+import {GameDataManager} from "./GameDataManager";
 
 export class SquareNumberValidator{
 
@@ -8,6 +8,8 @@ export class SquareNumberValidator{
 
             return false;
         }
+
+        console.log(squareNumbers);
 
         if (direction === 0) {
             if (!this.areSquareNumbersValidForRows(squareNumbers[0], squareNumbers)){
@@ -42,7 +44,7 @@ export class SquareNumberValidator{
 
         for (let i = 0; i < squareNumbers.length; i++) {
 
-            if (firstSquareNumber !== Math.trunc(squareNumbers[i] / 10)) {
+            if (Math.trunc(firstSquareNumber / 10) !== Math.trunc(squareNumbers[i] / 10)) {
                 return false;
             }
         }
