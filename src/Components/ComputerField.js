@@ -32,14 +32,15 @@ class ComputerField extends React.Component {
     makePlayerShot(id) {
 
         let gameDataManager = new GameDataManager();
-        let gameData = gameDataManager.getGameData();
 
         let square = this.state.computerField[id];
 
         square.isClicked = true;
 
         if (square.shipNumber !== -1) {
-            gameData.shootDeck(square.shipNumber, 'computerFleet');
+            gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
+
+
         }
         else{
             this.props.setIsPlayerTurn(false);

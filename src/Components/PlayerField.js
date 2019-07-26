@@ -232,6 +232,7 @@ class PlayerField extends React.Component {
 
                 this.shootFieldSquare(squareNumber);
 
+
                 if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
                     let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
