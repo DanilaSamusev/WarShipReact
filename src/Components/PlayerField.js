@@ -152,7 +152,7 @@ class PlayerField extends React.Component {
         }
 
         setTimeout(() => {
-            this.makeComputerShot();
+            this.props.makeComputerShot();
             this.shoot();
         }, 1000);
 

@@ -39,12 +39,11 @@ class ComputerField extends React.Component {
 
         if (square.shipNumber !== -1) {
             gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
-
-
         }
         else{
             this.props.setIsPlayerTurn(false);
             gameDataManager.setIsPlayerTurn(false);
+            this.props.makeComputerShot();
         }
 
         this.updateComputerField(new Array(square));
