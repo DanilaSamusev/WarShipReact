@@ -2,7 +2,7 @@ export class SquarePainterManager{
 
     getSquareNumbersToPaint(direction, shipsOnField, firstSquareNumber) {
 
-        var squareNumbers;
+        let squareNumbers;
 
         if (shipsOnField >= 0 && shipsOnField < 4) {
             squareNumbers = new Array(1);

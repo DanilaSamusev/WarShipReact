@@ -4,7 +4,7 @@ import "../css/computerField.css"
 import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
 
-class ComputerField extends React.Component {
+export default class ComputerField extends React.Component {
 
     constructor(props) {
         super(props);
@@ -29,11 +29,14 @@ class ComputerField extends React.Component {
         }
     }
 
-    makePlayerShot(id) {
+    makePlayerShot(squareNumber) {
 
         let gameDataManager = new GameDataManager();
+        let square = this.state.computerField[squareNumber];
 
-        let square = this.state.computerField[id];
+        if (square.isClicked === true || !gameDataManager.getGameData().isPlayerTurn){
+            return;
+        }
 
         square.isClicked = true;
 
@@ -101,5 +104,3 @@ class ComputerField extends React.Component {
         )
     }
 }
-
-export default ComputerField;

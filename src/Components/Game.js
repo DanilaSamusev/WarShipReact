@@ -66,7 +66,6 @@ class Game extends React.Component {
 
     makeComputerShot() {
 
-        console.log(1);
         let shootingAI = new ShootingAI();
         let gameDataManager = new GameDataManager();
         let squareNumber;
@@ -212,7 +211,7 @@ class Game extends React.Component {
 
     }
 
-    setIsPlayerTurn(state){
+    setIsPlayerTurn(state) {
 
         this.setState(
             () => {
@@ -228,7 +227,7 @@ class Game extends React.Component {
             return null;
         }
 
-        if (this.state.isPlayerTurn === true){
+        if (this.state.isPlayerTurn === true) {
             return (
                 <div className="game">
 
@@ -242,27 +241,27 @@ class Game extends React.Component {
 
                     />
 
-                </div>
-            )}
-        else{
-
-            return (
-                <div className="game">
-
-                    <ComputerField computerField={this.state.gameData.computerField.squares}
-                                   setIsPlayerTurn={this.setIsPlayerTurn}
-                                   makeComputerShot={this.shoot}
-                    />
-                    <PlayerField playerField={this.state.gameData.playerField.squares}
-                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
-                                 setIsPlayerTurn={this.setIsPlayerTurn}
-
-                    />
                 </div>
             )
+        } else {
 
-            }
+            return (
+                <div className="game">
+
+                    <ComputerField computerField={this.state.gameData.computerField.squares}
+                                   setIsPlayerTurn={this.setIsPlayerTurn}
+                                   makeComputerShot={this.shoot}
+                    />
+                    <PlayerField playerField={this.state.gameData.playerField.squares}
+                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
+                                 setIsPlayerTurn={this.setIsPlayerTurn}
+
+                    />
+                    
+                </div>
+            )
         }
+    }
 
 }
 
