@@ -7,6 +7,7 @@ import {ShootingAI} from "../ShootingAI";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import {GameDataManager} from "../GameDataManager";
 import {Direction} from "../Direction";
+import Interface from "./Interface";
 
 class PlayerField extends React.Component {
 
@@ -21,6 +22,7 @@ class PlayerField extends React.Component {
 
         this.updatePlayerField = this.updatePlayerField.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
+        this.resetShips = this.resetShips.bind(this);
         this.shoot = this.shoot.bind(this);
     }
 
@@ -113,9 +115,9 @@ class PlayerField extends React.Component {
 
         const field = this.state.playerField;
 
-        for (var i = 0; i < squareNumbers.length; i++) {
+        for (let i = 0; i < squareNumbers.length; i++) {
 
-            var square = this.state.playerField[squareNumbers[i]];
+            let square = this.state.playerField[squareNumbers[i]];
 
             field[square.id] = {
                 id: square.id,
@@ -293,6 +295,52 @@ class PlayerField extends React.Component {
         this.setField(field);
     }
 
+    resetShips(){
+
+        let gameDataManager = new GameDataManager();
+
+        this.resetShipsOnField();
+        this.resetShipsOnFleet();
+        gameDataManager.setValueShipsOnField(this.state.shipsOnField);
+        this.state.shipsOnField = 0;
+    }
+
+    resetShipsOnField(){
+
+        const field = this.state.playerField;
+
+        for (let i = 0; i < field.length; i++) {
+            let square = field[i];
+
+            field[square.id] = {
+                id: square.id,
+                isClicked: square.isClicked,
+                isChecked: square.isChecked,
+                shipNumber: -1,
+            };
+        }
+
+        this.setField(field);
+    }
+
+    resetShipsOnFleet(){
+
+        let gameDataManager = new GameDataManager();
+        let gameData = gameDataManager.getGameData();
+        let playerShips = gameData.playerFleet.ships;
+
+        for (let i = 0; i < playerShips.length; i++){
+
+            let ship = playerShips[i];
+
+            for (let j = 0; j < ship.decks.length; j++){
+                ship.decks[j].position = -1;
+            }
+        }
+
+        gameDataManager.setGameData(gameData);
+    }
+
     setSquaresHasShip(squareNumbers, shipNumber) {
 
         const field = this.state.playerField;
@@ -347,6 +395,9 @@ class PlayerField extends React.Component {
                             />
                         )
                     })}
+                <Interface shipsOnField={this.state.shipsOnField}
+                           resetShips={this.resetShips}
+                />
             </div>
         )
     }

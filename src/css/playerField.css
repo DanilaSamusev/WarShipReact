@@ -1,8 +1,8 @@
 .playerField{
     display: flex;
     flex-wrap: wrap;
-    height: 42%;
-    width: 32%;
+    height: 40%;
+    width: 25%;
 }
 
 .playerSquare {

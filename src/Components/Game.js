@@ -227,40 +227,21 @@ class Game extends React.Component {
             return null;
         }
 
-        if (this.state.isPlayerTurn === true) {
-            return (
-                <div className="game">
+        return (
+            <div className="game">
 
-                    <ComputerField computerField={this.state.gameData.computerField.squares}
-                                   setIsPlayerTurn={this.setIsPlayerTurn}
-                                   makeComputerShot={this.shoot}
-                    />
-                    <PlayerField playerField={this.state.gameData.playerField.squares}
-                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
-                                 setIsPlayerTurn={this.setIsPlayerTurn}
+                <ComputerField computerField={this.state.gameData.computerField.squares}
+                               setIsPlayerTurn={this.setIsPlayerTurn}
+                               makeComputerShot={this.shoot}
+                />
+                <PlayerField playerField={this.state.gameData.playerField.squares}
+                             shipsOnField={this.state.gameData.playerField.shipsOnField}
+                             setIsPlayerTurn={this.setIsPlayerTurn}
+                />
+            </div>
+        )
 
-                    />
 
-                </div>
-            )
-        } else {
-
-            return (
-                <div className="game">
-
-                    <ComputerField computerField={this.state.gameData.computerField.squares}
-                                   setIsPlayerTurn={this.setIsPlayerTurn}
-                                   makeComputerShot={this.shoot}
-                    />
-                    <PlayerField playerField={this.state.gameData.playerField.squares}
-                                 shipsOnField={this.state.gameData.playerField.shipsOnField}
-                                 setIsPlayerTurn={this.setIsPlayerTurn}
-
-                    />
-                    
-                </div>
-            )
-        }
     }
 
 }

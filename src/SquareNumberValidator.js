@@ -9,8 +9,6 @@ export class SquareNumberValidator{
             return false;
         }
 
-        console.log(squareNumbers);
-
         if (direction === 0) {
             if (!this.areSquareNumbersValidForRows(squareNumbers[0], squareNumbers)){
                 return false;
