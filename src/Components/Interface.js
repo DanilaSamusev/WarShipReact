@@ -1,6 +1,7 @@
 import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
+import {GameDataManager} from "../GameDataManager";
 
 export default class Interface extends React.Component {
 
@@ -14,11 +15,18 @@ export default class Interface extends React.Component {
 
     setGameState(gameState) {
 
+        let gameDataManager = new GameDataManager();
+
         this.setState(
             () => {
                 return {
                     gameState: gameState,
                 };
+            }, () => {
+                let gameData = gameDataManager.getGameData();
+
+                gameData.gameState = this.state.gameState;
+                gameDataManager.setGameData(gameData);
             });
     }
 

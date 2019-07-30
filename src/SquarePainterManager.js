@@ -34,4 +34,8 @@ export class SquarePainterManager{
 
         return squareNumbers;
     }
+
+    getNearestSquareNumbers(){
+
+    }
 }

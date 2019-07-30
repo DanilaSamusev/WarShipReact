@@ -34,7 +34,8 @@ export default class ComputerField extends React.Component {
         let gameDataManager = new GameDataManager();
         let square = this.state.computerField[squareNumber];
 
-        if (square.isClicked === true || !gameDataManager.getGameData().isPlayerTurn){
+        if (square.isClicked === true || !gameDataManager.getGameData().isPlayerTurn ||
+            gameDataManager.getGameData().gameState !== 'battle'){
             return;
         }
 
@@ -42,6 +43,13 @@ export default class ComputerField extends React.Component {
 
         if (square.shipNumber !== -1) {
             gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
+
+            let gameData = gameDataManager.getGameData();
+            let ship = gameData.playerFleet.ships[gameData.playerField.squares[squareNumber]];
+
+            if (!ship.shipNumber.isAlive){
+                this.paintAreaAroundShip(ship)
+            }
         }
         else{
             this.props.setIsPlayerTurn(false);
@@ -50,6 +58,18 @@ export default class ComputerField extends React.Component {
         }
 
         this.updateComputerField(new Array(square));
+    }
+
+    paintAreaAroundShip(ship){
+
+        for (let i = 0; i < ship.decks.length; i++){
+
+            let squareNumber = ship.decks[i].position;
+
+
+
+        }
+
     }
 
     updateComputerField(squares) {
@@ -70,19 +90,25 @@ export default class ComputerField extends React.Component {
             };
         }
 
+        this.setField(field);
+    }
+
+    setField(field){
+
+        let gameDataManager = new GameDataManager();
+
         this.setState(
             () => {
                 return {
                     computerField: field,
                 };
             }, () => {
-                let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+                let gameData = gameDataManager.getGameData();
+
                 gameData.computerField.squares = this.state.computerField;
-                sessionStorage.setItem('gameData', JSON.stringify(gameData))
+                gameDataManager.setGameData(gameData);
             });
     }
-
-
 
     render() {
         return (
@@ -93,9 +119,9 @@ export default class ComputerField extends React.Component {
                             <Square
                                 id={square.id}
                                 key={square.id}
-                                className="computerSquare"
-                                shipNumber={square.shipNumber}
                                 isClicked={square.isClicked}
+                                shipNumber={square.shipNumber}
+                                className="computerSquare"
                                 onClick={() => this.makePlayerShot(square.id)}
                             />
                         )

@@ -62,6 +62,23 @@ export class GameDataManager{
 
     }
 
+    resetShipsOnFleet() {
+
+        let gameData = this.getGameData();
+        let playerShips = gameData.playerFleet.ships;
+
+        for (let i = 0; i < playerShips.length; i++) {
+
+            let ship = playerShips[i];
+
+            for (let j = 0; j < ship.decks.length; j++) {
+                ship.decks[j].position = -1;
+            }
+        }
+
+        this.setGameData(gameData);
+    }
+
     getGameData(){
 
         return JSON.parse(sessionStorage.getItem('gameData'));
