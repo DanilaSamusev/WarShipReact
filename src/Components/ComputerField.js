@@ -3,6 +3,7 @@ import Square from './Square'
 import "../css/computerField.css"
 import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
+import {SquarePainterManager} from "../SquarePainterManager.js"
 
 export default class ComputerField extends React.Component {
 
@@ -35,7 +36,7 @@ export default class ComputerField extends React.Component {
         let square = this.state.computerField[squareNumber];
 
         if (square.isClicked === true || !gameDataManager.getGameData().isPlayerTurn ||
-            gameDataManager.getGameData().gameState !== 'battle'){
+            gameDataManager.getGameData().gameState !== 'battle') {
             return;
         }
 
@@ -45,13 +46,14 @@ export default class ComputerField extends React.Component {
             gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
 
             let gameData = gameDataManager.getGameData();
-            let ship = gameData.playerFleet.ships[gameData.playerField.squares[squareNumber]];
+            let ship = gameData.computerFleet.ships[square.shipNumber];
 
-            if (!ship.shipNumber.isAlive){
+            console.log(ship);
+
+            if (!ship.isAlive) {
                 this.paintAreaAroundShip(ship)
             }
-        }
-        else{
+        } else {
             this.props.setIsPlayerTurn(false);
             gameDataManager.setIsPlayerTurn(false);
             this.props.makeComputerShot();
@@ -60,16 +62,27 @@ export default class ComputerField extends React.Component {
         this.updateComputerField(new Array(square));
     }
 
-    paintAreaAroundShip(ship){
+    paintAreaAroundShip(ship) {
 
-        for (let i = 0; i < ship.decks.length; i++){
+        let squarePainterManager = new SquarePainterManager();
+        let field = this.state.computerField;
+
+        for (let i = 0; i < ship.decks.length; i++) {
 
             let squareNumber = ship.decks[i].position;
+            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
 
+            for (let i = 0; i < nearestSquareNumber.length; i++) {
 
+                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
 
+                    field[nearestSquareNumber[i]].isClicked = true;
+                }
+
+            }
         }
 
+        this.setField(field);
     }
 
     updateComputerField(squares) {
@@ -93,7 +106,7 @@ export default class ComputerField extends React.Component {
         this.setField(field);
     }
 
-    setField(field){
+    setField(field) {
 
         let gameDataManager = new GameDataManager();
 

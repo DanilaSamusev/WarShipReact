@@ -1,4 +1,5 @@
 import {GameDataManager} from "./GameDataManager";
+import {SquarePainterManager} from "./SquarePainterManager.js"
 
 export class SquareNumberValidator{
 
@@ -17,7 +18,9 @@ export class SquareNumberValidator{
 
         for (let i = 0; i < squareNumbers.length; i++) {
 
-            if (!this.isSquareNumberValidForShipNeighbour(squareNumbers[i], playerField)) {
+            let squarePainterManager = new SquarePainterManager();
+
+            if (!this.isSquareNumberValidForShipNeighbour(squarePainterManager.getNearestSquareNumbers(squareNumbers[i]), playerField)) {
                 return false;
             }
         }
@@ -57,30 +60,7 @@ export class SquareNumberValidator{
         return gameDataManager.getGameData().playerField.squares[squareNumber].isClicked;
     }
 
-    isSquareNumberValidForShipNeighbour(squareNumber, playerField) {
-
-        var nearestSquareNumbers = [
-            squareNumber - 11, squareNumber - 10, squareNumber - 9,
-            squareNumber - 1, squareNumber, squareNumber + 1,
-            squareNumber + 9, squareNumber + 10, squareNumber + 11
-        ];
-
-        if (squareNumber % 10 === 9) {
-            nearestSquareNumbers = [
-                squareNumber - 11, squareNumber - 10,
-                squareNumber - 1, squareNumber,
-                squareNumber + 9, squareNumber + 10
-            ];
-        }
-
-        if (squareNumber % 10 === 0) {
-            nearestSquareNumbers = [
-                squareNumber - 10, squareNumber - 9,
-                squareNumber + 1, squareNumber,
-                squareNumber + 10, squareNumber + 11
-            ];
-        }
-
+    isSquareNumberValidForShipNeighbour(nearestSquareNumbers, playerField) {
 
         for (var i = 0; i < nearestSquareNumbers.length; i++) {
 

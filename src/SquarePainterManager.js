@@ -35,7 +35,32 @@ export class SquarePainterManager{
         return squareNumbers;
     }
 
-    getNearestSquareNumbers(){
+    getNearestSquareNumbers(squareNumber){
 
+        let nearestSquareNumbers;
+
+        nearestSquareNumbers = [
+            squareNumber - 11, squareNumber - 10, squareNumber - 9,
+            squareNumber - 1, squareNumber, squareNumber + 1,
+            squareNumber + 9, squareNumber + 10, squareNumber + 11
+        ];
+
+        if (squareNumber % 10 === 9) {
+            nearestSquareNumbers = [
+                squareNumber - 11, squareNumber - 10,
+                squareNumber - 1, squareNumber,
+                squareNumber + 9, squareNumber + 10
+            ];
+        }
+
+        if (squareNumber % 10 === 0) {
+            nearestSquareNumbers = [
+                squareNumber - 10, squareNumber - 9,
+                squareNumber + 1, squareNumber,
+                squareNumber + 10, squareNumber + 11
+            ];
+        }
+
+        return nearestSquareNumbers;
     }
 }
