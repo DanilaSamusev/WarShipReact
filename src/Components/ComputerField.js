@@ -47,8 +47,6 @@ export default class ComputerField extends React.Component {
             let gameData = gameDataManager.getGameData();
             let ship = gameData.computerFleet.ships[square.shipNumber];
 
-            console.log(ship);
-
             if (!ship.isAlive) {
                 this.props.paintAreaAroundShip(ship)
             }

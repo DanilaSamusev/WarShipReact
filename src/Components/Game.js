@@ -72,7 +72,7 @@ class Game extends React.Component {
         if (ShootingAI._firstShotSquareNumber === -1) {
 
             squareNumber = shootingAI.getRandomSquareNumber();
-            this.shootFieldSquare(squareNumber);
+            this.shootSquare(squareNumber);
 
             if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
@@ -97,7 +97,7 @@ class Game extends React.Component {
                     squareNumber = shootingAI.getVerticalSquareNumber();
                 }
 
-                this.shootFieldSquare(squareNumber);
+                this.shootSquare(squareNumber);
 
                 if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
@@ -133,8 +133,7 @@ class Game extends React.Component {
 
                 squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
 
-                this.shootFieldSquare(squareNumber);
-
+                this.shootSquare(squareNumber);
 
                 if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
 
@@ -161,7 +160,7 @@ class Game extends React.Component {
         }
     }
 
-    shootFieldSquare(squareNumber) {
+    shootSquare(squareNumber) {
 
         let gameDataManager = new GameDataManager();
 
@@ -172,7 +171,6 @@ class Game extends React.Component {
     paintAreaAroundShip(ship) {
 
         let squarePainterManager = new SquarePainterManager();
-        let gameDataManager = new GameDataManager();
         let field = this.state.gameData.computerField.squares;
 
         for (let i = 0; i < ship.decks.length; i++) {
@@ -188,11 +186,6 @@ class Game extends React.Component {
                 }
             }
         }
-
-        let gameData = gameDataManager.getGameData();
-        gameData.computerField.squares = field;
-
-        this.setGameData(gameData);
     }
 
     updatePlayerField(squares) {
@@ -200,6 +193,8 @@ class Game extends React.Component {
         if (squares === null) {
             return;
         }
+
+        console.log(squares);
 
         const field = this.state.gameData.playerField.squares;
 
@@ -217,15 +212,13 @@ class Game extends React.Component {
         let gameData = this.state.gameData;
         gameData.playerField.squares = field;
 
-        this.setState(
-            () => {
-                return {
-                    gameData: gameData,
-                };
-            })
+        this.setGameData(gameData)
     }
 
     setGameData(gameData) {
+
+        console.log(gameData);
+        console.log(this.state.gameData);
 
         this.setState(
             () => {
