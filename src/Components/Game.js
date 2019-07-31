@@ -46,9 +46,7 @@ class Game extends React.Component {
         } else {
             this.setGameData(gameData);
         }
-
     }
-
 
     shoot() {
 

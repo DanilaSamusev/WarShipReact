@@ -3,10 +3,8 @@ import Square from "./Square";
 import "../css/index.css"
 import "../css/playerField.css"
 import {SquarePainterManager} from "../SquarePainterManager.js"
-import {ShootingAI} from "../ShootingAI";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import {GameDataManager} from "../GameDataManager";
-import {Direction} from "../Direction";
 import Interface from "./Interface";
 
 class PlayerField extends React.Component {
@@ -22,7 +20,6 @@ class PlayerField extends React.Component {
 
         this.shoot = this.shoot.bind(this);
         this.resetShips = this.resetShips.bind(this);
-        this.makeComputerShot = this.makeComputerShot.bind(this);
         this.updatePlayerField = this.updatePlayerField.bind(this);
     }
 
@@ -146,113 +143,6 @@ class PlayerField extends React.Component {
             this.props.makeComputerShot();
             this.shoot();
         }, 1000);
-    }
-
-    makeComputerShot() {
-
-        let shootingAI = new ShootingAI();
-        let gameDataManager = new GameDataManager();
-        let squareNumber;
-
-        if (ShootingAI._firstShotSquareNumber === -1) {
-
-            squareNumber = shootingAI.getRandomSquareNumber();
-            this.shootFieldSquare(squareNumber);
-
-            if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
-
-                let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
-
-                gameDataManager.shootDeck(shipNumber, 'playerFleet');
-
-                if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                    shootingAI.resetMemory();
-                } else {
-                    ShootingAI._firstShotSquareNumber = squareNumber;
-                }
-            } else {
-                gameDataManager.setIsPlayerTurn(true);
-            }
-        } else {
-            if (ShootingAI._shipPosition !== -1) {
-
-                if (ShootingAI._shipPosition === Direction.horizontal) {
-                    squareNumber = shootingAI.getHorizontalSquareNumber();
-                } else {
-                    squareNumber = shootingAI.getVerticalSquareNumber();
-                }
-
-                this.shootFieldSquare(squareNumber);
-
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
-
-                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
-
-                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
-
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                        shootingAI.resetMemory();
-                    } else {
-                        ShootingAI._lastShotSquareNumber = squareNumber;
-                    }
-                } else {
-
-                    gameDataManager.setIsPlayerTurn(true);
-                    ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
-
-                    if (ShootingAI._shipPosition === Direction.horizontal) {
-                        if (ShootingAI._nextShotDirection === Direction.left) {
-                            ShootingAI._nextShotDirection = Direction.right;
-                        } else {
-                            ShootingAI._nextShotDirection = Direction.left;
-                        }
-                    } else {
-                        if (ShootingAI._nextShotDirection === Direction.top) {
-                            ShootingAI._nextShotDirection = Direction.bottom;
-                        } else {
-                            ShootingAI._nextShotDirection = Direction.top;
-                        }
-                    }
-                }
-            } else {
-
-                squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
-
-                this.shootFieldSquare(squareNumber);
-
-
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
-
-                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
-
-                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
-
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                        shootingAI.resetMemory();
-                    } else {
-                        ShootingAI._lastShotSquareNumber = squareNumber;
-
-                        if (ShootingAI._roundShotDirection === Direction.left ||
-                            ShootingAI._roundShotDirection === Direction.right) {
-                            ShootingAI._shipPosition = Direction.horizontal;
-                        } else {
-                            ShootingAI._shipPosition = Direction.vertical;
-                        }
-                    }
-                } else {
-                    gameDataManager.setIsPlayerTurn(true);
-                }
-            }
-        }
-    }
-
-    shootFieldSquare(squareNumber) {
-
-        let gameDataManager = new GameDataManager();
-
-        gameDataManager.shootSquare(squareNumber);
-        this.updatePlayerField(new Array(gameDataManager.getGameData().playerField.squares[squareNumber]));
-
     }
 
     updatePlayerField(squares) {
