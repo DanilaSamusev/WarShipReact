@@ -1,13 +1,13 @@
 import React from 'react';
-import "../css/index.css"
 import "../css/game.css"
+import "../css/index.css"
 import "../css/playerPanel.css"
-
-import ComputerField from "../Components/ComputerField";
-import PlayerField from "./PlayerField";
+import {Direction} from "../Direction";
 import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
-import {Direction} from "../Direction";
+import {SquarePainterManager} from "../SquarePainterManager";
+import PlayerField from "./PlayerField";
+import ComputerField from "../Components/ComputerField";
 
 class Game extends React.Component {
 
@@ -18,9 +18,10 @@ class Game extends React.Component {
             gameData: null,
         };
 
+        this.shoot = this.shoot.bind(this);
         this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
-        this.shoot = this.shoot.bind(this);
+        this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
     }
 
     componentDidMount() {
@@ -168,6 +169,32 @@ class Game extends React.Component {
         this.updatePlayerField(new Array(gameDataManager.getGameData().playerField.squares[squareNumber]));
     }
 
+    paintAreaAroundShip(ship) {
+
+        let squarePainterManager = new SquarePainterManager();
+        let gameDataManager = new GameDataManager();
+        let field = this.state.gameData.computerField.squares;
+
+        for (let i = 0; i < ship.decks.length; i++) {
+
+            let squareNumber = ship.decks[i].position;
+            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
+
+            for (let i = 0; i < nearestSquareNumber.length; i++) {
+
+                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
+
+                    field[nearestSquareNumber[i]].isClicked = true;
+                }
+            }
+        }
+
+        let gameData = gameDataManager.getGameData();
+        gameData.computerField.squares = field;
+
+        this.setGameData(gameData);
+    }
+
     updatePlayerField(squares) {
 
         if (squares === null) {
@@ -206,7 +233,6 @@ class Game extends React.Component {
                     gameData: gameData,
                 };
             });
-
     }
 
     setIsPlayerTurn(state) {
@@ -231,17 +257,16 @@ class Game extends React.Component {
                 <ComputerField computerField={this.state.gameData.computerField.squares}
                                setIsPlayerTurn={this.setIsPlayerTurn}
                                makeComputerShot={this.shoot}
+                               paintAreaAroundShip={this.paintAreaAroundShip}
                 />
                 <PlayerField playerField={this.state.gameData.playerField.squares}
                              shipsOnField={this.state.gameData.playerField.shipsOnField}
                              setIsPlayerTurn={this.setIsPlayerTurn}
+
                 />
             </div>
         )
-
-
     }
-
 }
 
 export default Game;

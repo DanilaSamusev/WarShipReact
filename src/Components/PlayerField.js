@@ -1,10 +1,10 @@
 import React from 'react';
-import Square from "./Square";
 import "../css/index.css"
 import "../css/playerField.css"
-import {SquarePainterManager} from "../SquarePainterManager.js"
-import {SquareNumberValidator} from "../SquareNumberValidator";
 import {GameDataManager} from "../GameDataManager";
+import {SquareNumberValidator} from "../SquareNumberValidator";
+import {SquarePainterManager} from "../SquarePainterManager.js"
+import Square from "./Square";
 import Interface from "./Interface";
 
 class PlayerField extends React.Component {

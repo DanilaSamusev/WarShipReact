@@ -3,7 +3,6 @@ import Square from './Square'
 import "../css/computerField.css"
 import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
-import {SquarePainterManager} from "../SquarePainterManager.js"
 
 export default class ComputerField extends React.Component {
 
@@ -51,7 +50,7 @@ export default class ComputerField extends React.Component {
             console.log(ship);
 
             if (!ship.isAlive) {
-                this.paintAreaAroundShip(ship)
+                this.props.paintAreaAroundShip(ship)
             }
         } else {
             this.props.setIsPlayerTurn(false);
@@ -60,29 +59,6 @@ export default class ComputerField extends React.Component {
         }
 
         this.updateComputerField(new Array(square));
-    }
-
-    paintAreaAroundShip(ship) {
-
-        let squarePainterManager = new SquarePainterManager();
-        let field = this.state.computerField;
-
-        for (let i = 0; i < ship.decks.length; i++) {
-
-            let squareNumber = ship.decks[i].position;
-            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
-
-            for (let i = 0; i < nearestSquareNumber.length; i++) {
-
-                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
-
-                    field[nearestSquareNumber[i]].isClicked = true;
-                }
-
-            }
-        }
-
-        this.setField(field);
     }
 
     updateComputerField(squares) {
