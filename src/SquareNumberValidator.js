@@ -1,18 +1,25 @@
 import {GameDataManager} from "./GameDataManager";
 import {SquareNumberManager} from "./SquareNumberManager.js"
+import {Direction} from "./Direction";
 
-export class SquareNumberValidator{
+export class SquareNumberValidator {
 
     areSquareNumbersValid(squareNumbers, direction, playerField) {
 
-        if (!this.areSquareNumbersValidForBounds(squareNumbers, direction)) {
+        for (let i = 0; i < squareNumbers.length; i++) {
 
-            return false;
+            if (!this.isSquareNumberValidForBounds(squareNumbers[i])) {
+                return false;
+            }
         }
 
-        if (direction === 0) {
-            if (!this.areSquareNumbersValidForRow(squareNumbers[0], squareNumbers)){
-                return false;
+        if (direction === Direction.horizontal) {
+
+            for (let i = 0; i < squareNumbers.length; i++) {
+
+                if (!this.areSquareNumbersInSimilarRow(squareNumbers[0], squareNumbers[i])) {
+                    return false;
+                }
             }
         }
 
@@ -28,32 +35,20 @@ export class SquareNumberValidator{
         return true;
     }
 
-    areSquareNumbersValidForBounds(squareNumbers) {
+    areSquareNumbersInSimilarRow(firstSquareNumber, squareNumber) {
 
-        for (let i = 0; i < squareNumbers.length; i++) {
+        return Math.trunc(firstSquareNumber / 10) === Math.trunc(squareNumber / 10);
 
-            if (squareNumbers[i] < 0 ||
-                squareNumbers[i] > 99) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
-    areSquareNumbersValidForRow(firstSquareNumber, squareNumbers){
+    isSquareNumberValidForBounds(squareNumber) {
 
-        for (let i = 0; i < squareNumbers.length; i++) {
+        return (squareNumber >= 0 &&
+            squareNumber <= 99);
 
-            if (Math.trunc(firstSquareNumber / 10) !== Math.trunc(squareNumbers[i] / 10)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
-    isSquareNumberAlreadyClicked(squareNumber){
+    isSquareNumberAlreadyClicked(squareNumber) {
 
         let gameDataManager = new GameDataManager();
 
@@ -64,8 +59,7 @@ export class SquareNumberValidator{
 
         for (let i = 0; i < nearestSquareNumbers.length; i++) {
 
-            if (nearestSquareNumbers[i] >= 0 &&
-                nearestSquareNumbers[i] <= 99) {
+            if (this.isSquareNumberValidForBounds(nearestSquareNumbers[i])) {
 
                 if (playerField[nearestSquareNumbers[i]].shipNumber !== -1) {
 
