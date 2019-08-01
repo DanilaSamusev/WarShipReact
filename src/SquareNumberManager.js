@@ -1,3 +1,5 @@
+import {Direction} from "./Direction";
+
 export class SquareNumberManager{
 
     getSquareNumbersToPaint(direction, shipsOnField, firstSquareNumber) {
@@ -22,7 +24,7 @@ export class SquareNumberManager{
 
         squareNumbers[0] = firstSquareNumber;
 
-        if (direction === 0) {
+        if (direction === Direction.horizontal) {
             for (let i = 1; i < squareNumbers.length; i++) {
                 squareNumbers[i] = squareNumbers[i - 1] + 1;
             }

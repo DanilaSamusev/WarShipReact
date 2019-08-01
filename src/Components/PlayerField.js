@@ -70,9 +70,9 @@ class PlayerField extends React.Component {
         if (this.state.shipsOnField < 10) {
 
             let gameDataManager = new GameDataManager();
-            let gameData = gameDataManager.getGameData();
             let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
+            let gameData = gameDataManager.getGameData();
 
             let pointsToPlantShip = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
                 this.state.shipsOnField, squareNumber);

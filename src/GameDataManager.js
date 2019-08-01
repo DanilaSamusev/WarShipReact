@@ -31,17 +31,17 @@ export class GameDataManager{
 
     }
 
-    shootDeck(shipId, fleetName) {
+    shootDeck(shipId) {
 
         let gameData = this.getGameData();
         let fleet;
 
-        if (fleetName === 'playerFleet'){
+        if (gameData.isPlayerTurn){
 
-            fleet = gameData.playerFleet;
+            fleet = gameData.computerFleet;
         }
         else{
-            fleet = gameData.computerFleet;
+            fleet = gameData.playerFleet;
         }
 
         fleet.ships[shipId].hitsNumber = fleet.ships[shipId].hitsNumber + 1;
@@ -49,6 +49,7 @@ export class GameDataManager{
         if (fleet.ships[shipId].hitsNumber === fleet.ships[shipId].decks.length) {
             fleet.ships[shipId].isAlive = false;
         }
+
         this.setGameData(gameData);
     }
 

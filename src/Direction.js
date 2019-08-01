@@ -1,8 +1,8 @@
 export class Direction{
-    static top = 0;
-    static right = 1;
-    static bottom = 2;
-    static left = 3;
-    static vertical = 4;
-    static horizontal = 5;
+    static horizontal = 0;
+    static vertical = 1;
+    static top = 2;
+    static right = 3;
+    static bottom = 4;
+    static left = 5;
 }

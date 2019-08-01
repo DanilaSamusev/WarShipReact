@@ -103,10 +103,10 @@ export class ShootingAI {
 
         let squareNumberValidator = new SquareNumberValidator();
 
-        if (squareNumberValidator.areSquareNumbersValidForBounds([squareNumber]) &&
+        if (squareNumberValidator.isSquareNumberValidForBounds(squareNumber) &&
             !squareNumberValidator.isSquareNumberAlreadyClicked(squareNumber)) {
             if (ShootingAI._shipPosition === Direction.horizontal) {
-                return squareNumberValidator.areSquareNumbersValidForRow(ShootingAI._firstShotSquareNumber, [squareNumber])
+                return squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, squareNumber)
             }
 
             return true;
