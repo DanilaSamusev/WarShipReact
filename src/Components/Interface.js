@@ -13,6 +13,19 @@ export default class Interface extends React.Component {
         };
     }
 
+    componentWillMount() {
+
+        let gameDataManager = new GameDataManager();
+
+            this.setState(
+                () => {
+                    return {
+                        gameState: gameDataManager.getGameData().gameState,
+                    };
+                });
+
+    }
+
     setGameState(gameState) {
 
         let gameDataManager = new GameDataManager();

@@ -1,8 +1,8 @@
 import React from 'react';
-import Square from './Square'
 import "../css/computerField.css"
 import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
+import Square from './Square'
 
 export default class ComputerField extends React.Component {
 
@@ -10,38 +10,40 @@ export default class ComputerField extends React.Component {
         super(props);
 
         this.state = {
-            computerField: [],
+            squares: [],
         };
 
+        this.makeShot = this.makeShot.bind(this);
         this.updateComputerField = this.updateComputerField.bind(this);
-        this.makePlayerShot = this.makePlayerShot.bind(this);
     }
 
     componentWillMount() {
 
-        if (this.props.computerField !== null) {
+        if (this.props.squares !== null) {
             this.setState(
                 () => {
                     return {
-                        computerField: this.props.computerField,
+                        squares: this.props.squares,
                     };
                 });
         }
     }
 
-    makePlayerShot(squareNumber) {
+    makeShot(squareId) {
 
         let gameDataManager = new GameDataManager();
-        let square = this.state.computerField[squareNumber];
+        let square = this.state.squares[squareId];
+        let gameData = gameDataManager.getGameData();
 
-        if (square.isClicked === true || !gameDataManager.getGameData().isPlayerTurn ||
-            gameDataManager.getGameData().gameState !== 'battle') {
+        if (square.isClicked === true || !gameData.isPlayerTurn ||
+            gameData.gameState !== 'battle') {
             return;
         }
 
         square.isClicked = true;
 
         if (square.shipNumber !== -1) {
+
             gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
 
             let gameData = gameDataManager.getGameData();
@@ -56,6 +58,7 @@ export default class ComputerField extends React.Component {
             this.props.makeComputerShot();
         }
 
+
         this.updateComputerField(new Array(square));
     }
 
@@ -65,7 +68,7 @@ export default class ComputerField extends React.Component {
             return;
         }
 
-        const field = this.state.computerField;
+        const field = this.state.squares;
 
         for (var i = 0; i < squares.length; i++) {
             var square = squares[i];
@@ -87,12 +90,12 @@ export default class ComputerField extends React.Component {
         this.setState(
             () => {
                 return {
-                    computerField: field,
+                    squares: field,
                 };
             }, () => {
                 let gameData = gameDataManager.getGameData();
 
-                gameData.computerField.squares = this.state.computerField;
+                gameData.computerField.squares = this.state.squares;
                 gameDataManager.setGameData(gameData);
             });
     }
@@ -101,7 +104,7 @@ export default class ComputerField extends React.Component {
         return (
             <div className="computerField">
                 {
-                    this.state.computerField.map((square) => {
+                    this.state.squares.map((square) => {
                         return (
                             <Square
                                 id={square.id}
@@ -109,7 +112,7 @@ export default class ComputerField extends React.Component {
                                 isClicked={square.isClicked}
                                 shipNumber={square.shipNumber}
                                 className="computerSquare"
-                                onClick={() => this.makePlayerShot(square.id)}
+                                onClick={() => this.makeShot(square.id)}
                             />
                         )
                     })}
