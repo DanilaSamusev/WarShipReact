@@ -3,7 +3,7 @@ import "../css/index.css"
 import "../css/playerField.css"
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
-import {SquarePainterManager} from "../SquarePainterManager.js"
+import {SquareNumberManager} from "../SquareNumberManager.js"
 import Square from "./Square";
 import Interface from "./Interface";
 
@@ -71,7 +71,7 @@ class PlayerField extends React.Component {
 
             let gameDataManager = new GameDataManager();
             let gameData = gameDataManager.getGameData();
-            let squarePainterManager = new SquarePainterManager();
+            let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
 
             let pointsToPlantShip = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
@@ -97,7 +97,7 @@ class PlayerField extends React.Component {
 
         if (this.state.shipsOnField < 10) {
 
-            let squarePainterManager = new SquarePainterManager();
+            let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
             let squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
                 this.state.shipsOnField, squareNumber);

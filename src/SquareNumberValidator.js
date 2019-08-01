@@ -1,5 +1,5 @@
 import {GameDataManager} from "./GameDataManager";
-import {SquarePainterManager} from "./SquarePainterManager.js"
+import {SquareNumberManager} from "./SquareNumberManager.js"
 
 export class SquareNumberValidator{
 
@@ -11,14 +11,14 @@ export class SquareNumberValidator{
         }
 
         if (direction === 0) {
-            if (!this.areSquareNumbersValidForRows(squareNumbers[0], squareNumbers)){
+            if (!this.areSquareNumbersValidForRow(squareNumbers[0], squareNumbers)){
                 return false;
             }
         }
 
         for (let i = 0; i < squareNumbers.length; i++) {
 
-            let squarePainterManager = new SquarePainterManager();
+            let squarePainterManager = new SquareNumberManager();
 
             if (!this.isSquareNumberValidForShipNeighbour(squarePainterManager.getNearestSquareNumbers(squareNumbers[i]), playerField)) {
                 return false;
@@ -41,7 +41,7 @@ export class SquareNumberValidator{
         return true;
     }
 
-    areSquareNumbersValidForRows(firstSquareNumber, squareNumbers){
+    areSquareNumbersValidForRow(firstSquareNumber, squareNumbers){
 
         for (let i = 0; i < squareNumbers.length; i++) {
 
@@ -62,7 +62,7 @@ export class SquareNumberValidator{
 
     isSquareNumberValidForShipNeighbour(nearestSquareNumbers, playerField) {
 
-        for (var i = 0; i < nearestSquareNumbers.length; i++) {
+        for (let i = 0; i < nearestSquareNumbers.length; i++) {
 
             if (nearestSquareNumbers[i] >= 0 &&
                 nearestSquareNumbers[i] <= 99) {

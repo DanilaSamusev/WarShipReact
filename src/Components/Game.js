@@ -5,7 +5,7 @@ import "../css/playerPanel.css"
 import {Direction} from "../Direction";
 import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
-import {SquarePainterManager} from "../SquarePainterManager";
+import {SquareNumberManager} from "../SquareNumberManager";
 import PlayerField from "./PlayerField";
 import ComputerField from "../Components/ComputerField";
 
@@ -176,7 +176,7 @@ class Game extends React.Component {
     paintAreaAroundShip(ship) {
 
         let gameDataManager = new GameDataManager();
-        let squarePainterManager = new SquarePainterManager();
+        let squarePainterManager = new SquareNumberManager();
         let field;
 
         if (gameDataManager.getGameData().isPlayerTurn) {
@@ -272,6 +272,7 @@ class Game extends React.Component {
                              setIsPlayerTurn={this.setIsPlayerTurn}
 
                 />
+                <a href='/war-ship-react/public/test.html'>test</a>
             </div>
         )
     }

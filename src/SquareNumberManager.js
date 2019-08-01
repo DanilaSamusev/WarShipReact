@@ -1,4 +1,4 @@
-export class SquarePainterManager{
+export class SquareNumberManager{
 
     getSquareNumbersToPaint(direction, shipsOnField, firstSquareNumber) {
 
