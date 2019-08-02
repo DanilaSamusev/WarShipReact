@@ -77,7 +77,7 @@ class Game extends React.Component {
 
                 squareNumber = shootingAI.getRandomSquareNumber();
             }
-            while (squareNumberValidator.isSquareNumberValidToShoot(squareNumber));
+            while (!squareNumberValidator.isSquareNumberValidToShoot(squareNumber));
 
             this.shootSquare(squareNumber);
 

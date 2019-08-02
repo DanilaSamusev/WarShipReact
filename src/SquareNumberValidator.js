@@ -48,13 +48,6 @@ export class SquareNumberValidator {
 
     }
 
-    isSquareNumberAlreadyClicked(squareNumber) {
-
-        let gameDataManager = new GameDataManager();
-
-        return gameDataManager.getGameData().playerField.squares[squareNumber].isClicked;
-    }
-
     isSquareNumberValidForShipNeighbour(nearestSquareNumbers, playerField) {
 
         for (let i = 0; i < nearestSquareNumbers.length; i++) {
@@ -83,7 +76,7 @@ export class SquareNumberValidator {
 
         let gameDataManager = new GameDataManager();
 
-        return gameDataManager.getGameData().playerField.squares(squareNumber).isClicked;
+        return gameDataManager.getGameData().playerField.squares[squareNumber].isClicked;
     }
 
     hasDeadShipNeighbour(squareNumber) {
