@@ -70,7 +70,50 @@ export class SquareNumberValidator {
         }
 
         return true;
+    }
 
-    };
+    isSquareNumberValidToShoot(squareNumber) {
 
+        return !this.hasDeadShipNeighbour(squareNumber) &&
+            this.isSquareNumberValidForBounds(squareNumber) &&
+            !this.isSquareAlreadyShot(squareNumber)
+    }
+
+    isSquareAlreadyShot(squareNumber) {
+
+        let gameDataManager = new GameDataManager();
+
+        return gameDataManager.getGameData().playerField.squares(squareNumber).isClicked;
+    }
+
+    hasDeadShipNeighbour(squareNumber) {
+
+        let gameDataManager = new GameDataManager();
+        let squareNumberManager = new SquareNumberManager();
+        let squareNumberValidator = new SquareNumberValidator();
+        let gameData = gameDataManager.getGameData();
+        let nearestSquareNumbers = squareNumberManager.getNearestSquareNumbers(squareNumber);
+        let shipNumber;
+        let ship;
+
+        for (let i = 0; i < nearestSquareNumbers.length; i++) {
+
+            if (squareNumberValidator.isSquareNumberValidForBounds(nearestSquareNumbers[i])) {
+
+                shipNumber = gameData.playerField.squares[nearestSquareNumbers[i]].shipNumber;
+
+                if (shipNumber !== -1) {
+
+                    ship = gameData.playerFleet.ships[shipNumber];
+
+                    if (!ship.isAlive) {
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }

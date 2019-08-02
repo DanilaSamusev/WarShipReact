@@ -6,6 +6,7 @@ import {Direction} from "../Direction";
 import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberManager} from "../SquareNumberManager";
+import {SquareNumberValidator} from "../SquareNumberValidator";
 import PlayerField from "./PlayerField";
 import ComputerField from "../Components/ComputerField";
 
@@ -67,11 +68,17 @@ class Game extends React.Component {
 
         let shootingAI = new ShootingAI();
         let gameDataManager = new GameDataManager();
+        let squareNumberValidator = new SquareNumberValidator();
         let squareNumber;
 
         if (ShootingAI._firstShotSquareNumber === -1) {
 
-            squareNumber = shootingAI.getRandomSquareNumber();
+            do {
+
+                squareNumber = shootingAI.getRandomSquareNumber();
+            }
+            while (squareNumberValidator.isSquareNumberValidToShoot(squareNumber));
+
             this.shootSquare(squareNumber);
 
             if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
@@ -177,8 +184,7 @@ class Game extends React.Component {
         if (gameDataManager.getGameData().isPlayerTurn) {
 
             field = this.state.gameData.computerField.squares;
-        }
-        else{
+        } else {
 
             field = this.state.gameData.playerField.squares;
         }
@@ -264,7 +270,6 @@ class Game extends React.Component {
                              setIsPlayerTurn={this.setIsPlayerTurn}
 
                 />
-                <a href='/war-ship-react/public/test.html'>test</a>
             </div>
         )
     }

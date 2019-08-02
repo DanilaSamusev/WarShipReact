@@ -1,6 +1,4 @@
 import {Direction} from "./Direction";
-import {GameDataManager} from "./GameDataManager";
-import {SquareNumberManager} from "./SquareNumberManager.js"
 import {SquareNumberValidator} from "./SquareNumberValidator";
 
 export class ShootingAI {
@@ -13,46 +11,7 @@ export class ShootingAI {
 
     getRandomSquareNumber() {
 
-        let gameDataManager = new GameDataManager();
-        let gameData = gameDataManager.getGameData();
-        let randomSquareNumber;
-
-        do {
-            randomSquareNumber = Math.floor(Math.random() * (100));
-        } while (gameData.playerField.squares[randomSquareNumber].isClicked || this.hasDeadShipNeighbour(randomSquareNumber));
-
-        return randomSquareNumber;
-    }
-
-    hasDeadShipNeighbour(squareNumber) {
-
-        let gameDataManager = new GameDataManager();
-        let squareNumberManager = new SquareNumberManager();
-        let squareNumberValidator = new SquareNumberValidator();
-        let gameData = gameDataManager.getGameData();
-        let nearestSquareNumbers = squareNumberManager.getNearestSquareNumbers(squareNumber);
-        let shipNumber;
-        let ship;
-
-        for (let i = 0; i < nearestSquareNumbers.length; i++) {
-
-            if (squareNumberValidator.isSquareNumberValidForBounds(nearestSquareNumbers[i])) {
-
-                shipNumber = gameData.playerField.squares[nearestSquareNumbers[i]].shipNumber;
-
-                if (shipNumber !== -1){
-
-                    ship = gameData.playerFleet.ships[shipNumber];
-
-                    if (!ship.isAlive) {
-
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        return Math.floor(Math.random() * (100));
     }
 
     getRoundSquareNumber(middleSquareNumber) {
@@ -135,8 +94,7 @@ export class ShootingAI {
 
         let squareNumberValidator = new SquareNumberValidator();
 
-        if (squareNumberValidator.isSquareNumberValidForBounds(squareNumber) &&
-            !squareNumberValidator.isSquareNumberAlreadyClicked(squareNumber)) {
+        if (squareNumberValidator.isSquareNumberValidToShoot(squareNumber)) {
             if (ShootingAI._shipPosition === Direction.horizontal) {
                 return squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, squareNumber)
             }
