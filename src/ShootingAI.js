@@ -1,5 +1,6 @@
 import {Direction} from "./Direction";
 import {GameDataManager} from "./GameDataManager";
+import {SquareNumberManager} from "./SquareNumberManager.js"
 import {SquareNumberValidator} from "./SquareNumberValidator";
 
 export class ShootingAI {
@@ -18,9 +19,40 @@ export class ShootingAI {
 
         do {
             randomSquareNumber = Math.floor(Math.random() * (100));
-        } while (gameData.playerField.squares[randomSquareNumber].isClicked);
+        } while (gameData.playerField.squares[randomSquareNumber].isClicked || this.hasDeadShipNeighbour(randomSquareNumber));
 
         return randomSquareNumber;
+    }
+
+    hasDeadShipNeighbour(squareNumber) {
+
+        let gameDataManager = new GameDataManager();
+        let squareNumberManager = new SquareNumberManager();
+        let squareNumberValidator = new SquareNumberValidator();
+        let gameData = gameDataManager.getGameData();
+        let nearestSquareNumbers = squareNumberManager.getNearestSquareNumbers(squareNumber);
+        let shipNumber;
+        let ship;
+
+        for (let i = 0; i < nearestSquareNumbers.length; i++) {
+
+            if (squareNumberValidator.isSquareNumberValidForBounds(nearestSquareNumbers[i])) {
+
+                shipNumber = gameData.playerField.squares[nearestSquareNumbers[i]].shipNumber;
+
+                if (shipNumber !== -1){
+
+                    ship = gameData.playerFleet.ships[shipNumber];
+
+                    if (!ship.isAlive) {
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     getRoundSquareNumber(middleSquareNumber) {

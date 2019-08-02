@@ -52,7 +52,6 @@ class Game extends React.Component {
     shoot() {
 
         let gameDataManager = new GameDataManager();
-        console.log(1);
 
         if (gameDataManager.getGameData().isPlayerTurn) {
             return;
@@ -65,7 +64,6 @@ class Game extends React.Component {
     }
 
     makeComputerShot() {
-
 
         let shootingAI = new ShootingAI();
         let gameDataManager = new GameDataManager();
@@ -83,7 +81,6 @@ class Game extends React.Component {
                 gameDataManager.shootDeck(shipNumber, 'playerFleet');
 
                 if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                    this.paintAreaAroundShip(gameDataManager.getGameData().playerFleet.ships[shipNumber]);
                     shootingAI.resetMemory();
                 } else {
                     ShootingAI._firstShotSquareNumber = squareNumber;
@@ -109,7 +106,6 @@ class Game extends React.Component {
                     gameDataManager.shootDeck(shipNumber, 'playerFleet');
 
                     if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                        this.paintAreaAroundShip(gameDataManager.getGameData().playerFleet.ships[shipNumber]);
                         shootingAI.resetMemory();
                     } else {
                         ShootingAI._lastShotSquareNumber = squareNumber;
@@ -146,7 +142,6 @@ class Game extends React.Component {
                     gameDataManager.shootDeck(shipNumber, 'playerFleet');
 
                     if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
-                        this.paintAreaAroundShip(gameDataManager.getGameData().playerFleet.ships[shipNumber]);
                         shootingAI.resetMemory();
                     } else {
                         ShootingAI._lastShotSquareNumber = squareNumber;
@@ -229,9 +224,6 @@ class Game extends React.Component {
     }
 
     setGameData(gameData) {
-
-        console.log(gameData);
-        console.log(this.state.gameData);
 
         this.setState(
             () => {
