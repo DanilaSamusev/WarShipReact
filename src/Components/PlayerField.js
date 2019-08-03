@@ -2,8 +2,8 @@ import React from 'react';
 import "../css/index.css"
 import "../css/playerField.css"
 import {GameDataManager} from "../GameDataManager";
-import {SquareNumberValidator} from "../SquareNumberValidator";
 import {SquareNumberManager} from "../SquareNumberManager.js"
+import {SquareNumberValidator} from "../SquareNumberValidator";
 import Square from "./Square";
 import Interface from "./Interface";
 
