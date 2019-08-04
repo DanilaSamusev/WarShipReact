@@ -3,13 +3,13 @@ import React from 'react';
 class Square extends React.Component {
 
     render() {
-        var style = {backgroundColor: 'white'};
+        let style = {backgroundColor: 'white'};
 
         if (this.props.isChecked === true) {
             style = {backgroundColor: '#dfe0de'};
         }
 
-        if (this.props.shipNumber > -1) {
+        if (this.props.shipNumber > -1 && this.props.className === 'playerSquare') {
             style = {backgroundColor: 'grey'};
 
         }

@@ -1,11 +1,14 @@
 import React from 'react';
-import "../css/index.css"
 import "../css/game.css"
+import "../css/index.css"
 import "../css/playerPanel.css"
-
-import ComputerField from "../Components/ComputerField";
+import {Direction} from "../Direction";
+import {ShootingAI} from "../ShootingAI";
+import {GameDataManager} from "../GameDataManager";
+import {SquareNumberManager} from "../SquareNumberManager";
+import {SquareNumberValidator} from "../SquareNumberValidator";
 import PlayerField from "./PlayerField";
-import InfoPanel from "../Components/InfoPanel"
+import ComputerField from "../Components/ComputerField";
 
 class Game extends React.Component {
 
@@ -13,200 +16,238 @@ class Game extends React.Component {
         super(props);
 
         this.state = {
-            playerField: [],
-            computerField: [],
-            isPlayerTurn: null,
-            shotInfo: '',
+            gameData: null,
         };
 
-        this.updatePlayerField = this.updatePlayerField.bind(this);
-        this.updateComputerField = this.updateComputerField.bind(this);
-        this.makePlayerShot = this.makePlayerShot.bind(this);
+        this.shoot = this.shoot.bind(this);
+        this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
+        this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
     }
 
-    componentWillMount() {
-        this.getGameData();
+    componentDidMount() {
+
+        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+
+        if (gameData === null) {
+
+            fetch('http://localhost:5000/api/game',
+                {
+                    method: 'get',
+                    headers:
+                        {
+                            'Accept': 'application/json',
+                        },
+                })
+                .then(response => response.json())
+                .then(json => {
+                    sessionStorage.setItem('gameData', JSON.stringify(json));
+                    return json;
+                })
+                .then((json => this.setGameData(json)));
+        } else {
+            this.setGameData(gameData);
+        }
     }
 
-    getGameData(){
-        fetch('http://localhost:5000/api/game',
-            {
-                method: 'get',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                    },
-            })
-            .then(response => response.text())
-            .then(text => {
-                try {
-                    const json = JSON.parse(text);
+    shoot() {
 
-                    console.log(json);
+        let gameDataManager = new GameDataManager();
 
-                    this.setState(
-                        () => {
-                            return {
-                                playerField: json.playerSquares,
-                                computerField: json.computerSquares,
-                                isPlayerTurn: json.isPlayerTurn,
-                            };
-                        });
-
-                } catch (ex) {
-
-                }
-            });
-    }
-
-    updatePlayerField(squares) {
-
-        if (squares === null) {
+        if (gameDataManager.getGameData().isPlayerTurn) {
             return;
         }
 
-        const field = this.state.playerField;
-
-        for (var i = 0; i < squares.length; i++) {
-            var square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: square.shipNumber,
-            };
-        }
-
-        this.setState(
-            () => {
-                return {
-                    playerField: field,
-                };
-            });
-    }
-
-    updateComputerField(squares) {
-
-        if (squares === null) {
-            return;
-        }
-
-        const field = this.state.computerField;
-
-        for (var i = 0; i < squares.length; i++) {
-            var square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                shipNumber: square.shipNumber,
-            };
-        }
-
-        this.setState(
-            () => {
-                return {
-                    computerField: field,
-                };
-            });
-    }
-
-    myFetch(query) {
-        return fetch('http://localhost:5000/api/' + query,
-            {
-                method: 'put',
-                headers:
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-            }).then(response => response.text())
-    };
-
-    makePlayerShot(id) {
-        const query = '?id=' + id;
-        var computerSquare;
-
-        this.myFetch('computerField/playerShot' + query)
-            .then(text => {
-                try {
-                    computerSquare = JSON.parse(text);
-                    this.updateComputerField(new Array(computerSquare));
-                    this.changeShotInfo(computerSquare, 'Player');
-
-                    if (computerSquare.shipNumber === -1){
-                        this.setState(
-                            () => {
-                                return {
-                                    isPlayerTurn: false,
-                                };
-                            });
-                    }
-
-                } catch (ex) {
-
-                }
-            });
+        setTimeout(() => {
+            this.makeComputerShot();
+            this.shoot();
+        }, 1000);
     }
 
     makeComputerShot() {
-        var playerSquare;
 
-        console.log("1");
+        let shootingAI = new ShootingAI();
+        let gameDataManager = new GameDataManager();
+        let squareNumberValidator = new SquareNumberValidator();
+        let squareNumber;
 
-        this.myFetch('playerField/computerShot')
-            .then(text => {
-                try {
-                    playerSquare = JSON.parse(text);
-                    this.updatePlayerField(new Array(playerSquare));
-                    this.changeShotInfo(playerSquare, 'Computer');
+        if (ShootingAI._firstShotSquareNumber === -1) {
 
-                    if (playerSquare.shipNumber === -1){
-                        this.setState(
-                            () => {
-                                return {
-                                    isPlayerTurn: true,
-                                };
-                            });
-                    }
+            do {
 
-                } catch (ex) {
-
-                }
-            });
-    }
-
-    changeShotInfo(square, playerName){
-
-        if (square.shipNumber !== -1){
-            this.changeShotInfoState(playerName + ' has shot a ship!')
-        }
-        else{
-            this.changeShotInfoState(playerName + ' has missed!')
-        }
-    }
-
-    changeShotInfoState(info){
-        this.setState(() => {
-            return{
-                shotInfo: info,
+                squareNumber = shootingAI.getRandomSquareNumber();
             }
-        })
+            while (!squareNumberValidator.isSquareNumberValidToShoot(squareNumber));
+
+            this.shootSquare(squareNumber);
+
+            if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+
+                let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+
+                gameDataManager.shootDeck(shipNumber, 'playerFleet');
+
+                if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                    shootingAI.resetMemory();
+                } else {
+                    ShootingAI._firstShotSquareNumber = squareNumber;
+                }
+            } else {
+                gameDataManager.setIsPlayerTurn(true);
+            }
+        } else {
+            if (ShootingAI._shipPosition !== -1) {
+
+                if (ShootingAI._shipPosition === Direction.horizontal) {
+                    squareNumber = shootingAI.getHorizontalSquareNumber();
+                } else {
+                    squareNumber = shootingAI.getVerticalSquareNumber();
+                }
+
+                this.shootSquare(squareNumber);
+
+                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+
+                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+
+                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
+
+                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                        shootingAI.resetMemory();
+                    } else {
+                        ShootingAI._lastShotSquareNumber = squareNumber;
+                    }
+                } else {
+
+                    gameDataManager.setIsPlayerTurn(true);
+                    ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
+
+                    if (ShootingAI._shipPosition === Direction.horizontal) {
+                        if (ShootingAI._nextShotDirection === Direction.left) {
+                            ShootingAI._nextShotDirection = Direction.right;
+                        } else {
+                            ShootingAI._nextShotDirection = Direction.left;
+                        }
+                    } else {
+                        if (ShootingAI._nextShotDirection === Direction.top) {
+                            ShootingAI._nextShotDirection = Direction.bottom;
+                        } else {
+                            ShootingAI._nextShotDirection = Direction.top;
+                        }
+                    }
+                }
+            } else {
+
+                squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
+
+                this.shootSquare(squareNumber);
+
+                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+
+                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+
+                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
+
+                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                        shootingAI.resetMemory();
+                    } else {
+                        ShootingAI._lastShotSquareNumber = squareNumber;
+
+                        if (ShootingAI._roundShotDirection === Direction.left ||
+                            ShootingAI._roundShotDirection === Direction.right) {
+                            ShootingAI._shipPosition = Direction.horizontal;
+                        } else {
+                            ShootingAI._shipPosition = Direction.vertical;
+                        }
+                    }
+                } else {
+                    gameDataManager.setIsPlayerTurn(true);
+                }
+            }
+        }
+    }
+
+    shootSquare(squareNumber) {
+
+        let gameData = this.state.gameData;
+        gameData.playerField.squares[squareNumber].isClicked = true;
+        this.setGameData(gameData);
+    }
+
+    paintAreaAroundShip(ship) {
+
+        let gameDataManager = new GameDataManager();
+        let squarePainterManager = new SquareNumberManager();
+        let field;
+
+        if (gameDataManager.getGameData().isPlayerTurn) {
+
+            field = this.state.gameData.computerField.squares;
+        } else {
+
+            field = this.state.gameData.playerField.squares;
+        }
+
+        for (let i = 0; i < ship.decks.length; i++) {
+
+            let squareNumber = ship.decks[i].position;
+            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
+
+            for (let i = 0; i < nearestSquareNumber.length; i++) {
+
+                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
+
+                    field[nearestSquareNumber[i]].isClicked = true;
+                }
+            }
+        }
+    }
+
+    setGameData(gameData) {
+
+        let gameDataManager = new GameDataManager();
+
+        this.setState(
+            () => {
+                return {
+                    gameData: gameData,
+                };
+            });
+
+        gameDataManager.setGameData(gameData);
+    }
+
+    setIsPlayerTurn(state) {
+
+        let gameDataManager = new GameDataManager();
+
+        this.setState(
+            () => {
+                return {
+                    isPlayerTurn: state,
+                };
+            }, () => gameDataManager.setIsPlayerTurn(state));
     }
 
     render() {
+
+        if (this.state.gameData === null) {
+            return null;
+        }
+
         return (
             <div className="game">
-                <ComputerField computerField={this.state.computerField}
-                               updateComputerField={this.updateComputerField}
-                               onClick={this.makePlayerShot}/>
-                <div className="playerPanel">
-                    <PlayerField playerField={this.state.playerField}
-                                 updatePlayerField={this.updatePlayerField}/>
-                    <InfoPanel onClick={this.makeComputerShot} shotInfo={this.state.shotInfo} isPlayerTurn={this.state.isPlayerTurn}/>
-                </div>
+
+                <ComputerField squares={this.state.gameData.computerField.squares}
+                               setIsPlayerTurn={this.setIsPlayerTurn}
+                               makeComputerShot={this.shoot}
+                               paintAreaAroundShip={this.paintAreaAroundShip}
+                />
+                <PlayerField playerField={this.state.gameData.playerField.squares}
+                             shipsOnField={this.state.gameData.playerField.shipsOnField}
+                             setIsPlayerTurn={this.setIsPlayerTurn}
+
+                />
             </div>
         )
     }
