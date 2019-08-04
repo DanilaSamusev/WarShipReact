@@ -9,6 +9,7 @@ import {SquareNumberManager} from "../SquareNumberManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import PlayerField from "./PlayerField";
 import ComputerField from "../Components/ComputerField";
+import Interface from "./Interface";
 
 class Game extends React.Component {
 
@@ -20,6 +21,7 @@ class Game extends React.Component {
         };
 
         this.shoot = this.shoot.bind(this);
+        this.setGameData = this.setGameData.bind(this);
         this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
         this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
@@ -85,7 +87,7 @@ class Game extends React.Component {
 
                 let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
 
-                gameDataManager.shootDeck(shipNumber, 'playerFleet');
+                gameDataManager.shootDeck(shipNumber);
 
                 if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
                     shootingAI.resetMemory();
@@ -203,6 +205,18 @@ class Game extends React.Component {
         }
     }
 
+    resetShipsOnField() {
+
+        const gameData = this.state.gameData;
+
+        for (let i = 0; i < gameData.playerField.squares.length; i++) {
+
+            gameData.playerField.squares[i].shipNumber = -1;
+        }
+
+        this.setGameData(gameData);
+    }
+
     setGameData(gameData) {
 
         let gameDataManager = new GameDataManager();
@@ -242,11 +256,16 @@ class Game extends React.Component {
                                setIsPlayerTurn={this.setIsPlayerTurn}
                                makeComputerShot={this.shoot}
                                paintAreaAroundShip={this.paintAreaAroundShip}
+                               setGameData={this.setGameData}
                 />
                 <PlayerField playerField={this.state.gameData.playerField.squares}
                              shipsOnField={this.state.gameData.playerField.shipsOnField}
                              setIsPlayerTurn={this.setIsPlayerTurn}
-
+                />
+                <Interface shipsOnField={this.state.gameData.playerField.shipsOnField}
+                           gameState={this.state.gameData.gameState}
+                           resetShips={this.resetShips}
+                           setGameData={this.setGameData}
                 />
             </div>
         )

@@ -53,16 +53,6 @@ export class GameDataManager{
         this.setGameData(gameData);
     }
 
-    shootSquare(squareNumber){
-
-        let gameData = this.getGameData();
-
-        gameData.playerField.squares[squareNumber].isClicked = true;
-
-        this.setGameData(gameData);
-
-    }
-
     resetShipsOnFleet() {
 
         let gameData = this.getGameData();

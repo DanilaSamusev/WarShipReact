@@ -196,24 +196,6 @@ class PlayerField extends React.Component {
         this.setField(field);
     }
 
-    resetShipsOnField() {
-
-        const field = this.state.playerField;
-
-        for (let i = 0; i < field.length; i++) {
-            let square = field[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: -1,
-            };
-        }
-
-        this.setField(field);
-    }
-
     setSquaresHasShip(squareNumbers, shipNumber) {
 
         const field = this.state.playerField;
@@ -269,9 +251,6 @@ class PlayerField extends React.Component {
                             />
                         )
                     })}
-                <Interface shipsOnField={this.state.shipsOnField}
-                           resetShips={this.resetShips}
-                />
             </div>
         )
     }

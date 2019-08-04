@@ -32,9 +32,10 @@ export default class ComputerField extends React.Component {
     makeShot(squareId) {
 
         let gameDataManager = new GameDataManager();
-        let square = this.state.squares[squareId];
         let gameData = gameDataManager.getGameData();
+        let square = gameData.computerField.squares[squareId];
 
+        // write method to check this
         if (square.isClicked === true || !gameData.isPlayerTurn ||
             gameData.gameState !== 'battle') {
             return;
@@ -44,7 +45,7 @@ export default class ComputerField extends React.Component {
 
         if (square.shipNumber !== -1) {
 
-            gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
+            gameDataManager.shootDeck(square.shipNumber);
 
             let gameData = gameDataManager.getGameData();
             let ship = gameData.computerFleet.ships[square.shipNumber];
@@ -54,12 +55,11 @@ export default class ComputerField extends React.Component {
 
             }
         } else {
-            this.props.setIsPlayerTurn(false);
-            gameDataManager.setIsPlayerTurn(false);
-            this.props.makeComputerShot();
+            //this.props.setIsPlayerTurn(false);
+           // gameDataManager.setIsPlayerTurn(false);
+            //this.props.makeComputerShot();
         }
-
-
+        
         this.updateComputerField(new Array(square));
     }
 
@@ -72,33 +72,16 @@ export default class ComputerField extends React.Component {
         const field = this.state.squares;
 
         for (var i = 0; i < squares.length; i++) {
-            var square = squares[i];
 
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                shipNumber: square.shipNumber,
-            };
+            field[squares[i].id] = squares[i];
         }
 
-        this.setField(field);
-    }
-
-    setField(field) {
-
         let gameDataManager = new GameDataManager();
+        let gameData = gameDataManager.getGameData();
 
-        this.setState(
-            () => {
-                return {
-                    squares: field,
-                };
-            }, () => {
-                let gameData = gameDataManager.getGameData();
+        gameData.computerField.squares = field;
 
-                gameData.computerField.squares = this.state.squares;
-                gameDataManager.setGameData(gameData);
-            });
+        this.props.setGameData(gameData);
     }
 
     render() {
