@@ -169,10 +169,9 @@ class Game extends React.Component {
 
     shootSquare(squareNumber) {
 
-        let gameDataManager = new GameDataManager();
-
-        gameDataManager.shootSquare(squareNumber);
-        this.updatePlayerFieldSquares(new Array(gameDataManager.getGameData().playerField.squares[squareNumber]));
+        let gameData = this.state.gameData;
+        gameData.playerField.squares[squareNumber].isClicked = true;
+        this.setGameData(gameData);
     }
 
     paintAreaAroundShip(ship) {
@@ -204,32 +203,9 @@ class Game extends React.Component {
         }
     }
 
-    updatePlayerFieldSquares(squares) {
-
-        if (squares === null) {
-            return;
-        }
-
-        const field = this.state.gameData.playerField.squares;
-
-        for (let i = 0; i < squares.length; i++) {
-            let square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: square.shipNumber,
-            };
-        }
-
-        let gameData = this.state.gameData;
-        gameData.playerField.squares = field;
-
-        this.setGameData(gameData)
-    }
-
     setGameData(gameData) {
+
+        let gameDataManager = new GameDataManager();
 
         this.setState(
             () => {
@@ -237,6 +213,8 @@ class Game extends React.Component {
                     gameData: gameData,
                 };
             });
+
+        gameDataManager.setGameData(gameData);
     }
 
     setIsPlayerTurn(state) {
