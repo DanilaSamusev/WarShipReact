@@ -37,6 +37,7 @@ export default class Interface extends React.Component {
         if (this.props.gameState === 'battle preparation') {
 
             if (this.props.shipsOnField === 10) {
+
                 gameData.gameState = 'battle';
                 readyButton = <button onClick={() => this.props.setGameData(gameData)}>Ready!</button>
             }

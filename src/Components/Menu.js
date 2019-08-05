@@ -1,9 +1,7 @@
 import React from "react"
 import {BrowserRouter, Route, Link} from "react-router-dom";
-import createBrowserHistory from "history/createBrowserHistory"
 import Game from "./Game";
 
-const history = createBrowserHistory();
 
 const Home = () => (
     <div>
@@ -25,7 +23,7 @@ export default class Menu extends React.Component {
 
     render() {
         return(
-            <BrowserRouter history={history}>
+            <BrowserRouter>
                 <div>
                     <ul>
                         <li><Link to={"/"}>Rates</Link></li>
