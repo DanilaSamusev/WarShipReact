@@ -4,34 +4,18 @@ import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
 import Square from './Square'
 
+const gameDataManager = new GameDataManager();
+
 export default class ComputerField extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            squares: [],
-        };
-
         this.makeShot = this.makeShot.bind(this);
-        this.updateComputerField = this.updateComputerField.bind(this);
-    }
-
-    componentWillMount() {
-
-        if (this.props.squares !== null) {
-            this.setState(
-                () => {
-                    return {
-                        squares: this.props.squares,
-                    };
-                });
-        }
     }
 
     makeShot(squareId) {
 
-        let gameDataManager = new GameDataManager();
         let gameData = gameDataManager.getGameData();
         let square = gameData.computerField.squares[squareId];
 
@@ -41,7 +25,7 @@ export default class ComputerField extends React.Component {
             return;
         }
 
-        square.isClicked = true;
+        this.shootSquare(squareId);
 
         if (square.shipNumber !== -1) {
 
@@ -55,40 +39,28 @@ export default class ComputerField extends React.Component {
 
             }
         } else {
-            //this.props.setIsPlayerTurn(false);
-           // gameDataManager.setIsPlayerTurn(false);
-            //this.props.makeComputerShot();
+            this.props.setIsPlayerTurn(false);
+            this.props.makeComputerShot();
         }
-        
-        this.updateComputerField(new Array(square));
+
     }
 
-    updateComputerField(squares) {
+    shootSquare(squareId) {
 
-        if (squares === null) {
-            return;
-        }
-
-        const field = this.state.squares;
-
-        for (var i = 0; i < squares.length; i++) {
-
-            field[squares[i].id] = squares[i];
-        }
-
-        let gameDataManager = new GameDataManager();
         let gameData = gameDataManager.getGameData();
+        let squares = gameData.computerField.squares;
 
-        gameData.computerField.squares = field;
-
+        squares[squareId].isClicked = true;
         this.props.setGameData(gameData);
     }
+
+
 
     render() {
         return (
             <div className="computerField">
                 {
-                    this.state.squares.map((square) => {
+                    this.props.squares.map((square) => {
                         return (
                             <Square
                                 id={square.id}

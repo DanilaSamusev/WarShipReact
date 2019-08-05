@@ -11,6 +11,8 @@ import PlayerField from "./PlayerField";
 import ComputerField from "../Components/ComputerField";
 import Interface from "./Interface";
 
+const gameDataManager = new GameDataManager();
+
 class Game extends React.Component {
 
     constructor(props) {
@@ -29,7 +31,7 @@ class Game extends React.Component {
 
     componentDidMount() {
 
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+        let gameData = gameDataManager.getGameData();
 
         if (gameData === null) {
 
@@ -43,10 +45,9 @@ class Game extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    sessionStorage.setItem('gameData', JSON.stringify(json));
-                    return json;
+                    gameDataManager.setGameData(json);
+                    this.setGameData(json);
                 })
-                .then((json => this.setGameData(json)));
         } else {
             this.setGameData(gameData);
         }
@@ -240,7 +241,9 @@ class Game extends React.Component {
                 return {
                     isPlayerTurn: state,
                 };
-            }, () => gameDataManager.setIsPlayerTurn(state));
+            });
+
+        gameDataManager.setIsPlayerTurn(state)
     }
 
     render() {
