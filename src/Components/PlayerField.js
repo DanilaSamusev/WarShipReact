@@ -15,10 +15,7 @@ class PlayerField extends React.Component {
 
         this.state = {
             direction: this.props.direction,
-            shipsOnField: this.props.shipsOnField,
         };
-
-        this.resetShips = this.resetShips.bind(this);
     }
 
     handleClick(event, squareNumber) {
@@ -52,40 +49,38 @@ class PlayerField extends React.Component {
 
     plantShip(squareNumber) {
 
-        if (this.state.shipsOnField < 10) {
+        let gameData = gameDataManager.getGameData();
 
-            let gameDataManager = new GameDataManager();
+        if (gameData.playerField.shipsOnField < 10) {
+
             let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
-            let gameData = gameDataManager.getGameData();
 
             let pointsToPlantShip = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
-                this.state.shipsOnField, squareNumber);
+                gameData.playerField.shipsOnField, squareNumber);
 
             if (squareNumberValidator.areSquareNumbersValid(pointsToPlantShip, this.state.direction,
-                this.state.playerField)) {
+                gameData.playerField.squares)) {
 
-                this.setSquaresHasShip(pointsToPlantShip, gameData.playerFleet.ships[this.state.shipsOnField].id);
-                gameDataManager.setShipDeckPosition(pointsToPlantShip, this.state.shipsOnField);
-
-                this.setState(
-                    () => {
-                        return {
-                            shipsOnField: this.state.shipsOnField + 1,
-                        };
-                    }, () => gameDataManager.setValueShipsOnField(this.state.shipsOnField));
+                this.setSquaresHasShip(gameData, pointsToPlantShip, gameData.playerFleet.ships[gameData.playerField.shipsOnField].id);
+                gameDataManager.setShipDeckPosition(pointsToPlantShip, gameData.playerField.shipsOnField);
+                gameData.playerField.shipsOnField++;
             }
         }
+
+        this.props.setGameData(gameData);
     }
 
     handleMouseOver(squareNumber) {
 
-        if (this.state.shipsOnField < 10) {
+        let gameData = gameDataManager.getGameData();
+
+        if (gameData.playerField.shipsOnField < 10) {
 
             let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
             let squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
-                this.state.shipsOnField, squareNumber);
+                gameData.playerField.shipsOnField, squareNumber);
 
             this.cleanFieldFromIsChecked();
 
@@ -101,28 +96,12 @@ class PlayerField extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
-        console.log(this.state.shipsOnField);
-
-        if (this.state.shipsOnField === 10){
-            return;
-        }
-
         for (let i = 0; i < squareNumbers.length; i++) {
 
             gameData.playerField.squares[squareNumbers[i]].isChecked = true;
         }
 
         this.props.setGameData(gameData);
-    }
-
-    resetShips() {
-
-        let gameDataManager = new GameDataManager();
-
-        this.resetShipsOnField();
-        this.state.shipsOnField = 0;
-        gameDataManager.resetShipsOnFleet();
-        gameDataManager.setValueShipsOnField(this.state.shipsOnField);
     }
 
     cleanFieldFromIsChecked() {
@@ -137,40 +116,12 @@ class PlayerField extends React.Component {
         this.props.setGameData(gameData);
     }
 
-    setSquaresHasShip(squareNumbers, shipNumber) {
+    setSquaresHasShip(gameData, squareNumbers, shipNumber) {
 
-        const field = this.state.playerField;
+        for (let i = 0; i < squareNumbers.length; i++) {
 
-        for (var i = 0; i < squareNumbers.length; i++) {
-
-            var square = field[squareNumbers[i]];
-
-            field[squareNumbers[i]] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: shipNumber,
-            };
+           gameData.playerField.squares[squareNumbers[i]].shipNumber = shipNumber;
         }
-
-        this.props.setGameData(field);
-    }
-
-    setField(field) {
-
-        let gameDataManager = new GameDataManager();
-
-        this.setState(
-            () => {
-                return {
-                    playerField: field,
-                };
-            }, () => {
-                let gameData = gameDataManager.getGameData();
-
-                gameData.playerField.squares = this.state.playerField;
-                gameDataManager.setGameData(gameData);
-            });
     }
 
     render() {

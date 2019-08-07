@@ -1,14 +1,5 @@
 export class GameDataManager{
 
-    setValueShipsOnField(shipsOnField){
-
-        let gameData = this.getGameData();
-
-        gameData.playerField.shipsOnField = shipsOnField;
-
-        this.setGameData(gameData);
-    }
-
     setShipDeckPosition(pointsToPlant, shipNumber){
 
         let gameData = this.getGameData();

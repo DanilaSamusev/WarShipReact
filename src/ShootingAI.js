@@ -1,6 +1,8 @@
 import {Direction} from "./Direction";
 import {SquareNumberValidator} from "./SquareNumberValidator";
 
+let squareNumberValidator = new SquareNumberValidator();
+
 export class ShootingAI {
 
     static _lastShotSquareNumber = -1;
@@ -16,7 +18,8 @@ export class ShootingAI {
 
     getRoundSquareNumber(middleSquareNumber) {
 
-        if (this.isSquareNumberOkToShoot(middleSquareNumber - 1)) {
+        if (this.isSquareNumberOkToShoot(middleSquareNumber - 1)
+            && squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, middleSquareNumber - 1)) {
             ShootingAI._roundShotDirection = Direction.left;
             ShootingAI._nextShotDirection = Direction.left;
             return middleSquareNumber - 1;
@@ -28,7 +31,8 @@ export class ShootingAI {
             return middleSquareNumber - 10;
         }
 
-        if (this.isSquareNumberOkToShoot(middleSquareNumber + 1)) {
+        if (this.isSquareNumberOkToShoot(middleSquareNumber + 1)
+            && squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, middleSquareNumber + 1)) {
             ShootingAI._roundShotDirection = Direction.right;
             ShootingAI._nextShotDirection = Direction.right;
             return middleSquareNumber + 1;
@@ -95,7 +99,9 @@ export class ShootingAI {
         let squareNumberValidator = new SquareNumberValidator();
 
         if (squareNumberValidator.isSquareNumberValidToShoot(squareNumber)) {
+
             if (ShootingAI._shipPosition === Direction.horizontal) {
+
                 return squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, squareNumber)
             }
 

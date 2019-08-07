@@ -26,6 +26,7 @@ class Game extends React.Component {
         this.setGameData = this.setGameData.bind(this);
         this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
+        this.resetShipsOnField = this.resetShipsOnField.bind(this);
         this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
     }
 
@@ -56,7 +57,7 @@ class Game extends React.Component {
 
         let gameDataManager = new GameDataManager();
 
-        if (gameDataManager.getGameData().isPlayerTurn) {
+        if (gameDataManager.getGameData().isPlayerTurn || gameDataManager.getGameData().winnerName === null) {
             return;
         }
 
@@ -69,8 +70,8 @@ class Game extends React.Component {
     makeComputerShot() {
 
         let shootingAI = new ShootingAI();
-        let gameDataManager = new GameDataManager();
         let squareNumberValidator = new SquareNumberValidator();
+        
         let squareId;
 
         if (ShootingAI._firstShotSquareNumber === -1) {
@@ -167,6 +168,14 @@ class Game extends React.Component {
                 }
             }
         }
+
+        if (gameDataManager.getGameData().playerFleet.deadShipsCount === 10){
+
+            let gameData = gameDataManager.getGameData();
+            gameData.winnerName = 'Computer';
+            this.setGameData(gameData);
+        }
+
     }
 
     shootPlayerSquare(squareNumber) {
@@ -179,15 +188,7 @@ class Game extends React.Component {
     paintAreaAroundShip(ship) {
 
         let squarePainterManager = new SquareNumberManager();
-        let field;
-
-        if (gameDataManager.getGameData().isPlayerTurn) {
-
-            field = this.state.gameData.computerField.squares;
-        } else {
-
-            field = this.state.gameData.playerField.squares;
-        }
+        let gameData = gameDataManager.getGameData();
 
         for (let i = 0; i < ship.decks.length; i++) {
 
@@ -198,21 +199,35 @@ class Game extends React.Component {
 
                 if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
 
-                    field[nearestSquareNumber[i]].isClicked = true;
+                    gameData.computerField.squares[nearestSquareNumber[i]].isClicked = true;
                 }
             }
         }
+
+        this.setGameData(gameData);
     }
 
     resetShipsOnField() {
 
-        const gameData = this.state.gameData;
+        const gameData = gameDataManager.getGameData();
 
         for (let i = 0; i < gameData.playerField.squares.length; i++) {
 
             gameData.playerField.squares[i].shipNumber = -1;
         }
 
+        let ships = gameData.playerFleet.ships;
+
+        for (let i = 0; i < ships.length; i++){
+
+            for (let j = 0; j < ships[i].decks.length; j++){
+
+                ships[i].decks[j].position = -1;
+            }
+        }
+
+        gameData.playerField.shipsOnField = 0;
+        console.log(gameData);
         this.setGameData(gameData);
     }
 
@@ -264,10 +279,10 @@ class Game extends React.Component {
                 />
 
                 <Interface
-                    resetShips={this.resetShips}
                     gameState={this.state.gameData.gameState}
                     shipsOnField={this.state.gameData.playerField.shipsOnField}
                     setGameData={this.setGameData}
+                    resetShips={this.resetShipsOnField}
                 />
             </div>
         )
