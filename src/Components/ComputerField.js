@@ -21,40 +21,36 @@ export default class ComputerField extends React.Component {
 
         // write method to check this
         if (square.isClicked === true || !gameData.isPlayerTurn ||
-            gameData.gameState !== 'battle') {
+            gameData.gameState !== 'battle' || gameData.winnerName !== null) {
             return;
         }
 
-        this.shootSquare(squareId);
+        gameDataManager.shootSquare(gameData, squareId);
 
         if (square.shipNumber !== -1) {
 
-            gameDataManager.shootDeck(square.shipNumber);
+            gameDataManager.shootDeck(gameData, square.shipNumber);
 
-            let gameData = gameDataManager.getGameData();
             let ship = gameData.computerFleet.ships[square.shipNumber];
 
             if (!ship.isAlive) {
-                this.props.paintAreaAroundShip(ship);
-
+                this.props.paintAreaAroundShip(gameData, ship);
+                gameDataManager.incrementDeadShipsCount(gameData);
             }
-        } else {
-            this.props.setIsPlayerTurn(false);
+
+            if (gameData.computerFleet.deadShipsCount === 10){
+
+                gameData.winnerName = 'You';
+            }
+
+            this.props.setGameData(gameData);
+        }
+        else {
+            gameDataManager.setIsPlayerTurn(gameData,false);
+            this.props.setGameData(gameData);
             this.props.makeComputerShot();
         }
-
     }
-
-    shootSquare(squareId) {
-
-        let gameData = gameDataManager.getGameData();
-        let squares = gameData.computerField.squares;
-
-        squares[squareId].isClicked = true;
-        this.props.setGameData(gameData);
-    }
-
-
 
     render() {
         return (

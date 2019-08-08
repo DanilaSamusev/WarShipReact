@@ -42,8 +42,6 @@ export class ShootingAI {
         ShootingAI._roundShotDirection = Direction.bottom;
         ShootingAI._nextShotDirection = Direction.bottom;
 
-        console.log("round shot:");
-
         return middleSquareNumber + 10;
     }
 
