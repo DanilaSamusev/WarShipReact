@@ -5,7 +5,8 @@ import {GameDataManager} from "../GameDataManager";
 import {SquareNumberManager} from "../SquareNumberManager.js"
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import Square from "./Square";
-import Interface from "./Interface";
+
+const gameDataManager = new GameDataManager();
 
 class PlayerField extends React.Component {
 
@@ -13,27 +14,8 @@ class PlayerField extends React.Component {
         super(props);
 
         this.state = {
-            playerField: [],
-            direction: 0,
-            shipsOnField: 0,
+            direction: this.props.direction,
         };
-
-        this.shoot = this.shoot.bind(this);
-        this.resetShips = this.resetShips.bind(this);
-        this.updatePlayerField = this.updatePlayerField.bind(this);
-    }
-
-    componentWillMount() {
-
-        if (this.props.playerField !== null) {
-            this.setState(
-                () => {
-                    return {
-                        playerField: this.props.playerField,
-                        shipsOnField: this.props.shipsOnField,
-                    };
-                });
-        }
     }
 
     handleClick(event, squareNumber) {
@@ -67,187 +49,79 @@ class PlayerField extends React.Component {
 
     plantShip(squareNumber) {
 
-        if (this.state.shipsOnField < 10) {
+        let gameData = gameDataManager.getGameData();
 
-            let gameDataManager = new GameDataManager();
+        if (gameData.playerField.shipsOnField < 10) {
+
             let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
-            let gameData = gameDataManager.getGameData();
 
             let pointsToPlantShip = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
-                this.state.shipsOnField, squareNumber);
+                gameData.playerField.shipsOnField, squareNumber);
 
             if (squareNumberValidator.areSquareNumbersValid(pointsToPlantShip, this.state.direction,
-                this.state.playerField)) {
+                gameData.playerField.squares)) {
 
-                this.setSquaresHasShip(pointsToPlantShip, gameData.playerFleet.ships[this.state.shipsOnField].id);
-                gameDataManager.setShipDeckPosition(pointsToPlantShip, this.state.shipsOnField);
-
-                this.setState(
-                    () => {
-                        return {
-                            shipsOnField: this.state.shipsOnField + 1,
-                        };
-                    }, () => gameDataManager.setValueShipsOnField(this.state.shipsOnField));
+                this.setSquaresHasShip(gameData, pointsToPlantShip, gameData.playerFleet.ships[gameData.playerField.shipsOnField].id);
+                gameDataManager.setShipDeckPosition(pointsToPlantShip, gameData.playerField.shipsOnField);
+                gameData.playerField.shipsOnField++;
             }
         }
+
+        this.props.setGameData(gameData);
     }
 
     handleMouseOver(squareNumber) {
 
-        if (this.state.shipsOnField < 10) {
+        let gameData = gameDataManager.getGameData();
+
+        if (gameData.playerField.shipsOnField < 10) {
 
             let squarePainterManager = new SquareNumberManager();
             let squareNumberValidator = new SquareNumberValidator();
             let squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
-                this.state.shipsOnField, squareNumber);
+                gameData.playerField.shipsOnField, squareNumber);
 
             this.cleanFieldFromIsChecked();
 
             if (squareNumberValidator.areSquareNumbersValid(squareNumbers, this.state.direction,
-                this.state.playerField)) {
+                gameDataManager.getGameData().playerField.squares)) {
 
-                this.paintSquares(squareNumbers);
+                this.paintSquaresToPlantShip(squareNumbers);
             }
         }
     }
 
-    paintSquares(squareNumbers) {
+    paintSquaresToPlantShip(squareNumbers) {
 
-        const field = this.state.playerField;
+        let gameData = gameDataManager.getGameData();
 
         for (let i = 0; i < squareNumbers.length; i++) {
 
-            let square = this.state.playerField[squareNumbers[i]];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: true,
-                shipNumber: square.shipNumber,
-            };
+            gameData.playerField.squares[squareNumbers[i]].isChecked = true;
         }
 
-        this.setField(field);
-    }
-
-    shoot() {
-
-        let gameDataManager = new GameDataManager();
-
-        if (gameDataManager.getGameData().isPlayerTurn) {
-            return;
-        }
-
-        setTimeout(() => {
-            this.props.makeComputerShot();
-            this.shoot();
-        }, 1000);
-    }
-
-    updatePlayerField(squares) {
-
-        if (squares === null) {
-            return;
-        }
-
-        const field = this.state.playerField;
-
-        for (let i = 0; i < squares.length; i++) {
-            let square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: square.shipNumber,
-            };
-        }
-
-        this.setField(field);
-    }
-
-    resetShips() {
-
-        let gameDataManager = new GameDataManager();
-
-        this.resetShipsOnField();
-        this.state.shipsOnField = 0;
-        gameDataManager.resetShipsOnFleet();
-        gameDataManager.setValueShipsOnField(this.state.shipsOnField);
+        this.props.setGameData(gameData);
     }
 
     cleanFieldFromIsChecked() {
 
-        const field = this.state.playerField;
+        let gameData = gameDataManager.getGameData();
 
-        for (var j = 0; j < field.length; j++) {
+        for (let i = 0; i < 99; i++) {
 
-            var square = this.state.playerField[j];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: false,
-                shipNumber: square.shipNumber,
-            };
+            gameData.playerField.squares[i].isChecked = false;
         }
 
-        this.setField(field);
+        this.props.setGameData(gameData);
     }
 
-    resetShipsOnField() {
+    setSquaresHasShip(gameData, squareNumbers, shipNumber) {
 
-        const field = this.state.playerField;
+        for (let i = 0; i < squareNumbers.length; i++) {
 
-        for (let i = 0; i < field.length; i++) {
-            let square = field[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: -1,
-            };
+           gameData.playerField.squares[squareNumbers[i]].shipNumber = shipNumber;
         }
-
-        this.setField(field);
-    }
-
-    setSquaresHasShip(squareNumbers, shipNumber) {
-
-        const field = this.state.playerField;
-
-        for (var i = 0; i < squareNumbers.length; i++) {
-
-            var square = field[squareNumbers[i]];
-
-            field[squareNumbers[i]] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                isChecked: square.isChecked,
-                shipNumber: shipNumber,
-            };
-        }
-
-        this.setField(field);
-    }
-
-    setField(field) {
-
-        let gameDataManager = new GameDataManager();
-
-        this.setState(
-            () => {
-                return {
-                    playerField: field,
-                };
-            }, () => {
-                let gameData = gameDataManager.getGameData();
-
-                gameData.playerField.squares = this.state.playerField;
-                gameDataManager.setGameData(gameData);
-            });
     }
 
     render() {
@@ -255,7 +129,7 @@ class PlayerField extends React.Component {
         return (
             <div className="playerField">
                 {
-                    this.state.playerField.map((square) => {
+                    this.props.squares.map((square) => {
                         return (
                             <Square
                                 id={square.id}
@@ -269,9 +143,6 @@ class PlayerField extends React.Component {
                             />
                         )
                     })}
-                <Interface shipsOnField={this.state.shipsOnField}
-                           resetShips={this.resetShips}
-                />
             </div>
         )
     }

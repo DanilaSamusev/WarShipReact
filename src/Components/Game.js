@@ -9,6 +9,9 @@ import {SquareNumberManager} from "../SquareNumberManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import PlayerField from "./PlayerField";
 import ComputerField from "../Components/ComputerField";
+import Interface from "./Interface";
+
+const gameDataManager = new GameDataManager();
 
 class Game extends React.Component {
 
@@ -20,14 +23,16 @@ class Game extends React.Component {
         };
 
         this.shoot = this.shoot.bind(this);
+        this.setGameData = this.setGameData.bind(this);
         this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
+        this.resetShipsOnField = this.resetShipsOnField.bind(this);
         this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
     }
 
     componentDidMount() {
 
-        let gameData = JSON.parse(sessionStorage.getItem('gameData'));
+        let gameData = gameDataManager.getGameData();
 
         if (gameData === null) {
 
@@ -41,10 +46,8 @@ class Game extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    sessionStorage.setItem('gameData', JSON.stringify(json));
-                    return json;
+                    this.setGameData(json);
                 })
-                .then((json => this.setGameData(json)));
         } else {
             this.setGameData(gameData);
         }
@@ -54,7 +57,7 @@ class Game extends React.Component {
 
         let gameDataManager = new GameDataManager();
 
-        if (gameDataManager.getGameData().isPlayerTurn) {
+        if (gameDataManager.getGameData().isPlayerTurn || gameDataManager.getGameData().winnerName !== null) {
             return;
         }
 
@@ -67,59 +70,61 @@ class Game extends React.Component {
     makeComputerShot() {
 
         let shootingAI = new ShootingAI();
-        let gameDataManager = new GameDataManager();
         let squareNumberValidator = new SquareNumberValidator();
-        let squareNumber;
+        let gameData = gameDataManager.getGameData();
+        let squareId;
 
         if (ShootingAI._firstShotSquareNumber === -1) {
 
             do {
 
-                squareNumber = shootingAI.getRandomSquareNumber();
+                squareId = shootingAI.getRandomSquareNumber();
             }
-            while (!squareNumberValidator.isSquareNumberValidToShoot(squareNumber));
+            while (!squareNumberValidator.isSquareNumberValidToShoot(squareId));
 
-            this.shootSquare(squareNumber);
+            gameDataManager.shootSquare(gameData, squareId);
 
-            if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+            if (gameData.playerField.squares[squareId].shipNumber !== -1) {
 
-                let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+                let shipNumber = gameDataManager.getGameData().playerField.squares[squareId].shipNumber;
 
-                gameDataManager.shootDeck(shipNumber, 'playerFleet');
+                gameDataManager.shootDeck(gameData, shipNumber);
 
-                if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                if (!gameData.playerFleet.ships[shipNumber].isAlive) {
+                    gameDataManager.incrementDeadShipsCount(gameData);
                     shootingAI.resetMemory();
                 } else {
-                    ShootingAI._firstShotSquareNumber = squareNumber;
+                    ShootingAI._firstShotSquareNumber = squareId;
                 }
             } else {
-                gameDataManager.setIsPlayerTurn(true);
+                gameDataManager.setIsPlayerTurn(gameData, true);
             }
         } else {
             if (ShootingAI._shipPosition !== -1) {
 
                 if (ShootingAI._shipPosition === Direction.horizontal) {
-                    squareNumber = shootingAI.getHorizontalSquareNumber();
+                    squareId = shootingAI.getHorizontalSquareNumber();
                 } else {
-                    squareNumber = shootingAI.getVerticalSquareNumber();
+                    squareId = shootingAI.getVerticalSquareNumber();
                 }
 
-                this.shootSquare(squareNumber);
+                gameDataManager.shootSquare(gameData, squareId);
 
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+                if (gameData.playerField.squares[squareId].shipNumber !== -1) {
 
-                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareId].shipNumber;
 
-                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
+                    gameDataManager.shootDeck(gameData, shipNumber);
 
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                    if (!gameData.playerFleet.ships[shipNumber].isAlive) {
+                        gameDataManager.incrementDeadShipsCount(gameData);
                         shootingAI.resetMemory();
                     } else {
-                        ShootingAI._lastShotSquareNumber = squareNumber;
+                        ShootingAI._lastShotSquareNumber = squareId;
                     }
                 } else {
 
-                    gameDataManager.setIsPlayerTurn(true);
+                    gameDataManager.setIsPlayerTurn(gameData,true);
                     ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
 
                     if (ShootingAI._shipPosition === Direction.horizontal) {
@@ -138,20 +143,21 @@ class Game extends React.Component {
                 }
             } else {
 
-                squareNumber = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
+                squareId = shootingAI.getRoundSquareNumber(ShootingAI._firstShotSquareNumber);
 
-                this.shootSquare(squareNumber);
+                gameDataManager.shootSquare(gameData, squareId);
 
-                if (gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber !== -1) {
+                if (gameData.playerField.squares[squareId].shipNumber !== -1) {
 
-                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareNumber].shipNumber;
+                    let shipNumber = gameDataManager.getGameData().playerField.squares[squareId].shipNumber;
 
-                    gameDataManager.shootDeck(shipNumber, 'playerFleet');
+                    gameDataManager.shootDeck(gameData, shipNumber);
 
-                    if (!gameDataManager.getGameData().playerFleet.ships[shipNumber].isAlive) {
+                    if (!gameData.playerFleet.ships[shipNumber].isAlive) {
+                        gameDataManager.incrementDeadShipsCount(gameData);
                         shootingAI.resetMemory();
                     } else {
-                        ShootingAI._lastShotSquareNumber = squareNumber;
+                        ShootingAI._lastShotSquareNumber = squareId;
 
                         if (ShootingAI._roundShotDirection === Direction.left ||
                             ShootingAI._roundShotDirection === Direction.right) {
@@ -161,32 +167,22 @@ class Game extends React.Component {
                         }
                     }
                 } else {
-                    gameDataManager.setIsPlayerTurn(true);
+                    gameDataManager.setIsPlayerTurn(gameData,true);
                 }
             }
         }
-    }
 
-    shootSquare(squareNumber) {
+        if (gameData.playerFleet.deadShipsCount === 10){
 
-        let gameData = this.state.gameData;
-        gameData.playerField.squares[squareNumber].isClicked = true;
+            gameData.winnerName = 'Computer';
+        }
+
         this.setGameData(gameData);
     }
 
-    paintAreaAroundShip(ship) {
+    paintAreaAroundShip(gameData, ship) {
 
-        let gameDataManager = new GameDataManager();
         let squarePainterManager = new SquareNumberManager();
-        let field;
-
-        if (gameDataManager.getGameData().isPlayerTurn) {
-
-            field = this.state.gameData.computerField.squares;
-        } else {
-
-            field = this.state.gameData.playerField.squares;
-        }
 
         for (let i = 0; i < ship.decks.length; i++) {
 
@@ -197,15 +193,39 @@ class Game extends React.Component {
 
                 if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
 
-                    field[nearestSquareNumber[i]].isClicked = true;
+                    gameData.computerField.squares[nearestSquareNumber[i]].isClicked = true;
                 }
             }
         }
     }
 
+    resetShipsOnField() {
+
+        const gameData = gameDataManager.getGameData();
+
+        for (let i = 0; i < gameData.playerField.squares.length; i++) {
+
+            gameData.playerField.squares[i].shipNumber = -1;
+        }
+
+        let ships = gameData.playerFleet.ships;
+
+        for (let i = 0; i < ships.length; i++){
+
+            for (let j = 0; j < ships[i].decks.length; j++){
+
+                ships[i].decks[j].position = -1;
+            }
+        }
+
+        gameData.playerField.shipsOnField = 0;
+        console.log(gameData);
+        this.setGameData(gameData);
+    }
+
     setGameData(gameData) {
 
-        let gameDataManager = new GameDataManager();
+        gameDataManager.setGameData(gameData);
 
         this.setState(
             () => {
@@ -213,20 +233,18 @@ class Game extends React.Component {
                     gameData: gameData,
                 };
             });
-
-        gameDataManager.setGameData(gameData);
     }
 
     setIsPlayerTurn(state) {
 
-        let gameDataManager = new GameDataManager();
+        gameDataManager.setIsPlayerTurn(state);
 
         this.setState(
             () => {
                 return {
                     isPlayerTurn: state,
                 };
-            }, () => gameDataManager.setIsPlayerTurn(state));
+            });
     }
 
     render() {
@@ -238,16 +256,29 @@ class Game extends React.Component {
         return (
             <div className="game">
 
-                <ComputerField squares={this.state.gameData.computerField.squares}
-                               setIsPlayerTurn={this.setIsPlayerTurn}
-                               makeComputerShot={this.shoot}
-                               paintAreaAroundShip={this.paintAreaAroundShip}
+                <ComputerField
+                    squares={this.state.gameData.computerField.squares}
+                    makeComputerShot={this.shoot}
+                    setGameData={this.setGameData}
+                    setIsPlayerTurn={this.setIsPlayerTurn}
+                    paintAreaAroundShip={this.paintAreaAroundShip}
                 />
-                <PlayerField playerField={this.state.gameData.playerField.squares}
-                             shipsOnField={this.state.gameData.playerField.shipsOnField}
-                             setIsPlayerTurn={this.setIsPlayerTurn}
+                <PlayerField
+                    squares={this.state.gameData.playerField.squares}
+                    shipsOnField={this.state.gameData.playerField.shipsOnField}
+                    setGameData={this.setGameData}
+                    setIsPlayerTurn={this.setIsPlayerTurn}
+                />
 
+                <Interface
+                    gameState={this.state.gameData.gameState}
+                    shipsOnField={this.state.gameData.playerField.shipsOnField}
+                    setGameData={this.setGameData}
+                    resetShips={this.resetShipsOnField}
                 />
+
+                <h1>{this.state.gameData.winnerName} win!</h1>
+
             </div>
         )
     }

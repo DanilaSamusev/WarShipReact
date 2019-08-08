@@ -4,108 +4,59 @@ import "../css/index.css"
 import {GameDataManager} from "../GameDataManager";
 import Square from './Square'
 
+const gameDataManager = new GameDataManager();
+
 export default class ComputerField extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            squares: [],
-        };
-
         this.makeShot = this.makeShot.bind(this);
-        this.updateComputerField = this.updateComputerField.bind(this);
-    }
-
-    componentWillMount() {
-
-        if (this.props.squares !== null) {
-            this.setState(
-                () => {
-                    return {
-                        squares: this.props.squares,
-                    };
-                });
-        }
     }
 
     makeShot(squareId) {
 
-        let gameDataManager = new GameDataManager();
-        let square = this.state.squares[squareId];
         let gameData = gameDataManager.getGameData();
+        let square = gameData.computerField.squares[squareId];
 
+        // write method to check this
         if (square.isClicked === true || !gameData.isPlayerTurn ||
-            gameData.gameState !== 'battle') {
+            gameData.gameState !== 'battle' || gameData.winnerName !== null) {
             return;
         }
 
-        square.isClicked = true;
+        gameDataManager.shootSquare(gameData, squareId);
 
         if (square.shipNumber !== -1) {
 
-            gameDataManager.shootDeck(square.shipNumber, 'computerFleet');
+            gameDataManager.shootDeck(gameData, square.shipNumber);
 
-            let gameData = gameDataManager.getGameData();
             let ship = gameData.computerFleet.ships[square.shipNumber];
 
             if (!ship.isAlive) {
-                this.props.paintAreaAroundShip(ship);
-
+                this.props.paintAreaAroundShip(gameData, ship);
+                gameDataManager.incrementDeadShipsCount(gameData);
             }
-        } else {
-            this.props.setIsPlayerTurn(false);
-            gameDataManager.setIsPlayerTurn(false);
+
+            if (gameData.computerFleet.deadShipsCount === 10){
+
+                gameData.winnerName = 'You';
+            }
+
+            this.props.setGameData(gameData);
+        }
+        else {
+            gameDataManager.setIsPlayerTurn(gameData,false);
+            this.props.setGameData(gameData);
             this.props.makeComputerShot();
         }
-
-
-        this.updateComputerField(new Array(square));
-    }
-
-    updateComputerField(squares) {
-
-        if (squares === null) {
-            return;
-        }
-
-        const field = this.state.squares;
-
-        for (var i = 0; i < squares.length; i++) {
-            var square = squares[i];
-
-            field[square.id] = {
-                id: square.id,
-                isClicked: square.isClicked,
-                shipNumber: square.shipNumber,
-            };
-        }
-
-        this.setField(field);
-    }
-
-    setField(field) {
-
-        let gameDataManager = new GameDataManager();
-
-        this.setState(
-            () => {
-                return {
-                    squares: field,
-                };
-            }, () => {
-                let gameData = gameDataManager.getGameData();
-
-                gameData.computerField.squares = this.state.squares;
-                gameDataManager.setGameData(gameData);
-            });
     }
 
     render() {
         return (
             <div className="computerField">
                 {
-                    this.state.squares.map((square) => {
+                    this.props.squares.map((square) => {
                         return (
                             <Square
                                 id={square.id}

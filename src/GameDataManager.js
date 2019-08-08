@@ -1,14 +1,5 @@
 export class GameDataManager{
 
-    setValueShipsOnField(shipsOnField){
-
-        let gameData = this.getGameData();
-
-        gameData.playerField.shipsOnField = shipsOnField;
-
-        this.setGameData(gameData);
-    }
-
     setShipDeckPosition(pointsToPlant, shipNumber){
 
         let gameData = this.getGameData();
@@ -21,19 +12,13 @@ export class GameDataManager{
         this.setGameData(gameData);
     }
 
-    setIsPlayerTurn(isPlayerTurn){
-
-        let gameData = this.getGameData();
+    setIsPlayerTurn(gameData, isPlayerTurn){
 
         gameData.isPlayerTurn = isPlayerTurn;
-
-        this.setGameData(gameData);
-
     }
 
-    shootDeck(shipId) {
+    shootDeck(gameData, shipId) {
 
-        let gameData = this.getGameData();
         let fleet;
 
         if (gameData.isPlayerTurn){
@@ -49,18 +34,36 @@ export class GameDataManager{
         if (fleet.ships[shipId].hitsNumber === fleet.ships[shipId].decks.length) {
             fleet.ships[shipId].isAlive = false;
         }
-
-        this.setGameData(gameData);
     }
 
-    shootSquare(squareNumber){
+    shootSquare(gameData, squareNumber) {
 
-        let gameData = this.getGameData();
+        let field;
 
-        gameData.playerField.squares[squareNumber].isClicked = true;
+        if (gameData.isPlayerTurn){
 
-        this.setGameData(gameData);
+            field = gameData.computerField;
+        }
+        else{
 
+            field = gameData.playerField;
+        }
+
+        field.squares[squareNumber].isClicked = true;
+    }
+
+    incrementDeadShipsCount(gameData){
+
+        let fleet;
+
+        if (gameData.isPlayerTurn){
+            fleet = gameData.computerFleet
+        }
+        else{
+            fleet = gameData.playerFleet
+        }
+
+        fleet.deadShipsCount++;
     }
 
     resetShipsOnFleet() {
