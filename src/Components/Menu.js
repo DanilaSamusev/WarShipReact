@@ -3,17 +3,17 @@ import {BrowserRouter, Route, Link} from "react-router-dom";
 import Game from "./Game";
 
 
-const Home = () => (
+const Info = () => (
     <div>
         <h2>Coming soon...</h2>
     </div>
 );
 
-const About = () => (
+const SinglePlayer = () => (
     <Game/>
 );
 
-const Contacts = () => (
+const Multiplayer = () => (
     <div>
         <h2>Coming soon...</h2>
     </div>
@@ -27,15 +27,15 @@ export default class Menu extends React.Component {
                 <div>
                     <ul>
                         <li><Link to={"/"}>Rates</Link></li>
-                        <li><Link to={"/about"}>Single player</Link></li>
-                        <li><Link to={"/contacts"}>Multiplayer</Link></li>
+                        <li><Link to={"/singlePlayer"}>Single player</Link></li>
+                        <li><Link to={"/multiplayer"}>Multiplayer</Link></li>
                     </ul>
 
                     <hr/>
 
-                    <Route exact path="/" component={Home}/>
-                    <Route exact path="/about" component={About}/>
-                    <Route exact path="/contacts" component={Contacts}/>
+                    <Route exact path="/" component={Info}/>
+                    <Route exact path="/singlePlayer" component={SinglePlayer}/>
+                    <Route exact path="/multiplayer" component={Multiplayer}/>
                 </div>
             </BrowserRouter>
         )

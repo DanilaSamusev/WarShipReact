@@ -9,23 +9,17 @@ export default class Interface extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.resetShips = this.resetShips.bind(this);
     }
 
-    setGameData(gameState) {
+    resetShips(){
 
-        let gameDataManager = new GameDataManager();
+        let gameData = gameDataManager.getGameData();
 
-        this.setState(
-            () => {
-                return {
-                    gameState: gameState,
-                };
-            }, () => {
-                let gameData = gameDataManager.getGameData();
+        gameDataManager.resetShipsOnField(gameData);
 
-                gameData.gameState = this.state.gameState;
-                gameDataManager.setGameData(gameData);
-            });
+        this.props.setGameData(gameData);
     }
 
     render() {
@@ -42,7 +36,7 @@ export default class Interface extends React.Component {
                 readyButton = <button onClick={() => this.props.setGameData(gameData)}>Ready!</button>
             }
 
-            resetShipsButton = <button onClick={this.props.resetShips}>Reset ships</button>
+            resetShipsButton = <button onClick={this.resetShips}>Reset ships</button>
         }
 
         return (

@@ -1,3 +1,5 @@
+import {SquareNumberManager} from "./SquareNumberManager";
+
 export class GameDataManager{
 
     setShipDeckPosition(pointsToPlant, shipNumber){
@@ -38,6 +40,8 @@ export class GameDataManager{
 
     shootSquare(gameData, squareNumber) {
 
+        let a = this.getGameData();
+
         let field;
 
         if (gameData.isPlayerTurn){
@@ -66,21 +70,43 @@ export class GameDataManager{
         fleet.deadShipsCount++;
     }
 
-    resetShipsOnFleet() {
+    paintAreaAroundShip(gameData, ship) {
 
-        let gameData = this.getGameData();
-        let playerShips = gameData.playerFleet.ships;
+        let squarePainterManager = new SquareNumberManager();
 
-        for (let i = 0; i < playerShips.length; i++) {
+        for (let i = 0; i < ship.decks.length; i++) {
 
-            let ship = playerShips[i];
+            let squareNumber = ship.decks[i].position;
+            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
 
-            for (let j = 0; j < ship.decks.length; j++) {
-                ship.decks[j].position = -1;
+            for (let i = 0; i < nearestSquareNumber.length; i++) {
+
+                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
+
+                    gameData.computerField.squares[nearestSquareNumber[i]].isClicked = true;
+                }
+            }
+        }
+    }
+
+    resetShipsOnField(gameData) {
+
+        for (let i = 0; i < gameData.playerField.squares.length; i++) {
+
+            gameData.playerField.squares[i].shipNumber = -1;
+        }
+
+        let ships = gameData.playerFleet.ships;
+
+        for (let i = 0; i < ships.length; i++){
+
+            for (let j = 0; j < ships[i].decks.length; j++){
+
+                ships[i].decks[j].position = -1;
             }
         }
 
-        this.setGameData(gameData);
+        gameData.playerField.shipsOnField = 0;
     }
 
     getGameData(){

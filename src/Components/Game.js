@@ -26,8 +26,6 @@ class Game extends React.Component {
         this.setGameData = this.setGameData.bind(this);
         this.setIsPlayerTurn = this.setIsPlayerTurn.bind(this);
         this.makeComputerShot = this.makeComputerShot.bind(this);
-        this.resetShipsOnField = this.resetShipsOnField.bind(this);
-        this.paintAreaAroundShip = this.paintAreaAroundShip.bind(this);
     }
 
     componentDidMount() {
@@ -180,48 +178,6 @@ class Game extends React.Component {
         this.setGameData(gameData);
     }
 
-    paintAreaAroundShip(gameData, ship) {
-
-        let squarePainterManager = new SquareNumberManager();
-
-        for (let i = 0; i < ship.decks.length; i++) {
-
-            let squareNumber = ship.decks[i].position;
-            let nearestSquareNumber = squarePainterManager.getNearestSquareNumbers(squareNumber);
-
-            for (let i = 0; i < nearestSquareNumber.length; i++) {
-
-                if (nearestSquareNumber[i] >= 0 && nearestSquareNumber[i] < 100) {
-
-                    gameData.computerField.squares[nearestSquareNumber[i]].isClicked = true;
-                }
-            }
-        }
-    }
-
-    resetShipsOnField() {
-
-        const gameData = gameDataManager.getGameData();
-
-        for (let i = 0; i < gameData.playerField.squares.length; i++) {
-
-            gameData.playerField.squares[i].shipNumber = -1;
-        }
-
-        let ships = gameData.playerFleet.ships;
-
-        for (let i = 0; i < ships.length; i++){
-
-            for (let j = 0; j < ships[i].decks.length; j++){
-
-                ships[i].decks[j].position = -1;
-            }
-        }
-
-        gameData.playerField.shipsOnField = 0;
-        console.log(gameData);
-        this.setGameData(gameData);
-    }
 
     setGameData(gameData) {
 
@@ -274,7 +230,6 @@ class Game extends React.Component {
                     gameState={this.state.gameData.gameState}
                     shipsOnField={this.state.gameData.playerField.shipsOnField}
                     setGameData={this.setGameData}
-                    resetShips={this.resetShipsOnField}
                 />
 
                 <h1>{this.state.gameData.winnerName} win!</h1>

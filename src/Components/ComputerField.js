@@ -34,7 +34,7 @@ export default class ComputerField extends React.Component {
             let ship = gameData.computerFleet.ships[square.shipNumber];
 
             if (!ship.isAlive) {
-                this.props.paintAreaAroundShip(gameData, ship);
+                gameDataManager.paintAreaAroundShip(gameData, ship);
                 gameDataManager.incrementDeadShipsCount(gameData);
             }
 
