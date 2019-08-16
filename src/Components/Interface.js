@@ -11,6 +11,7 @@ export default class Interface extends React.Component {
         super(props);
 
         this.resetShips = this.resetShips.bind(this);
+        this.setIsPlayerReady = this.setIsPlayerReady.bind(this);
     }
 
     resetShips(){
@@ -22,18 +23,25 @@ export default class Interface extends React.Component {
         this.props.setGameData(gameData);
     }
 
+    setIsPlayerReady(){
+
+        let gameData = gameDataManager.getGameData();
+
+        gameData.boards[gameData.playerBoardId].isPlayerReady = true;
+
+        this.props.setGameData(gameData);
+    }
+
     render() {
 
         let readyButton;
         let resetShipsButton;
-        let gameData = gameDataManager.getGameData();
 
-        if (this.props.gameState === 'battle preparation') {
+        if (!this.props.isPlayerReady) {
 
             if (this.props.shipsOnField === 10) {
 
-                gameData.gameState = 'battle';
-                readyButton = <button onClick={() => this.props.setGameData(gameData)}>Ready!</button>
+                readyButton = <button onClick={() => this.setIsPlayerReady()}>Ready!</button>
             }
 
             resetShipsButton = <button onClick={this.resetShips}>Reset ships</button>

@@ -16,22 +16,22 @@ export class ShootingAI {
         return Math.floor(Math.random() * (100));
     }
 
-    getRoundSquareNumber(middleSquareNumber) {
+    getRoundSquareNumber(middleSquareNumber, board) {
 
-        if (this.isSquareNumberOkToShoot(middleSquareNumber - 1)
+        if (this.isSquareNumberOkToShoot(middleSquareNumber - 1, board)
             && squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, middleSquareNumber - 1)) {
             ShootingAI._roundShotDirection = Direction.left;
             ShootingAI._nextShotDirection = Direction.left;
             return middleSquareNumber - 1;
         }
 
-        if (this.isSquareNumberOkToShoot(middleSquareNumber - 10)) {
+        if (this.isSquareNumberOkToShoot(middleSquareNumber - 10, board)) {
             ShootingAI._roundShotDirection = Direction.top;
             ShootingAI._nextShotDirection = Direction.top;
             return middleSquareNumber - 10;
         }
 
-        if (this.isSquareNumberOkToShoot(middleSquareNumber + 1)
+        if (this.isSquareNumberOkToShoot(middleSquareNumber + 1, board)
             && squareNumberValidator.areSquareNumbersInSimilarRow(ShootingAI._firstShotSquareNumber, middleSquareNumber + 1)) {
             ShootingAI._roundShotDirection = Direction.right;
             ShootingAI._nextShotDirection = Direction.right;
@@ -45,7 +45,7 @@ export class ShootingAI {
         return middleSquareNumber + 10;
     }
 
-    getHorizontalSquareNumber() {
+    getHorizontalSquareNumber(board) {
 
         let currentSquareNumber;
 
@@ -53,7 +53,7 @@ export class ShootingAI {
 
             currentSquareNumber = ShootingAI._lastShotSquareNumber - 1;
 
-            if (!this.isSquareNumberOkToShoot(currentSquareNumber)) {
+            if (!this.isSquareNumberOkToShoot(currentSquareNumber, board)) {
 
                 ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
                 ShootingAI._nextShotDirection = Direction.right;
@@ -69,7 +69,7 @@ export class ShootingAI {
         return currentSquareNumber;
     }
 
-    getVerticalSquareNumber() {
+    getVerticalSquareNumber(board) {
 
         let currentSquareNumber;
 
@@ -77,7 +77,7 @@ export class ShootingAI {
 
             currentSquareNumber = ShootingAI._lastShotSquareNumber - 10;
 
-            if (!this.isSquareNumberOkToShoot(currentSquareNumber)) {
+            if (!this.isSquareNumberOkToShoot(currentSquareNumber, board)) {
 
                 ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
                 ShootingAI._nextShotDirection = Direction.bottom;
@@ -92,11 +92,11 @@ export class ShootingAI {
         return currentSquareNumber;
     }
 
-    isSquareNumberOkToShoot(squareNumber) {
+    isSquareNumberOkToShoot(squareNumber, board) {
 
         let squareNumberValidator = new SquareNumberValidator();
 
-        if (squareNumberValidator.isSquareNumberValidToShoot(squareNumber)) {
+        if (squareNumberValidator.isSquareNumberValidToShoot(squareNumber, board)) {
 
             if (ShootingAI._shipPosition === Direction.horizontal) {
 

@@ -65,26 +65,22 @@ export class SquareNumberValidator {
         return true;
     }
 
-    isSquareNumberValidToShoot(squareNumber) {
+    isSquareNumberValidToShoot(squareNumber, board) {
 
-        return !this.hasDeadShipNeighbour(squareNumber) &&
+        return !this.hasDeadShipNeighbour(squareNumber, board) &&
             this.isSquareNumberValidForBounds(squareNumber) &&
-            !this.isSquareAlreadyShot(squareNumber)
+            !this.isSquareAlreadyShot(squareNumber, board)
     }
 
-    isSquareAlreadyShot(squareNumber) {
+    isSquareAlreadyShot(squareNumber, board) {
 
-        let gameDataManager = new GameDataManager();
-
-        return gameDataManager.getGameData().playerField.squares[squareNumber].isClicked;
+        return board.field.squares[squareNumber].isClicked;
     }
 
-    hasDeadShipNeighbour(squareNumber) {
+    hasDeadShipNeighbour(squareNumber, board) {
 
-        let gameDataManager = new GameDataManager();
         let squareNumberManager = new SquareNumberManager();
         let squareNumberValidator = new SquareNumberValidator();
-        let gameData = gameDataManager.getGameData();
         let nearestSquareNumbers = squareNumberManager.getNearestSquareNumbers(squareNumber);
         let shipNumber;
         let ship;
@@ -93,11 +89,11 @@ export class SquareNumberValidator {
 
             if (squareNumberValidator.isSquareNumberValidForBounds(nearestSquareNumbers[i])) {
 
-                shipNumber = gameData.playerField.squares[nearestSquareNumbers[i]].shipNumber;
+                shipNumber = board.field.squares[nearestSquareNumbers[i]].shipNumber;
 
                 if (shipNumber !== -1) {
 
-                    ship = gameData.playerFleet.ships[shipNumber];
+                    ship = board.fleet.ships[shipNumber];
 
                     if (!ship.isAlive) {
 

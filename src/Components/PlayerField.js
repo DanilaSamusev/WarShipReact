@@ -116,14 +116,6 @@ class PlayerField extends React.Component {
         this.props.setGameData(gameData);
     }
 
-    setSquaresHasShip(gameData, squareNumbers, shipNumber) {
-
-        for (let i = 0; i < squareNumbers.length; i++) {
-
-           gameData.playerField.squares[squareNumbers[i]].shipNumber = shipNumber;
-        }
-    }
-
     render() {
 
         return (

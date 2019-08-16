@@ -19,12 +19,10 @@ export default class ComputerField extends React.Component {
         let gameData = gameDataManager.getGameData();
         let square = gameData.computerField.squares[squareId];
 
-        // write method to check this
         if (square.isClicked === true || !gameData.isPlayerTurn ||
             gameData.gameState !== 'battle' || gameData.winnerName !== null) {
             return;
         }
-
         gameDataManager.shootSquare(gameData, squareId);
 
         if (square.shipNumber !== -1) {
