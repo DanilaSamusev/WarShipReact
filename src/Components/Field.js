@@ -1,6 +1,6 @@
 import React from 'react';
 import "../css/index.css"
-import "../css/playerField.css"
+import "../css/field.css"
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberManager} from "../SquareNumberManager.js"
 import {SquareNumberValidator} from "../SquareNumberValidator";
@@ -57,17 +57,20 @@ export default class Field extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
-        if (gameData.boards[this.state.id].field.shipsOnField < 10) {
+        if (this.isPlayerField()) {
 
-            let squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
-                gameData.boards[this.state.id].field.shipsOnField, squareNumber);
+            if (gameData.boards[this.state.id].field.shipsOnField < 10) {
 
-            this.cleanFieldFromIsChecked();
+                let squareNumbers = squarePainterManager.getSquareNumbersToPaint(this.state.direction,
+                    gameData.boards[this.state.id].field.shipsOnField, squareNumber);
 
-            if (squareNumberValidator.areSquareNumbersValid(squareNumbers, this.state.direction,
-                gameData.boards[this.state.id].field.squares)) {
+                this.cleanFieldFromIsChecked();
 
-                this.paintSquaresToPlantShip(squareNumbers);
+                if (squareNumberValidator.areSquareNumbersValid(squareNumbers, this.state.direction,
+                    gameData.boards[this.state.id].field.squares)) {
+
+                    this.paintSquaresToPlantShip(squareNumbers);
+                }
             }
         }
     }
@@ -150,9 +153,6 @@ export default class Field extends React.Component {
             console.log(1);
             this.props.makeComputerShot();
         }
-
-
-
     }
 
     changeShipDirection(squareNumber) {
@@ -187,26 +187,34 @@ export default class Field extends React.Component {
         this.props.setGameData(gameData);
     }
 
+    isPlayerField() {
+
+        return this.state.id === gameDataManager.getGameData().playerBoardId;
+    }
+
     render() {
 
         return (
-            <div className={this.props.className}>
-                {
-                    this.props.squares.map((square) => {
-                        return (
-                            <Square
-                                id={square.id}
-                                key={square.id}
-                                isClicked={square.isClicked}
-                                isChecked={square.isChecked}
-                                shipNumber={square.shipNumber}
-                                className="playerSquare"
-                                onMouseOver={() => this.handleMouseOver(square.id)}
-                                onClick={(event) => this.handleClick(event, square.id)}
-                            />
-                        )
-                    })}
-            </div>
+
+                <div className='field'>
+
+                    {
+                        this.props.squares.map((square) => {
+                            return (
+                                <Square
+                                    className='square'
+                                    id={square.id}
+                                    key={square.id}
+                                    isClicked={square.isClicked}
+                                    isChecked={square.isChecked}
+                                    shipNumber={square.shipNumber}
+                                    onMouseOver={() => this.handleMouseOver(square.id)}
+                                    onClick={(event) => this.handleClick(event, square.id)}
+                                />
+                            )
+                        })}
+                </div>
+
         )
     }
 }

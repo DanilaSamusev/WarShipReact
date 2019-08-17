@@ -1,11 +1,11 @@
-.computerField{
+.field{
     display: flex;
     flex-wrap: wrap;
     height: 40%;
     width: 25%;
 }
 
-.computerSquare {
+.square {
     background: #fff;
     border: 1px solid black;
     height: 10%;

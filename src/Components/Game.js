@@ -7,8 +7,6 @@ import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import Interface from "./Interface";
-import PlayerField from "./PlayerField";
-import ComputerField from "../Components/ComputerField";
 import Field from "./Field";
 
 const gameDataManager = new GameDataManager();
@@ -211,7 +209,6 @@ class Game extends React.Component {
             return null;
         }
 
-
         let playerBoardId = this.state.gameData.playerBoardId;
         let enemyBoardId = this.state.gameData.enemyBoardId;
         let playerBoard = this.state.gameData.boards[playerBoardId];
@@ -221,6 +218,7 @@ class Game extends React.Component {
             <div className="game">
 
                 <Field
+
                     className='computerField'
                     id={enemyBoardId}
                     setGameData={this.setGameData}
