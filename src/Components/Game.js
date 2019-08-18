@@ -218,8 +218,8 @@ class Game extends React.Component {
             <div className="game">
 
                 <Field
-
-                    className='computerField'
+                    className='field'
+                    name='Player field'
                     id={enemyBoardId}
                     setGameData={this.setGameData}
                     squares={enemyBoard.field.squares}
@@ -227,7 +227,8 @@ class Game extends React.Component {
                 />
 
                 <Field
-                    className='playerField'
+                    className='field'
+                    name='Computer field'
                     id={playerBoardId}
                     squares={playerBoard.field.squares}
                     setGameData={this.setGameData}

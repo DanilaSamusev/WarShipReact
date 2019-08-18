@@ -1,9 +1,7 @@
 .game{
     display: flex;
-    flex-wrap: wrap;
     width: 100vw;
     height: 100vh;
-
     justify-content: center;
 }
 
@@ -17,6 +15,7 @@ a{
     width:120px;
     display:inline-block;
     text-align:center;
+    font-size: 20px;
     transition:all .33s linear;
     -webkit-transition:all .33s linear;
 }
@@ -33,39 +32,11 @@ a:nth-child(1) ~ div{
 }
 
 a:nth-child(2):hover ~ div {
-    transform:translate(120px);
     -webkit-transform:translate(120px);
-    background-color:#e74c3c;
-    transition:all .33s linear;
-    -webkit-transition:all .33s linear;
+    background:#fff;
 }
 
 a:nth-child(3):hover ~ div {
-    transform:translate(120px);
     -webkit-transform:translate(240px);
-    background-color:#BF55EC;
-    transition:all .33s linear;
-    -webkit-transition:all .33s linear;
-}
-
-
-a:nth-child(4):hover ~ div {
-    transform:translate(120px);
-    -webkit-transform:translate(360px);
-    background-color:#f39c12;
-    color:#03C9A9;
-    transition:all .33s linear;
-    -webkit-transition:all .33s linear;
-}
-
-a:nth-child(2):hover {
-    color:#e74c3c;
-}
-
-a:nth-child(3):hover {
-    color:#BF55EC;
-}
-
-a:nth-child(4):hover {
-    color:#f39c12;
+    background:#fff;
 }

@@ -1,13 +1,20 @@
 .field{
     display: flex;
     flex-wrap: wrap;
-    height: 40%;
-    width: 25%;
+    height: 400px;
+    width: 470px;
+    margin-left: 15px;
+}
+
+.fieldOwnerName{
+    text-align: center;
+    font-size: larger;
+    color: #fff;
 }
 
 .square {
     background: #fff;
     border: 1px solid black;
-    height: 10%;
-    width: 9%;
+    height: 40px;
+    width: 45px;
 }

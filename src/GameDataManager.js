@@ -53,14 +53,14 @@ export class GameDataManager{
         }
     }
 
-    resetShipsOnField(gameData) {
+    resetShipsOnField(board) {
 
-        for (let i = 0; i < gameData.playerField.squares.length; i++) {
+        for (let i = 0; i < board.field.squares.length; i++) {
 
-            gameData.playerField.squares[i].shipNumber = -1;
+            board.field.squares[i].shipNumber = -1;
         }
 
-        let ships = gameData.playerFleet.ships;
+        let ships = board.fleet.ships;
 
         for (let i = 0; i < ships.length; i++){
 
@@ -70,7 +70,7 @@ export class GameDataManager{
             }
         }
 
-        gameData.playerField.shipsOnField = 0;
+        board.field.shipsOnField = 0;
     }
 
     getGameData(){

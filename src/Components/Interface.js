@@ -18,7 +18,7 @@ export default class Interface extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
-        gameDataManager.resetShipsOnField(gameData);
+        gameDataManager.resetShipsOnField(gameData.boards[gameData.playerBoardId]);
 
         this.props.setGameData(gameData);
     }

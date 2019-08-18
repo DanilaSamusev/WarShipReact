@@ -194,15 +194,28 @@ export default class Field extends React.Component {
 
     render() {
 
+        let gameData = gameDataManager.getGameData();
+        let name = '';
+
+        if (this.state.id === gameData.playerBoardId) {
+            name = 'player';
+        } else {
+            name = 'enemy'
+        }
+
         return (
 
-                <div className='field'>
+            <div className='board'>
 
+                <div className='fieldOwnerName'>{this.props.name}</div>
+
+                <div className='field'>
                     {
                         this.props.squares.map((square) => {
                             return (
                                 <Square
                                     className='square'
+                                    name={name}
                                     id={square.id}
                                     key={square.id}
                                     isClicked={square.isClicked}
@@ -214,6 +227,7 @@ export default class Field extends React.Component {
                             )
                         })}
                 </div>
+            </div>
 
         )
     }
