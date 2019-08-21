@@ -24,9 +24,9 @@ export default class Menu extends React.Component {
             <BrowserRouter>
                 <div>
                     <nav>
-                        <a><Link to={"/"}>Rates</Link></a>
-                        <a><Link to={"/singlePlayer"}>Single player</Link></a>
-                        <a><Link to={"/multiPlayer"}>Multi player</Link></a>
+                        <Link to={"/"}>Rates</Link>
+                        <Link to={"/singlePlayer"}>Single player</Link>
+                        <Link to={"/multiPlayer"}>Multi player</Link>
                         <div className='line'/>
                     </nav>
 

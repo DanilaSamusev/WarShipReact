@@ -34,6 +34,7 @@ class Game extends React.Component {
     componentDidMount() {
 
         let gameData = gameDataManager.getGameData();
+
         let url;
 
         if (this.props.gameType === 'single') {
