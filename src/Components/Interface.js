@@ -2,8 +2,22 @@ import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
 import {GameDataManager} from "../GameDataManager";
+import * as signalR from "@aspnet/signalr";
 
 const gameDataManager = new GameDataManager();
+
+let hubUrl = 'http://localhost:5000/data';
+const hubConnection = new signalR.HubConnectionBuilder()
+    .withUrl(hubUrl)
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+hubConnection.on("Send", function (gameData) {
+
+    gameDataManager.setBoards(gameData);
+});
+
+hubConnection.start();
 
 export default class Interface extends React.Component {
 
@@ -18,18 +32,20 @@ export default class Interface extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
-        gameDataManager.resetShipsOnField(gameData.boards[gameData.playerBoardId]);
+        gameDataManager.resetShipsOnField(gameData.boards[gameData.playerId]);
 
-        this.props.setGameData(gameData);
+        this.props.setGameData(gameData, true);
     }
 
     setIsPlayerReady(){
 
         let gameData = gameDataManager.getGameData();
 
-        gameData.boards[gameData.playerBoardId].isPlayerReady = true;
+        gameData.players[gameData.playerId].isPlayerReady = true;
 
-        this.props.setGameData(gameData);
+        this.props.setGameData(gameData, true);
+
+        hubConnection.invoke("Send", gameData);
     }
 
     render() {

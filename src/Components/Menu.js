@@ -10,11 +10,11 @@ const Info = () => (
 );
 
 const SinglePlayer = () => (
-    <Game className='singlePlayer'/>
+    <Game gameType='single'/>
 );
 
 const MultiPlayer = () => (
-    <Game className='multiPlayer'/>
+    <Game gameType='multi'/>
 );
 
 export default class Menu extends React.Component {

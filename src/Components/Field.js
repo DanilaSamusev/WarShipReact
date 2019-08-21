@@ -11,19 +11,6 @@ const gameDataManager = new GameDataManager();
 const squarePainterManager = new SquareNumberManager();
 const squareNumberValidator = new SquareNumberValidator();
 
-let hubUrl = 'http://localhost:5000/data';
-const hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(hubUrl)
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-hubConnection.on("Send", function (gameData) {
-
-    gameDataManager.setBoards(gameData);
-});
-
-hubConnection.start();
-
 export default class Field extends React.Component {
 
     constructor(props) {
@@ -37,7 +24,7 @@ export default class Field extends React.Component {
 
     handleClick(event, squareId) {
 
-        if (this.state.id === gameDataManager.getGameData().playerBoardId) {
+        if (this.state.id === gameDataManager.getGameData().playerId) {
 
             if (event.shiftKey) {
                 this.changeShipDirection(squareId)
@@ -46,10 +33,7 @@ export default class Field extends React.Component {
             }
         } else {
 
-            if (gameDataManager.getGameData().isPlayerTurn) {
-
-                this.shoot(squareId);
-            }
+            this.shoot(squareId);
         }
     }
 
@@ -84,7 +68,7 @@ export default class Field extends React.Component {
             gameData.boards[this.state.id].field.squares[squareNumbers[i]].isChecked = true;
         }
 
-        this.props.setGameData(gameData);
+        this.props.setGameData(gameData, false);
     }
 
     plantShip(squareId) {
@@ -108,23 +92,24 @@ export default class Field extends React.Component {
             }
         }
 
-        this.props.setGameData(gameData);
+        this.props.setGameData(gameData, true);
 
-        hubConnection.invoke("Send", gameData);
+        this.props.hubConnection.invoke("Send", gameData);
     }
 
     shoot(squareId) {
 
         let gameData = gameDataManager.getGameData();
-        let playerBoard = gameData.boards[gameData.playerBoardId];
-        let currentBoard = gameData.boards[gameData.enemyBoardId];
+        let players = gameData.players;
+        let currentBoard = gameData.boards[gameData.enemyId];
         let square = currentBoard.field.squares[squareId];
 
-        if (square.isClicked || !playerBoard.isPlayerReady ||
-            !currentBoard.isPlayerReady) {
+        if (square.isClicked || !players[0].isPlayerReady || !players[1].isPlayerReady ||
+            !players[gameData.playerId].isPlayerTurn) {
 
             return;
         }
+
 
         square.isClicked = true;
 
@@ -144,15 +129,18 @@ export default class Field extends React.Component {
                 gameData.winnerName = 'Game over';
             }
 
-            this.props.setGameData(gameData);
+            this.props.setGameData(gameData, true);
         } else {
 
-            gameDataManager.setIsPlayerTurn(gameData, false);
-            this.props.setGameData(gameData);
+            gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
+            gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
+            this.props.setGameData(gameData, true);
 
-            console.log(1);
-            this.props.makeComputerShot();
+            if (gameData.gameType === 'Single player')
+                this.props.makeComputerShot();
         }
+
+        this.props.hubConnection.invoke("Send", gameData);
     }
 
     changeShipDirection(squareNumber) {
@@ -179,17 +167,17 @@ export default class Field extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
-        for (let i = 0; i < 99; i++) {
+        for (let i = 0; i <= 99; i++) {
 
             gameData.boards[this.state.id].field.squares[i].isChecked = false;
         }
 
-        this.props.setGameData(gameData);
+        this.props.setGameData(gameData, true);
     }
 
     isPlayerField() {
 
-        return this.state.id === gameDataManager.getGameData().playerBoardId;
+        return this.state.id === gameDataManager.getGameData().playerId;
     }
 
     render() {
@@ -197,7 +185,7 @@ export default class Field extends React.Component {
         let gameData = gameDataManager.getGameData();
         let name = '';
 
-        if (this.state.id === gameData.playerBoardId) {
+        if (this.state.id === gameData.playerId) {
             name = 'player';
         } else {
             name = 'enemy'

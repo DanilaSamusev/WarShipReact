@@ -85,12 +85,14 @@ export class GameDataManager{
 
     }
 
-    setBoards(gameData){
+    setBoards(data){
 
-        let data = this.getGameData();
+        let playerData = this.getGameData();
 
-        data.boards = gameData.boards;
+        playerData.boards = data.boards;
+        playerData.players = data.players;
+        this.setGameData(playerData);
 
-        this.setGameData(data);
+        return playerData;
     }
 }

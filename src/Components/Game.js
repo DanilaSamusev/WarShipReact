@@ -9,7 +9,12 @@ import {SquareNumberValidator} from "../SquareNumberValidator";
 import Interface from "./Interface";
 import Field from "./Field";
 
+import * as signalR from "@aspnet/signalr";
+import {HubConnection} from "@aspnet/signalr/dist/esm/HubConnection";
+
+const shootingAI = new ShootingAI();
 const gameDataManager = new GameDataManager();
+const squareNumberValidator = new SquareNumberValidator();
 
 class Game extends React.Component {
 
@@ -18,6 +23,7 @@ class Game extends React.Component {
 
         this.state = {
             gameData: null,
+            hubConnection: null,
         };
 
         this.shoot = this.shoot.bind(this);
@@ -30,10 +36,9 @@ class Game extends React.Component {
         let gameData = gameDataManager.getGameData();
         let url;
 
-        if (this.props.className === 'singlePlayer'){
+        if (this.props.gameType === 'single') {
             url = 'http://localhost:5000/api/game/single';
-        }
-        else{
+        } else {
             url = 'http://localhost:5000/api/game/multi'
         }
 
@@ -49,21 +54,22 @@ class Game extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    this.setGameData(json);
+                    this.setGameData(json, true);
                 })
         } else {
-            this.setGameData(gameData);
+            this.setGameData(gameData, true);
         }
+
+        this.setHubConnection();
     }
 
     shoot() {
 
         let gameData = gameDataManager.getGameData();
-        let playerBoard = gameData.boards[gameData.playerBoardId];
-        let currentBoard = gameData.boards[gameData.enemyBoardId];
+        let players = gameData.players;
 
-        if (gameData.isPlayerTurn || !playerBoard.isPlayerReady ||
-            !currentBoard.isPlayerReady) {
+        if (!players[0].isPlayerReady || !players[1].isPlayerReady ||
+            players[1].isPlayerTurn) {
 
             return;
         }
@@ -76,10 +82,8 @@ class Game extends React.Component {
 
     makeComputerShot() {
 
-        let shootingAI = new ShootingAI();
-        let squareNumberValidator = new SquareNumberValidator();
         let gameData = gameDataManager.getGameData();
-        let playerBoard = gameData.boards[gameData.playerBoardId];
+        let playerBoard = gameData.boards[gameData.playerId];
         let playerSquares = playerBoard.field.squares;
         let playerFleet = playerBoard.fleet;
         let squareId;
@@ -107,7 +111,8 @@ class Game extends React.Component {
                     ShootingAI._firstShotSquareNumber = squareId;
                 }
             } else {
-                gameDataManager.setIsPlayerTurn(gameData, true);
+                gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
+                gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
             }
         } else {
             if (ShootingAI._shipPosition !== -1) {
@@ -134,7 +139,8 @@ class Game extends React.Component {
                     }
                 } else {
 
-                    gameDataManager.setIsPlayerTurn(gameData, true);
+                    gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
+                    gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
                     ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
 
                     if (ShootingAI._shipPosition === Direction.horizontal) {
@@ -177,7 +183,8 @@ class Game extends React.Component {
                         }
                     }
                 } else {
-                    gameDataManager.setIsPlayerTurn(gameData, true);
+                    gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
+                    gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
                 }
             }
         }
@@ -187,13 +194,16 @@ class Game extends React.Component {
             gameData.winnerName = 'Computer';
         }
 
-        this.setGameData(gameData);
+        this.setGameData(gameData, true);
     }
 
 
-    setGameData(gameData) {
+    setGameData(gameData, shouldSaveData) {
 
-        gameDataManager.setGameData(gameData);
+        if (shouldSaveData) {
+
+            gameDataManager.setGameData(gameData);
+        }
 
         this.setState(
             () => {
@@ -203,40 +213,67 @@ class Game extends React.Component {
             });
     }
 
+    setHubConnection() {
+
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl('http://localhost:5000/data')
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        hubConnection.on('Send', (data) => {
+
+            let gameData = gameDataManager.setBoards(data);
+            this.setGameData(gameData);
+        });
+
+        hubConnection.start();
+
+        this.setState(
+            () => {
+                return {
+                    hubConnection: hubConnection,
+                }
+            });
+    }
+
     render() {
 
         if (this.state.gameData === null) {
             return null;
         }
 
-        let playerBoardId = this.state.gameData.playerBoardId;
-        let enemyBoardId = this.state.gameData.enemyBoardId;
-        let playerBoard = this.state.gameData.boards[playerBoardId];
-        let enemyBoard = this.state.gameData.boards[enemyBoardId];
+        let gameData = this.state.gameData;
+        let playerId = gameData.playerId;
+        let enemyId = gameData.enemyId;
+        let playerBoard = gameData.boards[playerId];
+        let enemyBoard = gameData.boards[enemyId];
 
         return (
             <div className="game">
 
                 <Field
                     className='field'
-                    name='Player field'
-                    id={enemyBoardId}
-                    setGameData={this.setGameData}
-                    squares={enemyBoard.field.squares}
+                    name='Enemy field'
+                    id={enemyId}
                     makeComputerShot={this.shoot}
+                    setGameData={this.setGameData}
+                    hubConnection={this.state.hubConnection}
+                    squares={enemyBoard.field.squares}
                 />
 
                 <Field
                     className='field'
-                    name='Computer field'
-                    id={playerBoardId}
+                    name='Player field'
+                    id={playerId}
                     squares={playerBoard.field.squares}
+                    hubConnection={this.state.hubConnection}
                     setGameData={this.setGameData}
                 />
 
                 <Interface
-                    isPlayerReady={playerBoard.isPlayerReady}
+                    isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
                     shipsOnField={playerBoard.field.shipsOnField}
+                    hubConnection={this.state.hubConnection}
                     setGameData={this.setGameData}
                 />
 

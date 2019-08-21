@@ -12,7 +12,7 @@ class Square extends React.Component {
             style = {backgroundColor: '#dfe0de'};
         }
 
-        if (this.props.shipNumber > -1 && this.props.name === 'player') {
+        if (this.props.shipNumber > -1 /*&& this.props.name === 'player'*/) {
 
             style = {backgroundColor: 'grey'};
         }
