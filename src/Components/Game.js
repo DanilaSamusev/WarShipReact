@@ -253,7 +253,7 @@ class Game extends React.Component {
             <div className="game">
 
                 <Field
-                    className='field'
+                    className='field computerField'
                     name='Enemy field'
                     id={enemyId}
                     makeComputerShot={this.shoot}
@@ -263,7 +263,7 @@ class Game extends React.Component {
                 />
 
                 <Field
-                    className='field'
+                    className='field playerField'
                     name='Player field'
                     id={playerId}
                     squares={playerBoard.field.squares}
