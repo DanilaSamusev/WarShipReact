@@ -182,7 +182,6 @@ export default class Field extends React.Component {
 
     render() {
 
-        const _square = 'Square';
         let gameData = gameDataManager.getGameData();
         let name = '';
 
@@ -203,7 +202,7 @@ export default class Field extends React.Component {
                         this.props.squares.map((square) => {
                             return (
                                 <Square
-                                    className={name + _square}
+                                    className='square'
                                     id={square.id}
                                     key={square.id}
                                     name={name}

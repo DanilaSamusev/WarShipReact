@@ -1,6 +1,7 @@
 import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
+import "../css/interface.css"
 import {GameDataManager} from "../GameDataManager";
 import * as signalR from "@aspnet/signalr";
 
@@ -64,7 +65,7 @@ export default class Interface extends React.Component {
         }
 
         return (
-            <div>
+            <div className='interface'>
                 {resetShipsButton}
                 {readyButton}
             </div>

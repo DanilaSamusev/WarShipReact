@@ -11,6 +11,7 @@ import Field from "./Field";
 import Console from "./Console"
 import Interface from "./Interface";
 import * as signalR from "@aspnet/signalr";
+import LoginPanel from "./LoginPanel";
 
 const shootingAI = new ShootingAI();
 const gameDataManager = new GameDataManager();
@@ -249,19 +250,23 @@ class Game extends React.Component {
         let enemyBoard = gameData.boards[enemyId];
         let userName = gameData.players[playerId].name;
 
-        if (typeof userName === 'undefined') {
+        if (userName === 'Unknown') {
 
             return (
                 <div className="game">
-                    <input placeholder='inter your name'/>
+                    <LoginPanel
+                        setGameData={this.setGameData}
+                    />
                 </div>
             )
         } else {
             return (
                 <div className="game">
 
+                    
+
                     <Field
-                        className='enemyField'
+                        className='field'
                         name='Enemy field'
                         id={enemyId}
                         makeComputerShot={this.shoot}
@@ -271,7 +276,7 @@ class Game extends React.Component {
                     />
 
                     <Field
-                        className='playerField'
+                        className='field'
                         name='Player field'
                         id={playerId}
                         squares={playerBoard.field.squares}
@@ -279,15 +284,15 @@ class Game extends React.Component {
                         setGameData={this.setGameData}
                     />
 
-                    <Console
-                        data={'miss!\nmiss!\nplayer loose\n'}
-                    />
-
                     <Interface
                         isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
                         shipsOnField={playerBoard.field.shipsOnField}
                         hubConnection={this.state.hubConnection}
                         setGameData={this.setGameData}
+                    />
+
+                    <Console
+                        data={'miss!\nmiss!\nplayer loose\n'}
                     />
 
                     <h1>{this.state.gameData.winnerName}</h1>
