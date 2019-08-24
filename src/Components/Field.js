@@ -182,6 +182,7 @@ export default class Field extends React.Component {
 
     render() {
 
+        const _square = 'Square';
         let gameData = gameDataManager.getGameData();
         let name = '';
 
@@ -197,15 +198,15 @@ export default class Field extends React.Component {
 
                 <div className='fieldOwnerName'>{this.props.name}</div>
 
-                <div className='field'>
+                <div className={'field ' + this.props.className}>
                     {
                         this.props.squares.map((square) => {
                             return (
                                 <Square
-                                    className='square'
-                                    name={name}
+                                    className={name + _square}
                                     id={square.id}
                                     key={square.id}
+                                    name={name}
                                     isClicked={square.isClicked}
                                     isChecked={square.isChecked}
                                     shipNumber={square.shipNumber}

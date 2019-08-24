@@ -2,15 +2,15 @@ import React from 'react';
 import "../css/game.css"
 import "../css/index.css"
 import "../css/playerPanel.css"
+import {Constant} from "../Constant";
 import {Direction} from "../Direction";
 import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
-import Interface from "./Interface";
 import Field from "./Field";
-
+import Console from "./Console"
+import Interface from "./Interface";
 import * as signalR from "@aspnet/signalr";
-import {HubConnection} from "@aspnet/signalr/dist/esm/HubConnection";
 
 const shootingAI = new ShootingAI();
 const gameDataManager = new GameDataManager();
@@ -34,13 +34,12 @@ class Game extends React.Component {
     componentDidMount() {
 
         let gameData = gameDataManager.getGameData();
+        let url = 'http://localhost:5000/api/game/';
 
-        let url;
-
-        if (this.props.gameType === 'single') {
-            url = 'http://localhost:5000/api/game/single';
+        if (this.props.gameType === Constant.single_player) {
+            url += Constant.single_player;
         } else {
-            url = 'http://localhost:5000/api/game/multi'
+            url += Constant.multi_player;
         }
 
         if (gameData === null) {
@@ -248,40 +247,54 @@ class Game extends React.Component {
         let enemyId = gameData.enemyId;
         let playerBoard = gameData.boards[playerId];
         let enemyBoard = gameData.boards[enemyId];
+        let userName = gameData.players[playerId].name;
 
-        return (
-            <div className="game">
+        if (typeof userName === 'undefined') {
 
-                <Field
-                    className='field computerField'
-                    name='Enemy field'
-                    id={enemyId}
-                    makeComputerShot={this.shoot}
-                    setGameData={this.setGameData}
-                    hubConnection={this.state.hubConnection}
-                    squares={enemyBoard.field.squares}
-                />
+            return (
+                <div className="game">
+                    <input placeholder='inter your name'/>
+                </div>
+            )
+        } else {
+            return (
+                <div className="game">
 
-                <Field
-                    className='field playerField'
-                    name='Player field'
-                    id={playerId}
-                    squares={playerBoard.field.squares}
-                    hubConnection={this.state.hubConnection}
-                    setGameData={this.setGameData}
-                />
+                    <Field
+                        className='enemyField'
+                        name='Enemy field'
+                        id={enemyId}
+                        makeComputerShot={this.shoot}
+                        setGameData={this.setGameData}
+                        hubConnection={this.state.hubConnection}
+                        squares={enemyBoard.field.squares}
+                    />
 
-                <Interface
-                    isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
-                    shipsOnField={playerBoard.field.shipsOnField}
-                    hubConnection={this.state.hubConnection}
-                    setGameData={this.setGameData}
-                />
+                    <Field
+                        className='playerField'
+                        name='Player field'
+                        id={playerId}
+                        squares={playerBoard.field.squares}
+                        hubConnection={this.state.hubConnection}
+                        setGameData={this.setGameData}
+                    />
 
-                <h1>{this.state.gameData.winnerName}</h1>
+                    <Console
+                        data={'miss!\nmiss!\nplayer loose\n'}
+                    />
 
-            </div>
-        )
+                    <Interface
+                        isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
+                        shipsOnField={playerBoard.field.shipsOnField}
+                        hubConnection={this.state.hubConnection}
+                        setGameData={this.setGameData}
+                    />
+
+                    <h1>{this.state.gameData.winnerName}</h1>
+
+                </div>
+            )
+        }
     }
 }
 

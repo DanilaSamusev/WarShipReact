@@ -1,4 +1,5 @@
 export class Direction{
+
     static horizontal = 0;
     static vertical = 1;
     static top = 2;

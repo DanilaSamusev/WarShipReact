@@ -1,0 +1,12 @@
+.console{
+    display: inline-flex;
+    position: relative;
+    top: 320px;
+    left: -300px;
+}
+
+textarea{
+
+    width: 300px;
+    height: 150px;
+}

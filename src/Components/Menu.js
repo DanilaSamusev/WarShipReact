@@ -1,7 +1,7 @@
 import React from "react"
 import {BrowserRouter, Route, Link} from "react-router-dom";
 import Game from "./Game";
-
+import {Constant} from "../Constant";
 
 const Info = () => (
     <div>
@@ -10,11 +10,11 @@ const Info = () => (
 );
 
 const SinglePlayer = () => (
-    <Game gameType='single'/>
+    <Game gameType={Constant.single_player}/>
 );
 
 const MultiPlayer = () => (
-    <Game gameType='multi'/>
+    <Game gameType={Constant.multi_player}/>
 );
 
 export default class Menu extends React.Component {
@@ -24,17 +24,17 @@ export default class Menu extends React.Component {
             <BrowserRouter>
                 <div>
                     <nav>
-                        <Link to={"/"}>Rates</Link>
-                        <Link to={"/singlePlayer"}>Single player</Link>
-                        <Link to={"/multiPlayer"}>Multi player</Link>
+                        <Link to={'/'}>Rates</Link>
+                        <Link to={Constant.single_player}>Single player</Link>
+                        <Link to={Constant.single_player}>Multi player</Link>
                         <div className='line'/>
                     </nav>
 
                     <hr/>
 
-                    <Route exact path="/" component={Info}/>
-                    <Route exact path="/singlePlayer" component={SinglePlayer}/>
-                    <Route exact path="/multiPlayer" component={MultiPlayer}/>
+                    <Route exact path='/' component={Info}/>
+                    <Route exact path={'/' + Constant.single_player} component={SinglePlayer}/>
+                    <Route exact path={'/' + Constant.multi_player} component={MultiPlayer}/>
                 </div>
             </BrowserRouter>
         )

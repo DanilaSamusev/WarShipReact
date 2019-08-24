@@ -1,8 +1,7 @@
 .game{
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    justify-content: center;
+    margin: auto;
+    width: min-content;
+    height: min-content;
 }
 
 nav{
