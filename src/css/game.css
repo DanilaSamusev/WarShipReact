@@ -1,7 +1,5 @@
-.game{
-    margin: auto;
-    width: min-content;
-    height: min-content;
+.boards{
+    display: flex;
 }
 
 nav{

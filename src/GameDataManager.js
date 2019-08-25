@@ -12,11 +12,6 @@ export class GameDataManager{
 
     }
 
-    setIsPlayerTurn(gameData, isPlayerTurn){
-
-        gameData.isPlayerTurn = isPlayerTurn;
-    }
-
     shootDeck(fleet, shipId) {
 
         fleet.ships[shipId].hitsNumber = fleet.ships[shipId].hitsNumber + 1;
@@ -73,6 +68,11 @@ export class GameDataManager{
         board.field.shipsOnField = 0;
     }
 
+    addEvent(gameData, performerName, event){
+
+        gameData.events += performerName + ': ' + event + '\n';
+    }
+
     getGameData(){
 
         return JSON.parse(sessionStorage.getItem('gameData'));
@@ -91,7 +91,6 @@ export class GameDataManager{
 
         playerData.boards = data.boards;
         playerData.players = data.players;
-        this.setGameData(playerData);
 
         return playerData;
     }

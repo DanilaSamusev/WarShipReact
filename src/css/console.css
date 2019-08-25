@@ -1,8 +1,5 @@
 .console{
-    display: inline-flex;
-    position: relative;
-    top: 320px;
-    left: -300px;
+
 }
 
 textarea{

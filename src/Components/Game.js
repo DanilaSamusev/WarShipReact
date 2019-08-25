@@ -8,9 +8,9 @@ import {ShootingAI} from "../ShootingAI";
 import {GameDataManager} from "../GameDataManager";
 import {SquareNumberValidator} from "../SquareNumberValidator";
 import Field from "./Field";
-import Console from "./Console"
 import Interface from "./Interface";
 import * as signalR from "@aspnet/signalr";
+import LoginPanel from "./LoginPanel";
 
 const shootingAI = new ShootingAI();
 const gameDataManager = new GameDataManager();
@@ -105,12 +105,18 @@ class Game extends React.Component {
                 gameDataManager.shootDeck(playerFleet, shipNumber);
 
                 if (!playerFleet.ships[shipNumber].isAlive) {
+
                     playerFleet.deadShipsCount++;
+                    gameDataManager.addEvent(gameData, 'Computer', 'has killed a ship!');
                     shootingAI.resetMemory();
                 } else {
+
                     ShootingAI._firstShotSquareNumber = squareId;
+                    gameDataManager.addEvent(gameData, 'Computer', 'hit!');
                 }
             } else {
+
+                gameDataManager.addEvent(gameData, 'Computer', 'miss!');
                 gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
                 gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
             }
@@ -118,8 +124,10 @@ class Game extends React.Component {
             if (ShootingAI._shipPosition !== -1) {
 
                 if (ShootingAI._shipPosition === Direction.horizontal) {
+
                     squareId = shootingAI.getHorizontalSquareNumber(playerBoard);
                 } else {
+
                     squareId = shootingAI.getVerticalSquareNumber(playerBoard);
                 }
 
@@ -133,12 +141,15 @@ class Game extends React.Component {
 
                     if (!playerFleet.ships[shipNumber].isAlive) {
                         playerFleet.deadShipsCount++;
+                        gameDataManager.addEvent(gameData, 'Computer', 'has killed a ship!');
                         shootingAI.resetMemory();
                     } else {
+                        gameDataManager.addEvent(gameData, 'Computer', 'hit!');
                         ShootingAI._lastShotSquareNumber = squareId;
                     }
                 } else {
 
+                    gameDataManager.addEvent(gameData, 'Computer', 'miss!');
                     gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
                     gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
                     ShootingAI._lastShotSquareNumber = ShootingAI._firstShotSquareNumber;
@@ -170,19 +181,27 @@ class Game extends React.Component {
                     gameDataManager.shootDeck(playerFleet, shipNumber);
 
                     if (!playerFleet.ships[shipNumber].isAlive) {
+
                         playerFleet.deadShipsCount++;
+                        gameDataManager.addEvent(gameData, 'Computer', 'has killed a ship!');
                         shootingAI.resetMemory();
                     } else {
+
+                        gameDataManager.addEvent(gameData, 'Computer', 'hit!');
                         ShootingAI._lastShotSquareNumber = squareId;
 
                         if (ShootingAI._roundShotDirection === Direction.left ||
                             ShootingAI._roundShotDirection === Direction.right) {
+
                             ShootingAI._shipPosition = Direction.horizontal;
                         } else {
+
                             ShootingAI._shipPosition = Direction.vertical;
                         }
                     }
                 } else {
+
+                    gameDataManager.addEvent(gameData, 'Computer', 'miss!');
                     gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
                     gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
                 }
@@ -196,7 +215,6 @@ class Game extends React.Component {
 
         this.setGameData(gameData, true);
     }
-
 
     setGameData(gameData, shouldSaveData) {
 
@@ -223,7 +241,7 @@ class Game extends React.Component {
         hubConnection.on('Send', (data) => {
 
             let gameData = gameDataManager.setBoards(data);
-            this.setGameData(gameData);
+            this.setGameData(gameData, true);
         });
 
         hubConnection.start();
@@ -249,39 +267,39 @@ class Game extends React.Component {
         let enemyBoard = gameData.boards[enemyId];
         let userName = gameData.players[playerId].name;
 
-        if (typeof userName === 'undefined') {
+        if (userName === 'Unknown') {
 
             return (
                 <div className="game">
-                    <input placeholder='inter your name'/>
+                    <LoginPanel
+                        setGameData={this.setGameData}
+                    />
                 </div>
             )
         } else {
             return (
                 <div className="game">
 
-                    <Field
-                        className='enemyField'
-                        name='Enemy field'
-                        id={enemyId}
-                        makeComputerShot={this.shoot}
-                        setGameData={this.setGameData}
-                        hubConnection={this.state.hubConnection}
-                        squares={enemyBoard.field.squares}
-                    />
+                    <div className="boards">
 
-                    <Field
-                        className='playerField'
-                        name='Player field'
-                        id={playerId}
-                        squares={playerBoard.field.squares}
-                        hubConnection={this.state.hubConnection}
-                        setGameData={this.setGameData}
-                    />
+                        <Field
+                            className='field'
+                            id={enemyId}
+                            makeComputerShot={this.shoot}
+                            setGameData={this.setGameData}
+                            hubConnection={this.state.hubConnection}
+                            squares={enemyBoard.field.squares}
+                        />
 
-                    <Console
-                        data={'miss!\nmiss!\nplayer loose\n'}
-                    />
+                        <Field
+                            className='field'
+                            id={playerId}
+                            squares={playerBoard.field.squares}
+                            hubConnection={this.state.hubConnection}
+                            setGameData={this.setGameData}
+                        />
+
+                    </div>
 
                     <Interface
                         isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}

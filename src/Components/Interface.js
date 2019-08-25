@@ -1,8 +1,10 @@
 import React from 'react';
 import "../css/index.css"
 import "../css/game.css"
+import "../css/interface.css"
 import {GameDataManager} from "../GameDataManager";
 import * as signalR from "@aspnet/signalr";
+import Console from "./Console";
 
 const gameDataManager = new GameDataManager();
 
@@ -52,6 +54,7 @@ export default class Interface extends React.Component {
 
         let readyButton;
         let resetShipsButton;
+        let gameData = gameDataManager.getGameData();
 
         if (!this.props.isPlayerReady) {
 
@@ -64,9 +67,13 @@ export default class Interface extends React.Component {
         }
 
         return (
-            <div>
+            <div className='interface'>
                 {resetShipsButton}
                 {readyButton}
+
+                <Console
+                    events={gameData.events}
+                />
             </div>
         )
 
