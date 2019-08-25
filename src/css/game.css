@@ -1,6 +1,5 @@
-.game{
+.boards{
     display: flex;
-    justify-content: center;
 }
 
 nav{

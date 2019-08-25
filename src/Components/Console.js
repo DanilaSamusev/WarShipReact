@@ -1,6 +1,5 @@
 import React from 'react';
 import "../css/console.css"
-import Square from "./Square";
 
 export default class Console extends React.Component {
 
@@ -13,7 +12,7 @@ export default class Console extends React.Component {
         return (
 
             <div className='console'>
-                <textarea value={this.props.data}>
+                <textarea value={this.props.events}>
 
                 </textarea>
             </div>

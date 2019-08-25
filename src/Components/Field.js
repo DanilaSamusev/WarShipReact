@@ -92,14 +92,14 @@ export default class Field extends React.Component {
             }
         }
 
-        this.props.setGameData(gameData, true);
-
+        alert();
         this.props.hubConnection.invoke("Send", gameData);
     }
 
     shoot(squareId) {
 
         let gameData = gameDataManager.getGameData();
+        let playerName = 'Player';
         let players = gameData.players;
         let currentBoard = gameData.boards[gameData.enemyId];
         let square = currentBoard.field.squares[squareId];
@@ -109,7 +109,6 @@ export default class Field extends React.Component {
 
             return;
         }
-
 
         square.isClicked = true;
 
@@ -129,11 +128,15 @@ export default class Field extends React.Component {
                 gameData.winnerName = 'Game over';
             }
 
+            gameDataManager.addEvent(gameData, playerName, 'hit!');
+
             this.props.setGameData(gameData, true);
         } else {
 
             gameData.players[0].isPlayerTurn = !gameData.players[0].isPlayerTurn;
             gameData.players[1].isPlayerTurn = !gameData.players[1].isPlayerTurn;
+            gameDataManager.addEvent(gameData, playerName, 'miss!');
+
             this.props.setGameData(gameData, true);
 
             if (gameData.gameType === 'Single player')
@@ -195,7 +198,7 @@ export default class Field extends React.Component {
 
             <div className='board'>
 
-                <div className='fieldOwnerName'>{this.props.name}</div>
+                <div className='fieldOwnerName'>{gameData.players[this.state.id].name + '\'s field'}</div>
 
                 <div className={'field ' + this.props.className}>
                     {
