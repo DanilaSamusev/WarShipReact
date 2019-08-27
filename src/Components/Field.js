@@ -92,7 +92,6 @@ export default class Field extends React.Component {
             }
         }
 
-        alert();
         this.props.hubConnection.invoke("Send", gameData);
     }
 

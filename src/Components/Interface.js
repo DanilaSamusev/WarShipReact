@@ -8,19 +8,6 @@ import Console from "./Console";
 
 const gameDataManager = new GameDataManager();
 
-let hubUrl = 'http://localhost:5000/data';
-const hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(hubUrl)
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-hubConnection.on("Send", function (gameData) {
-
-    gameDataManager.setBoards(gameData);
-});
-
-hubConnection.start();
-
 export default class Interface extends React.Component {
 
     constructor(props) {
@@ -46,8 +33,6 @@ export default class Interface extends React.Component {
         gameData.players[gameData.playerId].isPlayerReady = true;
 
         this.props.setGameData(gameData, true);
-
-        hubConnection.invoke("Send", gameData);
     }
 
     render() {

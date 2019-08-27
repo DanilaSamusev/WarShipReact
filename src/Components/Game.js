@@ -34,12 +34,14 @@ class Game extends React.Component {
     componentDidMount() {
 
         let gameData = gameDataManager.getGameData();
+        let gameType = this.props.gameType;
         let url = 'http://localhost:5000/api/game/';
 
-        if (this.props.gameType === Constant.single_player) {
+        if (gameType === Constant.single_player) {
             url += Constant.single_player;
         } else {
             url += Constant.multi_player;
+            this.setHubConnection();
         }
 
         if (gameData === null) {
@@ -59,8 +61,6 @@ class Game extends React.Component {
         } else {
             this.setGameData(gameData, true);
         }
-
-        this.setHubConnection();
     }
 
     shoot() {
@@ -240,6 +240,7 @@ class Game extends React.Component {
 
         hubConnection.on('Send', (data) => {
 
+            alert();
             let gameData = gameDataManager.setBoards(data);
             this.setGameData(gameData, true);
         });
@@ -273,45 +274,55 @@ class Game extends React.Component {
                 <div className="game">
                     <LoginPanel
                         setGameData={this.setGameData}
+                        hubConnection={this.state.hubConnection}
                     />
                 </div>
             )
         } else {
-            return (
-                <div className="game">
 
-                    <div className="boards">
+            if (!gameData.players[0].isLoggedIn || !gameData.players[1].isLoggedIn) {
 
-                        <Field
-                            className='field'
-                            id={enemyId}
-                            makeComputerShot={this.shoot}
-                            setGameData={this.setGameData}
+                return (
+                    <div>Waiting for partner</div>
+                )
+            } else {
+
+                return (
+                    <div className="game">
+
+                        <div className="boards">
+
+                            <Field
+                                className='field'
+                                id={enemyId}
+                                makeComputerShot={this.shoot}
+                                setGameData={this.setGameData}
+                                hubConnection={this.state.hubConnection}
+                                squares={enemyBoard.field.squares}
+                            />
+
+                            <Field
+                                className='field'
+                                id={playerId}
+                                squares={playerBoard.field.squares}
+                                hubConnection={this.state.hubConnection}
+                                setGameData={this.setGameData}
+                            />
+
+                        </div>
+
+                        <Interface
+                            isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
+                            shipsOnField={playerBoard.field.shipsOnField}
                             hubConnection={this.state.hubConnection}
-                            squares={enemyBoard.field.squares}
+                            setGameData={this.setGameData}
                         />
 
-                        <Field
-                            className='field'
-                            id={playerId}
-                            squares={playerBoard.field.squares}
-                            hubConnection={this.state.hubConnection}
-                            setGameData={this.setGameData}
-                        />
+                        <h1>{this.state.gameData.winnerName}</h1>
 
                     </div>
-
-                    <Interface
-                        isPlayerReady={gameData.players[gameData.playerId].isPlayerReady}
-                        shipsOnField={playerBoard.field.shipsOnField}
-                        hubConnection={this.state.hubConnection}
-                        setGameData={this.setGameData}
-                    />
-
-                    <h1>{this.state.gameData.winnerName}</h1>
-
-                </div>
-            )
+                )
+            }
         }
     }
 }

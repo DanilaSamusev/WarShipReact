@@ -27,8 +27,9 @@ export default class LoginPanel extends React.Component {
         let gameData = gameDataManager.getGameData();
         let playerId = gameData.playerId;
         gameData.players[playerId].name = this.state.playerName;
+        gameData.players[playerId].isLoggedIn = true;
 
-        this.props.setGameData(gameData, true);
+        this.props.hubConnection.invoke("Send", gameData);
     }
 
     render() {
