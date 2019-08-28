@@ -1,7 +1,4 @@
 import React from 'react';
-import {GameDataManager} from "../GameDataManager";
-
-const gameDataManager = new GameDataManager();
 
 export default class LoginPanel extends React.Component {
 
@@ -24,12 +21,7 @@ export default class LoginPanel extends React.Component {
 
     onSubmit(){
 
-        let gameData = gameDataManager.getGameData();
-        let playerId = gameData.playerId;
-        gameData.players[playerId].name = this.state.playerName;
-        gameData.players[playerId].isLoggedIn = true;
-
-        this.props.hubConnection.invoke("Send", gameData);
+        this.props.setPlayerName(this.state.playerName);
     }
 
     render() {

@@ -1,11 +1,11 @@
 import {SquareNumberManager} from "./SquareNumberManager";
 import * as signalR from "@aspnet/signalr";
 
-export class GameDataManager{
+export class GameDataManager {
 
-    setShipDeckPosition(fleet, pointsToPlant, shipNumber){
+    setShipDeckPosition(fleet, pointsToPlant, shipNumber) {
 
-        for (let i = 0; i < pointsToPlant.length; i++){
+        for (let i = 0; i < pointsToPlant.length; i++) {
 
             fleet.ships[shipNumber].decks[i].position = pointsToPlant[i];
         }
@@ -57,9 +57,9 @@ export class GameDataManager{
 
         let ships = board.fleet.ships;
 
-        for (let i = 0; i < ships.length; i++){
+        for (let i = 0; i < ships.length; i++) {
 
-            for (let j = 0; j < ships[i].decks.length; j++){
+            for (let j = 0; j < ships[i].decks.length; j++) {
 
                 ships[i].decks[j].position = -1;
             }
@@ -68,24 +68,26 @@ export class GameDataManager{
         board.field.shipsOnField = 0;
     }
 
-    addEvent(gameData, performerName, event){
+    addEvent(gameData, performerName, event) {
 
         gameData.events += performerName + ': ' + event + '\n';
     }
 
-    getGameData(){
+    getGameData() {
+
+        
 
         return JSON.parse(sessionStorage.getItem('gameData'));
 
     }
 
-    setGameData(gameData){
+    setGameData(gameData) {
 
         sessionStorage.setItem('gameData', JSON.stringify(gameData));
 
     }
 
-    setBoards(data){
+    setBoards(data) {
 
         let playerData = this.getGameData();
 
