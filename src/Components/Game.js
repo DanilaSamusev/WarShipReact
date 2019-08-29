@@ -10,7 +10,6 @@ import {SquareNumberValidator} from "../SquareNumberValidator";
 import Field from "./Field";
 import Interface from "./Interface";
 import * as signalR from "@aspnet/signalr";
-import LoginPanel from "./LoginPanel";
 
 const shootingAI = new ShootingAI();
 const gameDataManager = new GameDataManager();
@@ -33,26 +32,6 @@ class Game extends React.Component {
 
     componentDidMount() {
 
-        this.setHubConnection();
-        this.fetchGameData();
-    }
-
-    setFetchUrl(){
-
-        let gameType = this.props.gameType;
-        let url = 'http://localhost:5000/api/game/';
-
-        if (gameType === Constant.single_player) {
-            url += Constant.single_player + '?playerName=' + this.props.playerName;
-        } else {
-            url += Constant.multi_player + '?playerName=' + this.props.playerName;
-        }
-
-        return url;
-    }
-
-    fetchGameData(){
-
         let gameData = gameDataManager.getGameData();
         let url = this.setFetchUrl();
 
@@ -69,12 +48,26 @@ class Game extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
+                    this.setHubConnection(json);
                     this.setGameData(json, true);
-                    this.state.hubConnection.invoke("Send", this.state.gameData);
                 })
         } else {
             this.setGameData(gameData, true);
         }
+    }
+
+    setFetchUrl() {
+
+        let gameType = this.props.gameType;
+        let url = 'http://localhost:5000/api/game/';
+
+        if (gameType === Constant.single_player) {
+            url += Constant.single_player + '?playerName=' + this.props.playerName;
+        } else {
+            url += Constant.multi_player + '?playerName=' + this.props.playerName;
+        }
+
+        return url;
     }
 
     shoot() {
@@ -237,6 +230,8 @@ class Game extends React.Component {
             gameDataManager.setGameData(gameData);
         }
 
+        console.log(gameDataManager.getGameData().hubConnection.methods);
+
         this.setState(
             () => {
                 return {
@@ -245,7 +240,7 @@ class Game extends React.Component {
             });
     }
 
-    setHubConnection() {
+    setHubConnection(gameData) {
 
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl('http://localhost:5000/data')
@@ -258,14 +253,20 @@ class Game extends React.Component {
             this.setGameData(gameData, true);
         });
 
-        hubConnection.start();
+        hubConnection.on('LogPlayer', (player) => {
 
-        this.setState(
-            () => {
-                return {
-                    hubConnection: hubConnection,
-                }
+            let gameData = gameDataManager.getGameData();
+            console.log(gameData);
+            gameData.players[gameData.enemyId] = player;
+            this.setGameData(gameData, true);
+        });
+
+        hubConnection.start()
+            .then(() => {
+                hubConnection.invoke("LogPlayer", gameData.players[gameData.playerId]);
             });
+
+        gameData.hubConnection = hubConnection;
     }
 
     render() {
@@ -280,7 +281,9 @@ class Game extends React.Component {
         let playerBoard = gameData.boards[playerId];
         let enemyBoard = gameData.boards[enemyId];
 
-        if (!gameData.players[0].isLogged || !gameData.players[1].isLogged){
+        console.log(gameData.hubConnection.methods);
+
+        if (!gameData.players[0].isLogged || !gameData.players[1].isLogged) {
 
             return (
                 <div>Waiting for partner...</div>
@@ -288,6 +291,7 @@ class Game extends React.Component {
         }
 
         return (
+
             <div className="game">
 
                 <div className="boards">
@@ -297,7 +301,7 @@ class Game extends React.Component {
                         id={enemyId}
                         makeComputerShot={this.shoot}
                         setGameData={this.setGameData}
-                        hubConnection={this.state.hubConnection}
+                        hubConnection={this.state.gameData.hubConnection}
                         squares={enemyBoard.field.squares}
                     />
 
@@ -305,7 +309,7 @@ class Game extends React.Component {
                         className='field'
                         id={playerId}
                         squares={playerBoard.field.squares}
-                        hubConnection={this.state.hubConnection}
+                        hubConnection={this.state.gameData.hubConnection}
                         setGameData={this.setGameData}
                     />
 

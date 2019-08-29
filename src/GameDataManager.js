@@ -83,8 +83,10 @@ export class GameDataManager {
 
     setGameData(gameData) {
 
+
         sessionStorage.setItem('gameData', JSON.stringify(gameData));
 
+        console.log(this.getGameData());
     }
 
     setBoards(data) {

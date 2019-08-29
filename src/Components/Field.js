@@ -41,6 +41,7 @@ export default class Field extends React.Component {
 
         let gameData = gameDataManager.getGameData();
 
+
         if (this.isPlayerField()) {
 
             if (gameData.boards[this.state.id].field.shipsOnField < 10) {
@@ -92,6 +93,7 @@ export default class Field extends React.Component {
             }
         }
 
+        console.log(this.props.hubConnection);
         this.props.hubConnection.invoke("Send", gameData);
     }
 
