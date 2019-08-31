@@ -39,7 +39,7 @@ class Game extends React.Component {
 
             fetch(url,
                 {
-                    method: 'post',
+                    method: 'get',
                     headers:
                         {
                             'Accept': 'application/json',
@@ -48,11 +48,12 @@ class Game extends React.Component {
                 })
                 .then(response => response.json())
                 .then(json => {
-                    this.setHubConnection(json);
                     this.setGameData(json, true);
+                    this.setHubConnection(json);
                 })
         } else {
             this.setGameData(gameData, true);
+            this.setHubConnection(gameData);
         }
     }
 
@@ -62,9 +63,9 @@ class Game extends React.Component {
         let url = 'http://localhost:5000/api/game/';
 
         if (gameType === Constant.single_player) {
-            url += Constant.single_player + '?playerName=' + this.props.playerName;
+            url += Constant.single_player
         } else {
-            url += Constant.multi_player + '?playerName=' + this.props.playerName;
+            url += Constant.multi_player
         }
 
         return url;
@@ -230,8 +231,6 @@ class Game extends React.Component {
             gameDataManager.setGameData(gameData);
         }
 
-        console.log(gameDataManager.getGameData().hubConnection.methods);
-
         this.setState(
             () => {
                 return {
@@ -256,7 +255,6 @@ class Game extends React.Component {
         hubConnection.on('LogPlayer', (player) => {
 
             let gameData = gameDataManager.getGameData();
-            console.log(gameData);
             gameData.players[gameData.enemyId] = player;
             this.setGameData(gameData, true);
         });
@@ -266,7 +264,12 @@ class Game extends React.Component {
                 hubConnection.invoke("LogPlayer", gameData.players[gameData.playerId]);
             });
 
-        gameData.hubConnection = hubConnection;
+        this.setState(
+            () => {
+                return {
+                    hubConnection: hubConnection,
+                };
+            });
     }
 
     render() {
@@ -280,8 +283,6 @@ class Game extends React.Component {
         let enemyId = gameData.enemyId;
         let playerBoard = gameData.boards[playerId];
         let enemyBoard = gameData.boards[enemyId];
-
-        console.log(gameData.hubConnection.methods);
 
         if (!gameData.players[0].isLogged || !gameData.players[1].isLogged) {
 
@@ -301,7 +302,7 @@ class Game extends React.Component {
                         id={enemyId}
                         makeComputerShot={this.shoot}
                         setGameData={this.setGameData}
-                        hubConnection={this.state.gameData.hubConnection}
+                        hubConnection={this.state.hubConnection}
                         squares={enemyBoard.field.squares}
                     />
 
@@ -309,7 +310,7 @@ class Game extends React.Component {
                         className='field'
                         id={playerId}
                         squares={playerBoard.field.squares}
-                        hubConnection={this.state.gameData.hubConnection}
+                        hubConnection={this.state.hubConnection}
                         setGameData={this.setGameData}
                     />
 

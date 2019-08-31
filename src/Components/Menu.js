@@ -1,6 +1,6 @@
 import React from "react"
 import {BrowserRouter, Route, Link} from "react-router-dom";
-import Preview from "./Preview";
+import Game from "./Game";
 import {Constant} from "../Constant";
 
 const Info = () => (
@@ -10,11 +10,11 @@ const Info = () => (
 );
 
 const SinglePlayer = () => (
-    <Preview gameType={Constant.single_player}/>
+    <Game gameType={Constant.single_player}/>
 );
 
 const MultiPlayer = () => (
-    <Preview gameType={Constant.multi_player}/>
+    <Game gameType={Constant.multi_player}/>
 );
 
 export default class Menu extends React.Component {
